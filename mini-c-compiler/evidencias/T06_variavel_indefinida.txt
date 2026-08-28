@@ -1,0 +1,16 @@
+Source code:
+print(x);
+
+
+Tokens:
+PRINT
+IDENT(x)
+SEMICOLON
+EOF
+
+AST:
+AST_PRINT
+  AST_VAR(x)
+
+Program output:
+Runtime error: undefined variable 'x'

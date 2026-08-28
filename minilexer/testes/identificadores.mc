@@ -1,0 +1,3 @@
+idade _media aluno2 valor_total
+identificador_com_mais_de_trinta_e_um_caracteres
+integer print2 _if

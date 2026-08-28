@@ -1,0 +1,4 @@
+Source code:
+let valor = 10 @ 2;
+
+Unknown character: @

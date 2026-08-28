@@ -1,0 +1,6 @@
+# Executável gerado pelo GCC
+minilexer
+minilexer.exe
+
+# Arquivos intermediários
+*.o

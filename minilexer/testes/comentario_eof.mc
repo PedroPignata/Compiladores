@@ -1,0 +1,1 @@
+int x; // comentario sem quebra de linha final

@@ -1,0 +1,26 @@
+Source code:
+let x = 10 / 0;
+print(x);
+
+
+Tokens:
+LET
+IDENT(x)
+EQUAL
+NUMBER(10)
+DIV
+NUMBER(0)
+SEMICOLON
+PRINT
+IDENT(x)
+SEMICOLON
+EOF
+
+AST:
+AST_ASSIGN(x)
+  AST_BINARY_OP(/)
+    AST_NUMBER(10)
+    AST_NUMBER(0)
+
+Program output:
+Runtime error: division by zero
