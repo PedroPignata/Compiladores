@@ -89,6 +89,10 @@ continuam sendo considerados no controle de linha e coluna.
 ## Decisões de implementação
 
 - O arquivo é lido caractere por caractere com `fgetc`;
+- Os tipos de token são representados por `enum`, cada token por uma estrutura
+  `Token` e o estado da leitura por uma estrutura `Scanner`;
+- O reconhecimento foi dividido em funções específicas para identificadores,
+  números, literais, delimitadores, operadores e comentários;
 - `linha` e `coluna` começam em 1 e são atualizadas a cada caractere consumido;
 - A posição inicial é salva antes da leitura completa de cada token;
 - `ctype.h` é usado para reconhecer letras, algarismos e espaços;
@@ -102,7 +106,9 @@ continuam sendo considerados no controle de linha e coluna.
   erro léxico;
 - Números como `12.` e `1.2.3` geram erro léxico;
 - Depois de um erro, o analisador consome a entrada problemática e continua a
-  busca pelos próximos tokens.
+  busca pelos próximos tokens;
+- Tokens e erros léxicos são enviados para a mesma saída, preservando a ordem
+  da análise mesmo quando o resultado é redirecionado para um arquivo.
 
 ## Testes realizados
 

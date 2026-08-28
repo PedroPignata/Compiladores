@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,13 +7,60 @@
 #define TAMANHO_MAX_IDENTIFICADOR 31
 #define TAMANHO_MAX_LEXEMA 63
 
-static void avancarPosicao(int caractere, int *linha, int *coluna)
+typedef enum {
+    TOKEN_PALAVRA_RESERVADA,
+    TOKEN_IDENTIFICADOR,
+    TOKEN_NUMERO_INTEIRO,
+    TOKEN_NUMERO_REAL,
+    TOKEN_LITERAL_CARACTERE,
+    TOKEN_OPERADOR,
+    TOKEN_DELIMITADOR,
+    TOKEN_ERRO
+} TipoToken;
+
+typedef struct {
+    TipoToken tipo;
+    char lexema[TAMANHO_MAX_LEXEMA + 1];
+    int linha;
+    int coluna;
+} Token;
+
+typedef struct {
+    FILE *arquivo;
+    int linha;
+    int coluna;
+    int totalTokens;
+    int totalErros;
+} Scanner;
+
+static void avancarPosicao(Scanner *scanner, int caractere)
 {
     if (caractere == '\n') {
-        (*linha)++;
-        *coluna = 1;
+        scanner->linha++;
+        scanner->coluna = 1;
     } else {
-        (*coluna)++;
+        scanner->coluna++;
+    }
+}
+
+static int devolverCaractere(Scanner *scanner, int caractere)
+{
+    if (caractere != EOF &&
+        ungetc(caractere, scanner->arquivo) == EOF) {
+        fprintf(stderr, "Erro ao devolver caractere ao fluxo.\n");
+        return 0;
+    }
+
+    return 1;
+}
+
+static void adicionarAoLexema(char *lexema,
+                              size_t *tamanho,
+                              int caractere)
+{
+    if (*tamanho < TAMANHO_MAX_LEXEMA) {
+        lexema[*tamanho] = (char)caractere;
+        (*tamanho)++;
     }
 }
 
@@ -38,7 +86,6 @@ static int ehPalavraReservada(const char *lexema)
         "return",
         "print"
     };
-
     size_t quantidade =
         sizeof(palavrasReservadas) / sizeof(palavrasReservadas[0]);
     size_t i;
@@ -67,530 +114,454 @@ static int podeFormarOperadorComIgual(int caractere)
     return strchr("=!<>", caractere) != NULL;
 }
 
-static void imprimirToken(int linha,
-                          int coluna,
-                          const char *categoria,
-                          const char *lexema)
+static const char *nomeDoToken(TipoToken tipo)
+{
+    switch (tipo) {
+        case TOKEN_PALAVRA_RESERVADA:
+            return "PALAVRA_RESERVADA";
+        case TOKEN_IDENTIFICADOR:
+            return "IDENTIFICADOR";
+        case TOKEN_NUMERO_INTEIRO:
+            return "NUMERO_INTEIRO";
+        case TOKEN_NUMERO_REAL:
+            return "NUMERO_REAL";
+        case TOKEN_LITERAL_CARACTERE:
+            return "LITERAL_CARACTERE";
+        case TOKEN_OPERADOR:
+            return "OPERADOR";
+        case TOKEN_DELIMITADOR:
+            return "DELIMITADOR";
+        case TOKEN_ERRO:
+            return "ERRO_LEXICO";
+    }
+
+    return "DESCONHECIDO";
+}
+
+static void imprimirToken(const Token *token)
 {
     printf("%d:%d | %-18s | %s\n",
-           linha,
-           coluna,
-           categoria,
-           lexema);
+           token->linha,
+           token->coluna,
+           nomeDoToken(token->tipo),
+           token->lexema);
+}
+
+static void registrarToken(Scanner *scanner,
+                           TipoToken tipo,
+                           const char *lexema,
+                           int linha,
+                           int coluna)
+{
+    Token token;
+
+    token.tipo = tipo;
+    token.linha = linha;
+    token.coluna = coluna;
+    snprintf(token.lexema, sizeof(token.lexema), "%s", lexema);
+
+    imprimirToken(&token);
+    scanner->totalTokens++;
+}
+
+static void registrarErroLexico(Scanner *scanner,
+                                int linha,
+                                int coluna,
+                                const char *formato,
+                                ...)
+{
+    va_list argumentos;
+
+    printf("ERRO_LEXICO | linha %d, coluna %d | ", linha, coluna);
+
+    va_start(argumentos, formato);
+    vprintf(formato, argumentos);
+    va_end(argumentos);
+
+    putchar('\n');
+    scanner->totalErros++;
+}
+
+static int analisarIdentificador(Scanner *scanner, int caractere)
+{
+    char lexema[TAMANHO_MAX_LEXEMA + 1];
+    size_t tamanhoLexema = 0;
+    size_t comprimentoTotal = 0;
+    int linhaInicial = scanner->linha;
+    int colunaInicial = scanner->coluna;
+
+    do {
+        adicionarAoLexema(lexema, &tamanhoLexema, caractere);
+        comprimentoTotal++;
+        avancarPosicao(scanner, caractere);
+        caractere = fgetc(scanner->arquivo);
+    } while (caractere != EOF && ehParteIdentificador(caractere));
+
+    lexema[tamanhoLexema] = '\0';
+
+    if (!devolverCaractere(scanner, caractere)) {
+        return 0;
+    }
+
+    if (comprimentoTotal > TAMANHO_MAX_IDENTIFICADOR) {
+        registrarErroLexico(scanner,
+                            linhaInicial,
+                            colunaInicial,
+                            "identificador excede 31 caracteres");
+    } else if (ehPalavraReservada(lexema)) {
+        registrarToken(scanner,
+                       TOKEN_PALAVRA_RESERVADA,
+                       lexema,
+                       linhaInicial,
+                       colunaInicial);
+    } else {
+        registrarToken(scanner,
+                       TOKEN_IDENTIFICADOR,
+                       lexema,
+                       linhaInicial,
+                       colunaInicial);
+    }
+
+    return 1;
+}
+
+static int analisarNumero(Scanner *scanner, int caractere)
+{
+    char lexema[TAMANHO_MAX_LEXEMA + 1];
+    size_t tamanhoLexema = 0;
+    size_t comprimentoTotal = 0;
+    int quantidadePontos = 0;
+    int terminaComPonto = 0;
+    int linhaInicial = scanner->linha;
+    int colunaInicial = scanner->coluna;
+
+    do {
+        adicionarAoLexema(lexema, &tamanhoLexema, caractere);
+        comprimentoTotal++;
+
+        if (caractere == '.') {
+            quantidadePontos++;
+            terminaComPonto = 1;
+        } else {
+            terminaComPonto = 0;
+        }
+
+        avancarPosicao(scanner, caractere);
+        caractere = fgetc(scanner->arquivo);
+    } while (caractere != EOF &&
+             (isdigit((unsigned char)caractere) || caractere == '.'));
+
+    lexema[tamanhoLexema] = '\0';
+
+    if (!devolverCaractere(scanner, caractere)) {
+        return 0;
+    }
+
+    if (comprimentoTotal > TAMANHO_MAX_LEXEMA) {
+        registrarErroLexico(scanner,
+                            linhaInicial,
+                            colunaInicial,
+                            "número excede o tamanho suportado");
+    } else if (quantidadePontos == 0) {
+        registrarToken(scanner,
+                       TOKEN_NUMERO_INTEIRO,
+                       lexema,
+                       linhaInicial,
+                       colunaInicial);
+    } else if (quantidadePontos == 1 && !terminaComPonto) {
+        registrarToken(scanner,
+                       TOKEN_NUMERO_REAL,
+                       lexema,
+                       linhaInicial,
+                       colunaInicial);
+    } else {
+        registrarErroLexico(scanner,
+                            linhaInicial,
+                            colunaInicial,
+                            "número malformado: %s",
+                            lexema);
+    }
+
+    return 1;
+}
+
+static void analisarLiteral(Scanner *scanner)
+{
+    char lexema[TAMANHO_MAX_LEXEMA + 1];
+    size_t tamanhoLexema = 0;
+    int proximoCaractere;
+    int literalValido = 0;
+    const char *mensagemErro = NULL;
+    int linhaInicial = scanner->linha;
+    int colunaInicial = scanner->coluna;
+
+    adicionarAoLexema(lexema, &tamanhoLexema, '\'');
+    avancarPosicao(scanner, '\'');
+    proximoCaractere = fgetc(scanner->arquivo);
+
+    if (proximoCaractere == EOF) {
+        mensagemErro = "literal de caractere não fechado";
+    } else if (proximoCaractere == '\n') {
+        avancarPosicao(scanner, proximoCaractere);
+        mensagemErro = "literal de caractere não fechado";
+    } else if (proximoCaractere == '\'') {
+        adicionarAoLexema(lexema, &tamanhoLexema, proximoCaractere);
+        avancarPosicao(scanner, proximoCaractere);
+        mensagemErro = "literal de caractere vazio";
+    } else {
+        adicionarAoLexema(lexema, &tamanhoLexema, proximoCaractere);
+        avancarPosicao(scanner, proximoCaractere);
+        proximoCaractere = fgetc(scanner->arquivo);
+
+        if (proximoCaractere == '\'') {
+            adicionarAoLexema(lexema, &tamanhoLexema, proximoCaractere);
+            avancarPosicao(scanner, proximoCaractere);
+            literalValido = 1;
+        } else {
+            while (proximoCaractere != EOF &&
+                   proximoCaractere != '\n' &&
+                   proximoCaractere != '\'') {
+                adicionarAoLexema(lexema,
+                                  &tamanhoLexema,
+                                  proximoCaractere);
+                avancarPosicao(scanner, proximoCaractere);
+                proximoCaractere = fgetc(scanner->arquivo);
+            }
+
+            if (proximoCaractere == '\'') {
+                adicionarAoLexema(lexema,
+                                  &tamanhoLexema,
+                                  proximoCaractere);
+                avancarPosicao(scanner, proximoCaractere);
+                mensagemErro = "literal contém mais de um caractere";
+            } else {
+                if (proximoCaractere == '\n') {
+                    avancarPosicao(scanner, proximoCaractere);
+                }
+
+                mensagemErro = "literal de caractere não fechado";
+            }
+        }
+    }
+
+    lexema[tamanhoLexema] = '\0';
+
+    if (literalValido) {
+        registrarToken(scanner,
+                       TOKEN_LITERAL_CARACTERE,
+                       lexema,
+                       linhaInicial,
+                       colunaInicial);
+    } else {
+        registrarErroLexico(scanner,
+                            linhaInicial,
+                            colunaInicial,
+                            "%s: %s",
+                            mensagemErro,
+                            lexema);
+    }
+}
+
+static void analisarDelimitador(Scanner *scanner, int caractere)
+{
+    char lexema[2] = {(char)caractere, '\0'};
+    int linhaInicial = scanner->linha;
+    int colunaInicial = scanner->coluna;
+
+    registrarToken(scanner,
+                   TOKEN_DELIMITADOR,
+                   lexema,
+                   linhaInicial,
+                   colunaInicial);
+    avancarPosicao(scanner, caractere);
+}
+
+static int analisarBarraOuComentario(Scanner *scanner)
+{
+    int proximoCaractere;
+    int caractere;
+    int linhaInicial = scanner->linha;
+    int colunaInicial = scanner->coluna;
+
+    proximoCaractere = fgetc(scanner->arquivo);
+
+    if (proximoCaractere == '/') {
+        avancarPosicao(scanner, '/');
+        avancarPosicao(scanner, '/');
+
+        while ((caractere = fgetc(scanner->arquivo)) != EOF) {
+            avancarPosicao(scanner, caractere);
+
+            if (caractere == '\n') {
+                break;
+            }
+        }
+
+        return 1;
+    }
+
+    if (!devolverCaractere(scanner, proximoCaractere)) {
+        return 0;
+    }
+
+    registrarToken(scanner,
+                   TOKEN_OPERADOR,
+                   "/",
+                   linhaInicial,
+                   colunaInicial);
+    avancarPosicao(scanner, '/');
+
+    return 1;
+}
+
+static int analisarOperador(Scanner *scanner, int caractere)
+{
+    char lexema[3] = {(char)caractere, '\0', '\0'};
+    int proximoCaractere;
+    int linhaInicial = scanner->linha;
+    int colunaInicial = scanner->coluna;
+
+    if (caractere == '&' || caractere == '|') {
+        proximoCaractere = fgetc(scanner->arquivo);
+
+        if (proximoCaractere == caractere) {
+            lexema[1] = (char)proximoCaractere;
+            avancarPosicao(scanner, caractere);
+            avancarPosicao(scanner, proximoCaractere);
+            registrarToken(scanner,
+                           TOKEN_OPERADOR,
+                           lexema,
+                           linhaInicial,
+                           colunaInicial);
+        } else {
+            if (!devolverCaractere(scanner, proximoCaractere)) {
+                return 0;
+            }
+
+            registrarErroLexico(scanner,
+                                linhaInicial,
+                                colunaInicial,
+                                "operador incompleto: %c",
+                                caractere);
+            avancarPosicao(scanner, caractere);
+        }
+
+        return 1;
+    }
+
+    if (podeFormarOperadorComIgual(caractere)) {
+        proximoCaractere = fgetc(scanner->arquivo);
+
+        if (proximoCaractere == '=') {
+            lexema[1] = '=';
+            avancarPosicao(scanner, caractere);
+            avancarPosicao(scanner, proximoCaractere);
+        } else {
+            if (!devolverCaractere(scanner, proximoCaractere)) {
+                return 0;
+            }
+
+            avancarPosicao(scanner, caractere);
+        }
+    } else {
+        avancarPosicao(scanner, caractere);
+    }
+
+    registrarToken(scanner,
+                   TOKEN_OPERADOR,
+                   lexema,
+                   linhaInicial,
+                   colunaInicial);
+
+    return 1;
+}
+
+static int analisarArquivo(Scanner *scanner)
+{
+    int caractere;
+
+    while ((caractere = fgetc(scanner->arquivo)) != EOF) {
+        if (isspace((unsigned char)caractere)) {
+            avancarPosicao(scanner, caractere);
+        } else if (ehInicioIdentificador(caractere)) {
+            if (!analisarIdentificador(scanner, caractere)) {
+                return 0;
+            }
+        } else if (isdigit((unsigned char)caractere)) {
+            if (!analisarNumero(scanner, caractere)) {
+                return 0;
+            }
+        } else if (caractere == '\'') {
+            analisarLiteral(scanner);
+        } else if (ehDelimitador(caractere)) {
+            analisarDelimitador(scanner, caractere);
+        } else if (caractere == '/') {
+            if (!analisarBarraOuComentario(scanner)) {
+                return 0;
+            }
+        } else if (ehOperadorDeUmCaractere(caractere) ||
+                   caractere == '&' || caractere == '|') {
+            if (!analisarOperador(scanner, caractere)) {
+                return 0;
+            }
+        } else {
+            registrarErroLexico(scanner,
+                                scanner->linha,
+                                scanner->coluna,
+                                "símbolo inválido: %c",
+                                caractere);
+            avancarPosicao(scanner, caractere);
+        }
+    }
+
+    return 1;
 }
 
 int main(int argc, char *argv[])
 {
-    FILE *arquivo;
-    int caractere;
-    int linha = 1;
-    int coluna = 1;
-    int totalTokens = 0;
-    int totalErros = 0;
+    Scanner scanner;
 
     if (argc != 2) {
         fprintf(stderr, "Uso: %s <arquivo-fonte>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
-    arquivo = fopen(argv[1], "r");
+    scanner.arquivo = fopen(argv[1], "r");
 
-    if (arquivo == NULL) {
+    if (scanner.arquivo == NULL) {
         fprintf(stderr,
                 "Erro: não foi possível abrir o arquivo '%s'.\n",
                 argv[1]);
         return EXIT_FAILURE;
     }
 
-    while ((caractere = fgetc(arquivo)) != EOF) {
-        /*
-         * Ignora espaços, tabulações, quebras de linha
-         * e outros caracteres reconhecidos por isspace.
-         */
-        if (isspace((unsigned char)caractere)) {
-            avancarPosicao(caractere, &linha, &coluna);
-            continue;
-        }
-
-        /*
-         * Identificadores e palavras reservadas.
-         */
-        if (ehInicioIdentificador(caractere)) {
-            char lexema[TAMANHO_MAX_IDENTIFICADOR + 1];
-            size_t caracteresArmazenados = 0;
-            size_t comprimentoTotal = 0;
-            int linhaInicial = linha;
-            int colunaInicial = coluna;
-
-            do {
-                if (caracteresArmazenados <
-                    TAMANHO_MAX_IDENTIFICADOR) {
-                    lexema[caracteresArmazenados] =
-                        (char)caractere;
-                    caracteresArmazenados++;
-                }
-
-                comprimentoTotal++;
-                avancarPosicao(caractere, &linha, &coluna);
-                caractere = fgetc(arquivo);
-            } while (caractere != EOF &&
-                     ehParteIdentificador(caractere));
-
-            lexema[caracteresArmazenados] = '\0';
-
-            if (caractere != EOF &&
-                ungetc(caractere, arquivo) == EOF) {
-                fprintf(stderr,
-                        "Erro ao devolver caractere ao fluxo.\n");
-                fclose(arquivo);
-                return EXIT_FAILURE;
-            }
-
-            if (comprimentoTotal >
-                TAMANHO_MAX_IDENTIFICADOR) {
-                fprintf(stderr,
-                        "ERRO_LEXICO | linha %d, coluna %d | "
-                        "identificador excede 31 caracteres\n",
-                        linhaInicial,
-                        colunaInicial);
-                totalErros++;
-            } else if (ehPalavraReservada(lexema)) {
-                imprimirToken(linhaInicial,
-                              colunaInicial,
-                              "PALAVRA_RESERVADA",
-                              lexema);
-                totalTokens++;
-            } else {
-                imprimirToken(linhaInicial,
-                              colunaInicial,
-                              "IDENTIFICADOR",
-                              lexema);
-                totalTokens++;
-            }
-
-            continue;
-        }
-
-        /*
-         * Números inteiros, reais e malformados.
-         */
-        if (isdigit((unsigned char)caractere)) {
-            char lexema[TAMANHO_MAX_LEXEMA + 1];
-            size_t caracteresArmazenados = 0;
-            size_t comprimentoTotal = 0;
-            int quantidadePontos = 0;
-            int terminaComPonto = 0;
-            int linhaInicial = linha;
-            int colunaInicial = coluna;
-
-            do {
-                if (caracteresArmazenados <
-                    TAMANHO_MAX_LEXEMA) {
-                    lexema[caracteresArmazenados] =
-                        (char)caractere;
-                    caracteresArmazenados++;
-                }
-
-                comprimentoTotal++;
-
-                if (caractere == '.') {
-                    quantidadePontos++;
-                    terminaComPonto = 1;
-                } else {
-                    terminaComPonto = 0;
-                }
-
-                avancarPosicao(caractere, &linha, &coluna);
-                caractere = fgetc(arquivo);
-            } while (caractere != EOF &&
-                     (isdigit((unsigned char)caractere) ||
-                      caractere == '.'));
-
-            lexema[caracteresArmazenados] = '\0';
-
-            if (caractere != EOF &&
-                ungetc(caractere, arquivo) == EOF) {
-                fprintf(stderr,
-                        "Erro ao devolver caractere ao fluxo.\n");
-                fclose(arquivo);
-                return EXIT_FAILURE;
-            }
-
-            if (comprimentoTotal > TAMANHO_MAX_LEXEMA) {
-                fprintf(stderr,
-                        "ERRO_LEXICO | linha %d, coluna %d | "
-                        "número excede o tamanho suportado\n",
-                        linhaInicial,
-                        colunaInicial);
-                totalErros++;
-            } else if (quantidadePontos == 0) {
-                imprimirToken(linhaInicial,
-                              colunaInicial,
-                              "NUMERO_INTEIRO",
-                              lexema);
-                totalTokens++;
-            } else if (quantidadePontos == 1 &&
-                       !terminaComPonto) {
-                imprimirToken(linhaInicial,
-                              colunaInicial,
-                              "NUMERO_REAL",
-                              lexema);
-                totalTokens++;
-            } else {
-                fprintf(stderr,
-                        "ERRO_LEXICO | linha %d, coluna %d | "
-                        "número malformado: %s\n",
-                        linhaInicial,
-                        colunaInicial,
-                        lexema);
-                totalErros++;
-            }
-
-            continue;
-        }
-
-        /*
-         * Literais de caractere.
-         */
-        if (caractere == '\'') {
-            char lexema[TAMANHO_MAX_LEXEMA + 1];
-            size_t tamanhoLexema = 0;
-            int proximoCaractere;
-            int literalValido = 0;
-            const char *mensagemErro = NULL;
-            int linhaInicial = linha;
-            int colunaInicial = coluna;
-
-            /*
-             * Consome a aspa de abertura.
-             */
-            lexema[tamanhoLexema++] = '\'';
-            avancarPosicao(caractere, &linha, &coluna);
-
-            proximoCaractere = fgetc(arquivo);
-
-            if (proximoCaractere == EOF) {
-                mensagemErro =
-                    "literal de caractere não fechado";
-            } else if (proximoCaractere == '\n') {
-                avancarPosicao(proximoCaractere,
-                               &linha,
-                               &coluna);
-
-                mensagemErro =
-                    "literal de caractere não fechado";
-            } else if (proximoCaractere == '\'') {
-                /*
-                 * Duas aspas consecutivas: literal vazio.
-                 */
-                lexema[tamanhoLexema++] = '\'';
-
-                avancarPosicao(proximoCaractere,
-                               &linha,
-                               &coluna);
-
-                mensagemErro =
-                    "literal de caractere vazio";
-            } else {
-                /*
-                 * Consome o caractere que deveria estar
-                 * dentro do literal.
-                 */
-                if (tamanhoLexema < TAMANHO_MAX_LEXEMA) {
-                    lexema[tamanhoLexema++] =
-                        (char)proximoCaractere;
-                }
-
-                avancarPosicao(proximoCaractere,
-                               &linha,
-                               &coluna);
-
-                proximoCaractere = fgetc(arquivo);
-
-                if (proximoCaractere == '\'') {
-                    /*
-                     * Exatamente um caractere e uma aspa final.
-                     */
-                    if (tamanhoLexema <
-                        TAMANHO_MAX_LEXEMA) {
-                        lexema[tamanhoLexema++] = '\'';
-                    }
-
-                    avancarPosicao(proximoCaractere,
-                                   &linha,
-                                   &coluna);
-
-                    literalValido = 1;
-                } else {
-                    /*
-                     * Consome o restante até aspa, nova linha ou EOF.
-                     */
-                    while (proximoCaractere != EOF &&
-                           proximoCaractere != '\n' &&
-                           proximoCaractere != '\'') {
-                        if (tamanhoLexema <
-                            TAMANHO_MAX_LEXEMA) {
-                            lexema[tamanhoLexema++] =
-                                (char)proximoCaractere;
-                        }
-
-                        avancarPosicao(proximoCaractere,
-                                       &linha,
-                                       &coluna);
-
-                        proximoCaractere = fgetc(arquivo);
-                    }
-
-                    if (proximoCaractere == '\'') {
-                        if (tamanhoLexema <
-                            TAMANHO_MAX_LEXEMA) {
-                            lexema[tamanhoLexema++] = '\'';
-                        }
-
-                        avancarPosicao(proximoCaractere,
-                                       &linha,
-                                       &coluna);
-
-                        mensagemErro =
-                            "literal contém mais de um caractere";
-                    } else {
-                        if (proximoCaractere == '\n') {
-                            avancarPosicao(proximoCaractere,
-                                           &linha,
-                                           &coluna);
-                        }
-
-                        mensagemErro =
-                            "literal de caractere não fechado";
-                    }
-                }
-            }
-
-            lexema[tamanhoLexema] = '\0';
-
-            if (literalValido) {
-                imprimirToken(linhaInicial,
-                              colunaInicial,
-                              "LITERAL_CARACTERE",
-                              lexema);
-                totalTokens++;
-            } else {
-                fprintf(stderr,
-                        "ERRO_LEXICO | linha %d, coluna %d | "
-                        "%s: %s\n",
-                        linhaInicial,
-                        colunaInicial,
-                        mensagemErro,
-                        lexema);
-                totalErros++;
-            }
-
-            continue;
-        }
-
-        /*
-         * Delimitadores.
-         */
-        if (ehDelimitador(caractere)) {
-            char lexema[2];
-            int linhaInicial = linha;
-            int colunaInicial = coluna;
-
-            lexema[0] = (char)caractere;
-            lexema[1] = '\0';
-
-            imprimirToken(linhaInicial,
-                          colunaInicial,
-                          "DELIMITADOR",
-                          lexema);
-            totalTokens++;
-
-            avancarPosicao(caractere, &linha, &coluna);
-            continue;
-        }
-
-        /*
-         * A barra pode ser divisão ou início de comentário.
-         */
-        if (caractere == '/') {
-            int proximoCaractere;
-            int linhaInicial = linha;
-            int colunaInicial = coluna;
-
-            proximoCaractere = fgetc(arquivo);
-
-            if (proximoCaractere == '/') {
-                avancarPosicao('/', &linha, &coluna);
-                avancarPosicao('/', &linha, &coluna);
-
-                while ((caractere = fgetc(arquivo)) != EOF) {
-                    avancarPosicao(caractere,
-                                   &linha,
-                                   &coluna);
-
-                    if (caractere == '\n') {
-                        break;
-                    }
-                }
-
-                continue;
-            }
-
-            if (proximoCaractere != EOF &&
-                ungetc(proximoCaractere, arquivo) == EOF) {
-                fprintf(stderr,
-                        "Erro ao devolver caractere ao fluxo.\n");
-                fclose(arquivo);
-                return EXIT_FAILURE;
-            }
-
-            imprimirToken(linhaInicial,
-                          colunaInicial,
-                          "OPERADOR",
-                          "/");
-            totalTokens++;
-
-            avancarPosicao('/', &linha, &coluna);
-            continue;
-        }
-
-        /*
-         * Operadores simples e operadores seguidos por '='.
-         */
-        if (ehOperadorDeUmCaractere(caractere)) {
-            char lexema[3];
-            int proximoCaractere;
-            int linhaInicial = linha;
-            int colunaInicial = coluna;
-
-            lexema[0] = (char)caractere;
-            lexema[1] = '\0';
-            lexema[2] = '\0';
-
-            if (podeFormarOperadorComIgual(caractere)) {
-                proximoCaractere = fgetc(arquivo);
-
-                if (proximoCaractere == '=') {
-                    lexema[1] = '=';
-
-                    avancarPosicao(caractere,
-                                   &linha,
-                                   &coluna);
-                    avancarPosicao(proximoCaractere,
-                                   &linha,
-                                   &coluna);
-                } else {
-                    if (proximoCaractere != EOF &&
-                        ungetc(proximoCaractere, arquivo) == EOF) {
-                        fprintf(stderr,
-                                "Erro ao devolver caractere "
-                                "ao fluxo.\n");
-                        fclose(arquivo);
-                        return EXIT_FAILURE;
-                    }
-
-                    avancarPosicao(caractere,
-                                   &linha,
-                                   &coluna);
-                }
-            } else {
-                avancarPosicao(caractere,
-                               &linha,
-                               &coluna);
-            }
-
-            imprimirToken(linhaInicial,
-                          colunaInicial,
-                          "OPERADOR",
-                          lexema);
-            totalTokens++;
-            continue;
-        }
-
-        /*
-         * && e ||. Um único & ou | não é válido.
-         */
-        if (caractere == '&' || caractere == '|') {
-            char lexema[3];
-            int proximoCaractere;
-            int linhaInicial = linha;
-            int colunaInicial = coluna;
-
-            proximoCaractere = fgetc(arquivo);
-
-            if (proximoCaractere == caractere) {
-                lexema[0] = (char)caractere;
-                lexema[1] = (char)proximoCaractere;
-                lexema[2] = '\0';
-
-                imprimirToken(linhaInicial,
-                              colunaInicial,
-                              "OPERADOR",
-                              lexema);
-                totalTokens++;
-
-                avancarPosicao(caractere,
-                               &linha,
-                               &coluna);
-                avancarPosicao(proximoCaractere,
-                               &linha,
-                               &coluna);
-            } else {
-                if (proximoCaractere != EOF &&
-                    ungetc(proximoCaractere, arquivo) == EOF) {
-                    fprintf(stderr,
-                            "Erro ao devolver caractere ao fluxo.\n");
-                    fclose(arquivo);
-                    return EXIT_FAILURE;
-                }
-
-                fprintf(stderr,
-                        "ERRO_LEXICO | linha %d, coluna %d | "
-                        "operador incompleto: %c\n",
-                        linhaInicial,
-                        colunaInicial,
-                        caractere);
-                totalErros++;
-
-                avancarPosicao(caractere,
-                               &linha,
-                               &coluna);
-            }
-
-            continue;
-        }
-
-        /*
-         * Qualquer caractere restante é inválido.
-         */
-        fprintf(stderr,
-                "ERRO_LEXICO | linha %d, coluna %d | "
-                "símbolo inválido: %c\n",
-                linha,
-                coluna,
-                caractere);
-        totalErros++;
-
-        avancarPosicao(caractere, &linha, &coluna);
-    }
-
-    if (ferror(arquivo)) {
-        fprintf(stderr,
-                "Erro durante a leitura do arquivo '%s'.\n",
-                argv[1]);
-        fclose(arquivo);
+    scanner.linha = 1;
+    scanner.coluna = 1;
+    scanner.totalTokens = 0;
+    scanner.totalErros = 0;
+
+    if (!analisarArquivo(&scanner)) {
+        fclose(scanner.arquivo);
         return EXIT_FAILURE;
     }
 
-    if (fclose(arquivo) != 0) {
+    if (ferror(scanner.arquivo)) {
+        fprintf(stderr,
+                "Erro durante a leitura do arquivo '%s'.\n",
+                argv[1]);
+        fclose(scanner.arquivo);
+        return EXIT_FAILURE;
+    }
+
+    if (fclose(scanner.arquivo) != 0) {
         fprintf(stderr,
                 "Erro ao fechar o arquivo '%s'.\n",
                 argv[1]);
         return EXIT_FAILURE;
     }
 
-    printf("\nTotal de tokens: %d\n", totalTokens);
-    printf("Total de erros léxicos: %d\n", totalErros);
+    printf("\nTotal de tokens: %d\n", scanner.totalTokens);
+    printf("Total de erros léxicos: %d\n", scanner.totalErros);
 
     return EXIT_SUCCESS;
 }

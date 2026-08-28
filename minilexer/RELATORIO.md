@@ -22,6 +22,12 @@ linha e coluna começam em 1. Para caracteres comuns, a coluna é incrementada;
 ao encontrar `\n`, a linha aumenta e a coluna volta para 1. Antes de iniciar um
 token, a posição atual é armazenada como sua posição inicial.
 
+O programa utiliza uma enumeração para as categorias, uma estrutura `Token`
+para armazenar tipo, lexema e posição, e uma estrutura `Scanner` para manter o
+arquivo, os contadores e a posição corrente. O reconhecimento foi separado em
+funções para identificadores, números, literais, delimitadores, operadores e
+comentários, deixando o fluxo principal responsável apenas por escolher a regra.
+
 A decisão sobre o token segue esta ordem:
 
 1. Espaços e comentários são consumidos sem gerar tokens;
@@ -51,7 +57,8 @@ divisão. Quando um caractere é lido antecipadamente e não pertence ao token,
 Os vetores possuem limites fixos verificados antes de cada escrita. Cada token
 válido incrementa o contador de tokens e cada falha incrementa o contador de
 erros. Um erro não encerra a análise, permitindo apresentar outros problemas do
-mesmo arquivo.
+mesmo arquivo. Tokens e erros léxicos usam a mesma saída para preservar a ordem
+em que foram encontrados, inclusive quando o resultado é redirecionado.
 
 ## 3. Exemplo de entrada e saída
 
@@ -105,7 +112,8 @@ antecipadas, diferenciar `/` de `//`, priorizar operadores compostos e recuperar
 análise após entradas malformadas. Outra preocupação foi consumir lexemas longos
 sem escrever fora dos limites dos vetores. A solução foi atualizar linha e coluna
 somente para caracteres efetivamente consumidos, devolver antecipações com
-`ungetc` e separar o comprimento total da quantidade armazenada.
+`ungetc`, separar o comprimento total da quantidade armazenada e isolar cada
+regra de reconhecimento em uma função.
 
 ## 6. Divisão do trabalho
 
