@@ -1,0 +1,20 @@
+flowchart TD
+    UI[Interface Streamlit] --> O[Orquestrador TransformerSimulator]
+    O --> N[Normalização]
+    N --> T[Tokenização]
+    T --> I[Vocabulário e IDs]
+    I --> E[Embeddings didáticos]
+    E --> P[Codificação posicional]
+    P --> Q[Query, Key e Value]
+    Q --> H1[Cabeça 1]
+    Q --> H2[Cabeça 2]
+    H1 --> C[Concatenação]
+    H2 --> C
+    C --> L1[Camada 1: relações locais]
+    L1 --> L2[Camada 2: contexto]
+    L2 --> L3[Camada 3: preparação]
+    L3 --> G[Probabilidades e argmax]
+    G --> F{Resposta terminou?}
+    F -- não --> O
+    F -- sim --> R[Resumo e resposta final]
+    O -. snapshots imutáveis .-> UI

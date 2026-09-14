@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "transformer-simulator"
+version = "1.0.0"
+description = "Simulador educacional e determinístico de uma arquitetura Transformer"
+requires-python = ">=3.10"
+dependencies = [
+  "streamlit>=1.39,<2",
+  "numpy>=1.26,<3",
+  "plotly>=5.24,<7",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -22,8 +22,28 @@ do repositório da disciplina, planejar sua arquitetura e publicar essa base.
 - `Desafio_Simulador_Arquitetura_Transformer.pdf`
 - captura de tela da pasta local `Compiladores`
 
-**Revisão humana pendente:** confirmar a escolha de React + TypeScript e revisar
-os requisitos e limites documentados antes do início da implementação.
+**Revisão realizada:** a opção inicial por React + TypeScript foi substituída
+por Python + Streamlit após discussão com o aluno. Os requisitos e limites
+foram mantidos.
+
+## 2026-09-14 — Implementação completa em Python
+
+**Objetivo:** implementar, parte por parte, todos os requisitos do enunciado em
+Python e garantir os nove entregáveis.
+
+**Prompt principal:**
+
+> Vamos começar! Quero ir parte por parte fazendo tudo que é pedido no arquivo
+> da atividade. Vamos fazer em Python. Lembrando os nove entregáveis e todos os
+> tópicos obrigatórios do README.
+
+**Resultado aproveitado:** arquitetura migrada para Python + Streamlit; núcleo
+matemático determinístico; interface das 13 etapas; testes; documentação;
+tabela, capturas e vídeo de evidência.
+
+**Revisão realizada:** compilação Python, 29 testes automatizados, execução dos
+dez casos do enunciado, inspeção no navegador, correção de contraste e
+verificação de erros no console.
 
 ## Modelo para próximas entradas
 

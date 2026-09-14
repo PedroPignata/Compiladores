@@ -3,6 +3,11 @@ dist/
 coverage/
 playwright-report/
 test-results/
+.venv/
+__pycache__/
+.pytest_cache/
+.streamlit/secrets.toml
+*.py[cod]
 .env
 .env.*
 !.env.example

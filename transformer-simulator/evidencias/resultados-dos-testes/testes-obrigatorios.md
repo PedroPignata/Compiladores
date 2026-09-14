@@ -1,0 +1,18 @@
+# Tabela dos testes obrigatórios
+
+Gerada automaticamente por `scripts/generate_test_report.py`.
+
+| # | Situação | Entrada | Tokens gerados | Esperado | Obtido | Resposta | Resultado |
+|---:|---|---|---|---|---|---|---|
+| 1 | Pergunta curta | Tudo bem? | ['Tudo', 'bem', '?'] | Executar todo o pipeline e gerar um fallback. | Pipeline completo: 3 tokens, 2 cabeças e 3 camadas. | Não tenho uma resposta cadastrada para essa pergunta. | APROVADO |
+| 2 | Frase afirmativa | O Brasil é um país. | ['O', 'Brasil', 'é', 'um', 'país', '.'] | Reconhecer uma afirmação e responder sem falhar. | Pipeline completo: 6 tokens, 2 cabeças e 3 camadas. | Entendi: você apresentou uma frase afirmativa. | APROVADO |
+| 3 | Frase com pontuação | Olá, mundo! | ['Olá', ',', 'mundo', '!'] | Separar vírgula e exclamação em tokens próprios. | Vírgula e exclamação foram preservadas como tokens. | Entendi: você apresentou uma frase afirmativa. | APROVADO |
+| 4 | Palavra desconhecida | Xilofone quântico. | ['Xilofone', 'quântico', '.'] | Marcar palavras ausentes com o ID de <UNK>. | Palavras desconhecidas foram marcadas com <UNK>/ID 1. | Entendi: você apresentou uma frase afirmativa. | APROVADO |
+| 5 | Palavras repetidas | Brasil Brasil Brasil. | ['Brasil', 'Brasil', 'Brasil', '.'] | Reutilizar o ID e manter posições distintas. | As três ocorrências mantiveram o mesmo ID e posições distintas. | Entendi: você apresentou uma frase afirmativa. | APROVADO |
+| 6 | Mesmas palavras em ordens diferentes | O cachorro mordeu o homem. / O homem mordeu o cachorro. | ['O', 'cachorro', 'mordeu', 'o', 'homem', '.'] | Produzir vetores posicionados diferentes quando a ordem muda. | A troca de ordem alterou os vetores posicionados dos mesmos tokens. | Entendi: você apresentou uma frase afirmativa. | APROVADO |
+| 7 | Pergunta respondível | Qual é a capital do Brasil? | ['Qual', 'é', 'a', 'capital', 'do', 'Brasil', '?'] | Gerar a resposta cadastrada token por token. | A resposta cadastrada foi gerada progressivamente. | A capital do Brasil é Brasília. | APROVADO |
+| 8 | Pergunta não respondível | Qual é a capital de Marte? | ['Qual', 'é', 'a', 'capital', 'de', 'Marte', '?'] | Informar honestamente que não há resposta cadastrada. | O sistema informou que não conhece a resposta. | Não tenho uma resposta cadastrada para essa pergunta. | APROVADO |
+| 9 | Texto vazio | '   ' | [] | Bloquear o processamento com uma mensagem de validação. | Digite uma frase ou pergunta antes de processar. | Não gerada. | APROVADO |
+| 10 | Caracteres especiais | IA & compiladores #2026! | ['IA', '&', 'compiladores', '#', '2026', '!'] | Tokenizar caracteres especiais sem encerrar com erro. | Os caracteres & e # foram tokenizados sem erro. | Entendi: você apresentou uma frase afirmativa. | APROVADO |
+
+**Resumo:** 10/10 testes aprovados.
