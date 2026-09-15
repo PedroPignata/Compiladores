@@ -6,6 +6,7 @@ from .models import TokenInfo
 from .tokenization import token_category
 
 
+# cada palavra conhecida tem um numero fixo usado pelo simulador
 VOCABULARY: dict[str, int] = {
     "<pad>": 0,
     "<unk>": 1,
@@ -59,12 +60,14 @@ VOCABULARY: dict[str, int] = {
 
 
 def assign_token_ids(tokens: list[str]) -> tuple[TokenInfo, ...]:
-    """Associa IDs estáveis; palavras fora do vocabulário recebem <UNK>."""
+    """Associa IDs estáveis e usa UNK para palavras desconhecidas"""
 
+    # percorre os tokens e procura cada um no vocabulario
     result: list[TokenInfo] = []
     for position, token in enumerate(tokens):
         key = token.casefold()
         known = key in VOCABULARY
+        # se a palavra nao existir ela recebe o ID reservado para desconhecidos
         result.append(
             TokenInfo(
                 text=token,

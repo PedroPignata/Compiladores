@@ -6,6 +6,7 @@ from transformer_simulator import TransformerSimulator
 
 
 def test_complete_pipeline_for_registered_question():
+    # testa todas as etapas juntas usando uma pergunta conhecida
     result = TransformerSimulator().simulate("Qual   é a capital do Brasil?")
 
     assert result.normalization.normalized == "Qual é a capital do Brasil?"
@@ -36,6 +37,7 @@ def test_complete_pipeline_for_registered_question():
 
 
 def test_result_is_json_serializable():
+    # confirma que o resultado pode ser baixado pela interface
     result = TransformerSimulator().simulate("O que é um compilador?")
 
     serialized = json.dumps(result.to_dict(), ensure_ascii=False)
@@ -44,6 +46,7 @@ def test_result_is_json_serializable():
 
 
 def test_context_is_reprocessed_and_grows_between_generation_steps():
+    # o contexto deve aumentar sempre que um novo token e escolhido
     result = TransformerSimulator().simulate("Quanto é 2 + 2?")
     counts = [step.context_token_count for step in result.generation_steps]
 

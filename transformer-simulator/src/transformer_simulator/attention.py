@@ -1,4 +1,4 @@
-"""Atenção escalada com duas cabeças e matrizes fixas documentadas."""
+"""Atenção escalada com duas cabeças e matrizes fixas documentadas"""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ import numpy as np
 from .models import AttentionHeadResult, VectorInfo
 
 
+# cada cabeca usa matrizes diferentes para observar relacoes diferentes
 HEAD_CONFIGS = (
     {
         "name": "Cabeça 1",
@@ -28,8 +29,9 @@ HEAD_CONFIGS = (
 
 
 def softmax(values: np.ndarray, axis: int = -1) -> np.ndarray:
-    """Softmax numericamente estável."""
+    """Softmax numericamente estável"""
 
+    # tirar o maior valor evita numeros grandes demais na exponencial
     shifted = values - np.max(values, axis=axis, keepdims=True)
     exponentials = np.exp(shifted)
     return exponentials / np.sum(exponentials, axis=axis, keepdims=True)
@@ -42,24 +44,29 @@ def _as_matrix_tuple(matrix: np.ndarray) -> tuple[tuple[float, ...], ...]:
 def calculate_attention(
     positioned_vectors: tuple[VectorInfo, ...],
 ) -> tuple[tuple[AttentionHeadResult, ...], tuple[tuple[float, ...], ...]]:
-    """Calcula Q, K, V e Attention(Q,K,V) para duas cabeças."""
+    """Calcula Q, K, V e Attention(Q,K,V) para duas cabeças"""
 
     if not positioned_vectors:
         raise ValueError("A atenção requer pelo menos um token.")
 
+    # transforma os vetores em uma matriz para fazer as contas com NumPy
     inputs = np.asarray([vector.values for vector in positioned_vectors], dtype=float)
     heads: list[AttentionHeadResult] = []
     outputs: list[np.ndarray] = []
 
     for config in HEAD_CONFIGS:
+        # cria as matrizes Q K e V usando as configuracoes da cabeca atual
         wq = np.asarray(config["WQ"], dtype=float)
         wk = np.asarray(config["WK"], dtype=float)
         wv = np.asarray(config["WV"], dtype=float)
         queries = inputs @ wq
         keys = inputs @ wk
         values = inputs @ wv
+        # compara cada Query com todas as Keys e aplica a escala da formula
         scores = (queries @ keys.T) / math.sqrt(keys.shape[1])
+        # o softmax converte os valores em pesos que somam um
         weights = softmax(scores, axis=1)
+        # os pesos dizem quanto de cada Value vai entrar na saida
         output = weights @ values
         outputs.append(output)
         heads.append(
@@ -80,6 +87,7 @@ def calculate_attention(
             )
         )
 
+    # junta lado a lado as respostas produzidas pelas duas cabecas
     combined = np.concatenate(outputs, axis=1)
     return tuple(heads), _as_matrix_tuple(combined)
 
@@ -87,7 +95,8 @@ def calculate_attention(
 def mean_attention_weights(
     heads: tuple[AttentionHeadResult, ...],
 ) -> tuple[tuple[float, ...], ...]:
-    """Calcula uma visão agregada das cabeças para o resumo final."""
+    """Calcula uma visão agregada das cabeças para o resumo final"""
 
+    # faz uma media simples para mostrar um resumo das duas cabecas
     matrices = np.asarray([head.weights for head in heads], dtype=float)
     return _as_matrix_tuple(np.mean(matrices, axis=0))

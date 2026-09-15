@@ -5,6 +5,7 @@ from transformer_simulator import EmptyInputError, TransformerSimulator
 from transformer_simulator.required_cases import REQUIRED_CASES
 
 
+# usa o mesmo simulador para conferir os casos exigidos na atividade
 simulator = TransformerSimulator()
 
 
@@ -37,6 +38,7 @@ def test_case_5_reuses_ids_but_preserves_positions():
 
 
 def test_case_6_order_changes_positioned_representation():
+    # mostra que trocar a ordem muda a representacao dos mesmos tokens
     case = REQUIRED_CASES[5]
     first = simulator.simulate(case.input_text)
     second = simulator.simulate(case.secondary_input)

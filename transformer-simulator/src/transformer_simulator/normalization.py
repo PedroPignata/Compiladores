@@ -9,18 +9,21 @@ from .models import NormalizationResult
 
 
 class EmptyInputError(ValueError):
-    """Erro apresentado quando não existe texto útil para processar."""
+    """Erro apresentado quando não existe texto útil para processar"""
 
 
 def normalize_text(text: str) -> NormalizationResult:
-    """Normaliza Unicode e espaços, preservando caixa e pontuação."""
+    """Normaliza Unicode e espaços preservando caixa e pontuação"""
 
+    # impede que um texto vazio siga para as outras etapas
     if not text or not text.strip():
         raise EmptyInputError("Digite uma frase ou pergunta antes de processar.")
 
+    # padroniza os caracteres e troca varios espacos por apenas um
     unicode_normalized = unicodedata.normalize("NFKC", text)
     normalized = re.sub(r"\s+", " ", unicode_normalized).strip()
 
+    # registra o que mudou para depois mostrar na interface
     changes: list[str] = []
     if unicode_normalized != text:
         changes.append("Caracteres Unicode equivalentes foram padronizados.")

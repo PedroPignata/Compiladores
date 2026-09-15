@@ -1,4 +1,4 @@
-"""Interface Streamlit do Simulador Educacional de uma Arquitetura Transformer."""
+"""Interface Streamlit do Simulador Educacional de uma Arquitetura Transformer"""
 
 from __future__ import annotations
 
@@ -14,10 +14,13 @@ import streamlit as st
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from transformer_simulator import EmptyInputError, TransformerSimulator  # noqa: E402
-from transformer_simulator.attention import mean_attention_weights  # noqa: E402
+# Importação do simulador
+from transformer_simulator import EmptyInputError, TransformerSimulator
+#calcula a média dos pesos das duas cabeças de atenção para montar o resumo final
+from transformer_simulator.attention import mean_attention_weights
 
 
+# configura o nome o icone e o formato da pagina
 st.set_page_config(
     page_title="Transformer por Dentro",
     page_icon="🧠",
@@ -25,8 +28,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-
 def load_styles() -> None:
+    # carrega o arquivo que cuida das cores e da aparencia
     style_path = PROJECT_ROOT / "src" / "transformer_simulator" / "styles.css"
     st.markdown(f"<style>{style_path.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
 
@@ -36,6 +39,7 @@ def rounded(values: tuple[float, ...], digits: int = 4) -> list[float]:
 
 
 def vector_rows(vectors: tuple) -> list[dict[str, object]]:
+    # organiza os vetores em linhas para mostrar nas tabelas
     return [
         {
             "Token": vector.token,
@@ -57,6 +61,7 @@ def matrix_rows(tokens: list[str], matrix: tuple[tuple[float, ...], ...]) -> lis
 
 
 def token_pills(tokens: tuple) -> None:
+    # monta as caixinhas coloridas que mostram cada token e seu ID
     pills = "".join(
         (
             f'<span class="token-pill {"" if token.known else "unknown-token"}">'
@@ -69,6 +74,7 @@ def token_pills(tokens: tuple) -> None:
 
 
 def attention_heatmap(tokens: list[str], weights: tuple[tuple[float, ...], ...], title: str) -> None:
+    # transforma os pesos de atencao em um mapa de calor
     figure = go.Figure(
         data=go.Heatmap(
             z=weights,
@@ -94,6 +100,7 @@ def attention_heatmap(tokens: list[str], weights: tuple[tuple[float, ...], ...],
 
 
 def probability_chart(step) -> None:
+    # mostra os candidatos e a chance de cada um ser escolhido
     tokens = [candidate.token for candidate in step.candidates]
     probabilities = [candidate.probability * 100 for candidate in step.candidates]
     colors = ["#4f46e5"] + ["#c7d2fe"] * (len(tokens) - 1)
@@ -120,9 +127,11 @@ def stage_heading(number: int, title: str, subtitle: str) -> None:
     )
 
 
+# prepara a pagina e cria o objeto que executa toda a simulacao
 load_styles()
 simulator = TransformerSimulator()
 
+# barra lateral com uma explicacao rapida e exemplos de entrada
 with st.sidebar:
     st.markdown("## 🧠 Transformer por Dentro")
     st.caption("Simulador educacional · Disciplina de Compiladores")
@@ -147,6 +156,7 @@ st.write(
     "atenção e camadas didáticas constroem uma resposta token por token."
 )
 
+# o session state guarda o resultado mesmo quando o Streamlit recarrega a tela
 if "simulation_result" not in st.session_state:
     st.session_state.simulation_result = None
 if "generation_index" not in st.session_state:
@@ -166,11 +176,13 @@ with st.container(border=True):
     with reset_column:
         reset_clicked = st.button("↻ Reiniciar", width="stretch")
 
+# limpa o resultado e volta a aplicacao para o inicio
 if reset_clicked:
     st.session_state.simulation_result = None
     st.session_state.generation_index = 1
     st.rerun()
 
+# chama o codigo principal quando o usuario clica em processar
 if process_clicked:
     try:
         with st.spinner("Executando as etapas do Transformer didático..."):
@@ -180,6 +192,7 @@ if process_clicked:
         st.session_state.simulation_result = None
         st.error(str(error))
 
+# sem um resultado ainda a pagina mostra apenas o aviso inicial
 result = st.session_state.simulation_result
 if result is None:
     st.markdown(
@@ -195,6 +208,7 @@ metric_columns[1].metric("Cabeças de atenção", len(result.attention_heads))
 metric_columns[2].metric("Camadas", len(result.layers))
 metric_columns[3].metric("Ciclos de processamento", result.processing_cycles)
 
+# cada aba representa uma parte do caminho feito pelo simulador
 tabs = st.tabs(
     [
         "1–2 · Entrada",
@@ -260,6 +274,7 @@ with tabs[2]:
     )
 
 with tabs[3]:
+    # aqui o usuario escolhe qual cabeca de atencao quer analisar
     selected_head_name = st.selectbox(
         "Cabeça analisada",
         [head.name for head in result.attention_heads],
@@ -312,6 +327,7 @@ with tabs[4]:
             )
 
 with tabs[5]:
+    # estes controles deixam acompanhar a resposta um token por vez
     stage_heading(11, "Probabilidades", "Quatro candidatos são comparados em cada iteração.")
     stage_heading(12, "Geração progressiva", "O contexto atualizado é reprocessado antes do próximo token.")
     total_steps = len(result.generation_steps)
@@ -349,6 +365,7 @@ with tabs[5]:
         st.success("Condição de término encontrada: a resposta cadastrada foi concluída.")
 
 with tabs[6]:
+    # a ultima aba junta a resposta e deixa claro o que e real e o que foi simulado
     stage_heading(13, "Resultado final", "Resumo completo da simulação e das suas limitações.")
     st.markdown(f'<div class="final-answer">{html.escape(result.final_answer)}</div>', unsafe_allow_html=True)
     summary_columns = st.columns(2)

@@ -1,4 +1,4 @@
-"""Gera um vídeo curto a partir das capturas validadas da aplicação."""
+"""Gera um vídeo curto usando as capturas da aplicação"""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 
+# caminhos e configuracoes usados para montar o video
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SCREENSHOT_DIR = PROJECT_ROOT / "evidencias" / "capturas-de-tela"
 OUTPUT = PROJECT_ROOT / "evidencias" / "video" / "demonstracao-transformer.mp4"
@@ -32,6 +33,7 @@ SCENES = (
 
 
 def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    # tenta usar uma fonte instalada e usa a padrao se nao encontrar
     candidates = (
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
         if bold
@@ -47,6 +49,7 @@ def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.Im
 
 
 def prepare_scene(filename: str, title: str) -> Image.Image:
+    # ajusta o tamanho da captura e coloca o titulo na parte de baixo
     image = Image.open(SCREENSHOT_DIR / filename).convert("RGB").resize(SIZE)
     overlay = Image.new("RGBA", SIZE, (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
@@ -56,6 +59,7 @@ def prepare_scene(filename: str, title: str) -> Image.Image:
 
 
 def main() -> None:
+    # cria cada cena e prepara o arquivo MP4
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     scenes = [prepare_scene(filename, title) for filename, title in SCENES]
     writer = imageio_ffmpeg.write_frames(
@@ -71,11 +75,13 @@ def main() -> None:
     try:
         previous: Image.Image | None = None
         for scene in scenes:
+            # faz uma transicao suave entre uma captura e a seguinte
             if previous is not None:
                 for step in range(1, TRANSITION_FRAMES + 1):
                     alpha = step / (TRANSITION_FRAMES + 1)
                     transition = Image.blend(previous, scene, alpha)
                     writer.send(np.asarray(transition, dtype=np.uint8))
+            # repete o quadro para ele ficar visivel por mais tempo
             frame = np.asarray(scene, dtype=np.uint8)
             for _ in range(HOLD_FRAMES):
                 writer.send(frame)

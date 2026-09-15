@@ -1,4 +1,4 @@
-"""Contratos de dados imutáveis usados pelo núcleo e pela interface."""
+"""Estruturas que organizam os dados usados pelo simulador"""
 
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 
+# guarda o texto antes e depois da normalizacao
 @dataclass(frozen=True)
 class NormalizationResult:
     original: str
@@ -14,6 +15,7 @@ class NormalizationResult:
     changes: tuple[str, ...]
 
 
+# guarda as informacoes que pertencem a cada token
 @dataclass(frozen=True)
 class TokenInfo:
     text: str
@@ -30,6 +32,7 @@ class VectorInfo:
     values: tuple[float, ...]
 
 
+# guarda todos os calculos feitos por uma cabeca de atencao
 @dataclass(frozen=True)
 class AttentionHeadResult:
     name: str
@@ -58,6 +61,7 @@ class CandidateProbability:
     probability: float
 
 
+# registra uma rodada da geracao da resposta
 @dataclass(frozen=True)
 class GenerationStep:
     iteration: int
@@ -69,6 +73,7 @@ class GenerationStep:
     progressive_text: str
 
 
+# junta o resultado de todas as etapas para entregar a interface
 @dataclass(frozen=True)
 class SimulationResult:
     normalization: NormalizationResult
@@ -89,6 +94,6 @@ class SimulationResult:
     simulated_parts: tuple[str, ...]
 
     def to_dict(self) -> dict[str, Any]:
-        """Converte o resultado completo em dados serializáveis em JSON."""
+        """Converte o resultado completo em dados que podem virar JSON"""
 
         return asdict(self)

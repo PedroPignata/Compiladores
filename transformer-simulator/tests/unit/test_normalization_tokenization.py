@@ -5,6 +5,7 @@ from transformer_simulator.tokenization import detokenize, tokenize
 
 
 def test_normalization_collapses_spaces_and_preserves_case_and_punctuation():
+    # verifica se os espacos sao corrigidos sem mudar o resto da frase
     result = normalize_text("  Qual   é a capital do Brasil?  ")
 
     assert result.normalized == "Qual é a capital do Brasil?"
@@ -16,6 +17,7 @@ def test_empty_input_is_rejected():
 
 
 def test_tokenizer_separates_unicode_words_and_punctuation():
+    # a virgula e a exclamacao devem virar tokens separados
     assert tokenize("Olá, Brasil!") == ["Olá", ",", "Brasil", "!"]
 
 

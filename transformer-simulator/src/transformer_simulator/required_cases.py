@@ -1,4 +1,4 @@
-"""Os dez cenários mínimos definidos no enunciado da atividade."""
+"""Os dez cenários mínimos definidos no enunciado da atividade"""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ class RequiredCase:
     secondary_input: str | None = None
 
 
+# estes sao os dez casos que o professor pediu para testar
 REQUIRED_CASES = (
     RequiredCase(1, "Pergunta curta", "Tudo bem?", "Executar todo o pipeline e gerar um fallback."),
     RequiredCase(2, "Frase afirmativa", "O Brasil é um país.", "Reconhecer uma afirmação e responder sem falhar."),

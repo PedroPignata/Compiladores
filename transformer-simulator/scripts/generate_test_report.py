@@ -1,4 +1,4 @@
-"""Executa os dez casos obrigatórios e gera a tabela de evidências."""
+"""Executa os dez casos obrigatórios e gera a tabela de evidências"""
 
 from __future__ import annotations
 
@@ -17,12 +17,14 @@ from transformer_simulator.required_cases import REQUIRED_CASES, RequiredCase  #
 
 
 def execute_case(simulator: TransformerSimulator, case: RequiredCase) -> dict[str, str]:
+    # roda um caso e compara o resultado com o comportamento esperado
     try:
         result = simulator.simulate(case.input_text)
         tokens = [token.text for token in result.input_tokens]
         approved = True
         detail = f"Pipeline completo: {len(tokens)} tokens, 2 cabeças e 3 camadas."
 
+        # alguns casos precisam de uma verificacao propria
         if case.number == 3:
             approved = "," in tokens and "!" in tokens
             detail = "Vírgula e exclamação foram preservadas como tokens."
@@ -77,6 +79,7 @@ def execute_case(simulator: TransformerSimulator, case: RequiredCase) -> dict[st
 
 
 def write_markdown(rows: list[dict[str, str]], output: Path) -> None:
+    # transforma os resultados em uma tabela Markdown
     lines = [
         "# Tabela dos testes obrigatórios",
         "",
@@ -104,6 +107,7 @@ def write_markdown(rows: list[dict[str, str]], output: Path) -> None:
 
 
 def main() -> int:
+    # gera os arquivos Markdown e CSV dentro da pasta de evidencias
     simulator = TransformerSimulator()
     rows = [execute_case(simulator, case) for case in REQUIRED_CASES]
     output_dir = PROJECT_ROOT / "evidencias" / "resultados-dos-testes"

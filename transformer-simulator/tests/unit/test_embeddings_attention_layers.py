@@ -11,6 +11,7 @@ from transformer_simulator.vocabulary import assign_token_ids
 
 
 def _positioned(texts):
+    # prepara os vetores usados por varios testes deste arquivo
     tokens = assign_token_ids(texts)
     embeddings = generate_embeddings(tokens)
     positions = generate_positional_encodings(tokens)
@@ -18,6 +19,7 @@ def _positioned(texts):
 
 
 def test_embeddings_are_deterministic_and_four_dimensional():
+    # confirma que o mesmo token sempre recebe o mesmo embedding
     tokens = assign_token_ids(["Brasil", "Brasil"])
     first = generate_embeddings(tokens)
     second = generate_embeddings(tokens)
@@ -42,6 +44,7 @@ def test_softmax_is_stable_and_sums_to_one():
 
 
 def test_two_attention_heads_have_valid_distributions():
+    # cada linha dos pesos precisa formar uma distribuicao que soma um
     _, _, positioned = _positioned(["Qual", "é", "Brasil", "?"])
     heads, combined = calculate_attention(positioned)
 
@@ -55,6 +58,7 @@ def test_two_attention_heads_have_valid_distributions():
 
 
 def test_three_layers_are_sequential_and_transform_the_vectors():
+    # garante que nenhuma camada pule a saida da camada anterior
     _, _, positioned = _positioned(["Qual", "é", "Brasil", "?"])
     _, combined = calculate_attention(positioned)
     layers = run_layers(combined)

@@ -10,6 +10,7 @@ from .attention import softmax
 from .models import LayerResult
 
 
+# matriz fixa usada na ultima camada para preparar os vetores
 PREPARATION_MATRIX = np.asarray(
     (
         (0.70, 0.10, 0.20, 0.00),
@@ -31,6 +32,7 @@ def _layer_result(
     before: np.ndarray,
     after: np.ndarray,
 ) -> LayerResult:
+    # guarda a entrada a saida e o tamanho medio da mudanca
     return LayerResult(
         name=name,
         description=description,
@@ -41,6 +43,7 @@ def _layer_result(
 
 
 def _local_layer(inputs: np.ndarray) -> np.ndarray:
+    # mistura cada token com os vizinhos que ficam ao lado dele
     outputs = np.zeros_like(inputs)
     for index in range(len(inputs)):
         neighbors = [(index, 0.60)]
@@ -55,12 +58,14 @@ def _local_layer(inputs: np.ndarray) -> np.ndarray:
 
 
 def _context_layer(inputs: np.ndarray) -> np.ndarray:
+    # compara todos os tokens para encontrar relacoes mais distantes
     similarities = (inputs @ inputs.T) / math.sqrt(inputs.shape[1])
     weights = softmax(similarities, axis=1)
     return 0.55 * inputs + 0.45 * (weights @ inputs)
 
 
 def _preparation_layer(inputs: np.ndarray) -> np.ndarray:
+    # limita os valores entre menos um e um usando tanh
     return np.tanh(inputs @ PREPARATION_MATRIX + 0.10 * inputs)
 
 
@@ -69,6 +74,7 @@ def run_layers(
 ) -> tuple[LayerResult, ...]:
     """Executa três transformações; cada uma recebe a saída da anterior."""
 
+    # a saida de uma camada sempre vira a entrada da proxima
     initial = np.asarray(combined_attention, dtype=float)
     local = _local_layer(initial)
     contextual = _context_layer(local)

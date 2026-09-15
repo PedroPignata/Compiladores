@@ -3,10 +3,12 @@ from pathlib import Path
 from streamlit.testing.v1 import AppTest
 
 
+# encontra o arquivo principal sem depender da pasta usada no terminal
 APP_FILE = Path(__file__).resolve().parents[2] / "app.py"
 
 
 def test_streamlit_processes_default_question_without_exception():
+    # abre a interface e simula o clique no botao de processar
     app = AppTest.from_file(str(APP_FILE), default_timeout=15).run()
 
     app.button[0].click().run()
@@ -26,6 +28,7 @@ def test_streamlit_processes_default_question_without_exception():
 
 
 def test_streamlit_rejects_blank_input():
+    # confirma que a tela mostra um erro quando a entrada esta vazia
     app = AppTest.from_file(str(APP_FILE), default_timeout=15).run()
 
     app.text_area[0].set_value("   ")
