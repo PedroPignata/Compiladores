@@ -1,13 +1,9 @@
 """Atenção escalada com duas cabeças e matrizes fixas documentadas"""
 
 from __future__ import annotations
-
 import math
-
 import numpy as np
-
 from .models import AttentionHeadResult, VectorInfo
-
 
 # cada cabeca usa matrizes diferentes para observar relacoes diferentes
 HEAD_CONFIGS = (
