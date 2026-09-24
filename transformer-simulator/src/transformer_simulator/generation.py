@@ -10,7 +10,7 @@ from collections.abc import Callable
 from .models import CandidateProbability, GenerationStep
 from .tokenization import detokenize, tokenize
 
-
+#recebe uma tupla de strings e devolve uma tupla de números
 ContextEncoder = Callable[[tuple[str, ...]], tuple[float, ...]]
 
 

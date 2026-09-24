@@ -6,7 +6,7 @@ import re
 
 
 # esta expressao encontra palavras numeros e sinais separados
-TOKEN_PATTERN = re.compile(r"\w+(?:[-’']\w+)*|[^\w\s]", re.UNICODE)
+TOKEN_PATTERN = re.compile(r"\w+(?:[-’']\w+)*|[^\w\s]", re.UNICODE) #preparação da expressão regular para tokenização
 PUNCTUATION = frozenset(".,!?;:%)]}»")
 OPENING = frozenset("([{«")
 

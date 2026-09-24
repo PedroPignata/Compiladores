@@ -67,12 +67,12 @@ class TransformerSimulator:
 
     def simulate(self, text: str) -> SimulationResult:
         # as primeiras etapas limpam o texto e separam os tokens
-        normalization = normalize_text(text)
+        normalization = normalize_text(text) # prepara a entrada para a tokenizacao e para a interface
         token_texts = tuple(tokenize(normalization.normalized))
         if not token_texts:
             raise EmptyInputError("A entrada não produziu tokens válidos.")
 
-        # executa embeddings posicao atencao e as tres camadas
+        # executa embeddings posicao atencao e as tres camadas, coodena os calculos
         tokens, embeddings, positions, positioned, heads, layers = self._encode_token_texts(
             token_texts
         )
@@ -89,7 +89,7 @@ class TransformerSimulator:
             self._context_summary,
         )
 
-        # devolve tudo em um unico objeto que a interface consegue mostrar
+        # devolve tudo em um unico objeto que a interface consegue mostrar, devolve o resultado
         return SimulationResult(
             normalization=normalization,
             input_tokens=tokens,
