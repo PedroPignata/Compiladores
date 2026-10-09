@@ -1,4 +1,4 @@
-# Gramática inicial da MiniLang
+# Gramática inicial da MiniForge
 
 Rascunho EBNF para a entrega `v0.0-spec`, alinhado à proposta base e à gramática
 da aula 12. Será revisado na etapa de gramática e testes.

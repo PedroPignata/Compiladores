@@ -2,7 +2,7 @@
 
 ## Visão completa
 
-O projeto MiniForge implementará a MiniLang em Python 3.10+, por fases. O
+O projeto MiniForge implementará a MiniForge em Python 3.10+, por fases. O
 produto final compilará fontes `.mini` para código de três endereços (TAC),
 que será executado por uma máquina virtual. Não há geração de assembly.
 

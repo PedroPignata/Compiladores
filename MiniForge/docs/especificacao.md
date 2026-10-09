@@ -1,6 +1,6 @@
-# Especificação da MiniLang — v0.0-spec
+# Especificação da MiniForge — v0.0-spec
 
-MiniForge é o nome do projeto; MiniLang é a linguagem implementada. Esta
+MiniForge é o nome do projeto e da linguagem implementada. Esta
 especificação adota a proposta base dos slides e explicita regras das etapas
 posteriores para manter o pipeline consistente. Os módulos futuros ainda não
 implementam essas regras nesta entrega.

@@ -1,6 +1,6 @@
-# MiniForge — compilador MiniLang
+# MiniForge — mini compilador
 
-Projeto didático de Compiladores 2026.2: construir um compilador da MiniLang,
+Projeto didático de Compiladores 2026.2: construir um compilador da MiniForge,
 com análise léxica, parser e AST, análise semântica, código de três endereços
 (TAC), máquina virtual e otimizações.
 
@@ -13,12 +13,12 @@ leitura. Os demais módulos estão reservados para as próximas etapas.
 Requer Python 3.10 ou superior. Execute a partir desta pasta `MiniForge/`:
 
 ```bash
-python3 -m minilang exemplos/fatorial.mini
-python3 -m minilang --help
+python3 -m miniforge exemplos/fatorial.mini
+python3 -m miniforge --help
 ```
 
-Se `python` no seu ambiente aponta para Python 3.10+, pode usar o comando dos
-slides: `python -m minilang exemplos/fatorial.mini`.
+Se `python` no seu ambiente aponta para Python 3.10+, pode usar o comando
+equivalente: `python -m miniforge exemplos/fatorial.mini`.
 
 **Nesta versão, a saída é o próprio código-fonte.** Ainda não há tokenização,
 validação ou execução: o fatorial não calcula `120`, e os exemplos inválidos
@@ -29,7 +29,7 @@ geram mensagem em stderr e saída 1; argumentos incorretos geram saída 2.
 
 ```text
 MiniForge/
-├── minilang/
+├── miniforge/
 │   ├── __init__.py
 │   ├── __main__.py     # CLI implementada nesta entrega
 │   ├── tokens.py       # módulos abaixo reservados para as próximas etapas
@@ -52,7 +52,7 @@ MiniForge/
 ```
 
 A pasta faz parte do repositório `PedroPignata/Compiladores`. MiniForge é o
-nome do projeto e `minilang` é o pacote Python, conforme a proposta da aula.
+nome do projeto e da linguagem; `miniforge` é o pacote Python.
 
 ## Documentação
 
@@ -67,7 +67,7 @@ nome do projeto e `minilang` é o pacote Python, conforme a proposta da aula.
 Compare o texto impresso com o arquivo original:
 
 ```bash
-python3 -m minilang exemplos/fatorial.mini > /tmp/miniforge-fatorial.txt
+python3 -m miniforge exemplos/fatorial.mini > /tmp/miniforge-fatorial.txt
 diff exemplos/fatorial.mini /tmp/miniforge-fatorial.txt
 ```
 
@@ -91,13 +91,13 @@ A execução atual não depende de pacotes externos. As opções `--tokens`,
 A partir de `MiniForge/`, com autenticação Git configurada:
 
 ```bash
-git add README.md .gitignore requirements-dev.txt docs exemplos minilang tests
-git commit -m "Cria arquitetura e especificação inicial da MiniLang"
+git add README.md .gitignore requirements-dev.txt docs exemplos miniforge tests
+git commit -m "Cria arquitetura e especificação inicial da MiniForge"
 git tag v0.0-spec
 git push origin main
 git push origin v0.0-spec
 ```
 
-Referência: material de aulas práticas do projeto MiniLang, Compiladores
+Referência: material de aulas práticas de mini compiladores, Compiladores
 2026.2, Lorena Bezerra. A entrega segue a aula 06; funcionalidades das aulas
 seguintes permanecem planejadas.

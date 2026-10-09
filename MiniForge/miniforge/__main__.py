@@ -7,7 +7,7 @@ import sys
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="MiniForge / MiniLang: nesta etapa, apenas lê e imprime o fonte."
+        description="MiniForge: nesta etapa, apenas lê e imprime o fonte."
     )
     parser.add_argument("arquivo", type=Path, help="caminho do programa .mini")
     args = parser.parse_args()
