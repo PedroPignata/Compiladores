@@ -1,0 +1,2 @@
+# Dependência das próximas etapas: testes com pytest.
+pytest>=8,<9

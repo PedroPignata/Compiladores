@@ -1,0 +1,9 @@
+// Válido. Saída esperada quando a VM existir: true e 0.
+var valor: int = 3;
+var pequeno: bool = valor < 5;
+print(pequeno);
+if (valor > 5) {
+    print(1);
+} else {
+    print(0);
+}

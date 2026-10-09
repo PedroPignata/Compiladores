@@ -1,0 +1,11 @@
+// Válido. Saída esperada quando a VM existir: true, 2 e 1.
+var x: int = 1;
+{
+    var y: int = 2;
+    {
+        var x: bool = true;
+        print(x);
+    }
+    print(y);
+}
+print(x);

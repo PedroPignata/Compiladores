@@ -1,0 +1,3 @@
+// ERRO: 'ausente' não foi declarada
+// Erro proposital: uso de variável sem declaração; a sintaxe é válida.
+print(ausente);
