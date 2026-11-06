@@ -1,0 +1,16 @@
+// Válido. Saída esperada (python -m miniforge): 72 e 22.
+// Programa-vitrine do mineirês (v0.6): três fornadas de pão de queijo,
+// cada uma com 12 a mais que a anterior; o que passar de 50 é pra visita.
+trem fornada: inteirim = 1;
+trem paes: inteirim = 0;
+enquanto_tiver (fornada <= 3) {
+    paes = paes + fornada * 12;
+    fornada = fornada + 1;
+}
+mostra_so(paes);
+trem sobrou: booleanim = paes > 50;
+uai (sobrou) {
+    mostra_so(paes - 50);     // pra visita, sô
+} sinao {
+    mostra_so(0);
+}

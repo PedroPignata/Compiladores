@@ -1,0 +1,2 @@
+// ERRO: 'y' num foi declarado, sô
+{ trem y: inteirim = 1; mostra_so(y); } mostra_so(y);

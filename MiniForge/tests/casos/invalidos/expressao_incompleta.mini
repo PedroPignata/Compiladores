@@ -1,0 +1,2 @@
+// ERRO: faltou uma expressão
+x = 1 + ;

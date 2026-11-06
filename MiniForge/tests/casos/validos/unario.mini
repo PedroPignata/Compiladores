@@ -1,0 +1,5 @@
+// validos/unario.mini: menos unário, inclusive repetido e sobre parênteses
+trem x: inteirim = -5;
+trem y: inteirim = - -x;
+x = -(x + y) * -2;
+mostra_so(x);

@@ -1,0 +1,2 @@
+// ERRO: operador '==' num serve pra inteirim e booleanim
+mostra_so(1 == eh_memo);

@@ -1,0 +1,2 @@
+// ERRO: operador '<' num serve pra booleanim e booleanim
+mostra_so(eh_memo < num_eh);

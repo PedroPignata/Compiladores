@@ -1,0 +1,2 @@
+// validos/derivacao.mini: o caso da derivação mais à esquerda de docs/gramatica.md
+trem x: inteirim = 1 + 2 * 3;

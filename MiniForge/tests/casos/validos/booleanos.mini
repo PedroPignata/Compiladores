@@ -1,0 +1,6 @@
+// validos/booleanos.mini: tipo booleanim, literais e comparação agrupada com parênteses
+trem ok: booleanim = eh_memo;
+trem fim: booleanim = num_eh;
+ok = (1 < 2) == eh_memo;
+mostra_so(ok);
+mostra_so(fim);

@@ -1,0 +1,3 @@
+// ERRO: 'z' num foi declarado, sô
+// Um analisador ingênuo daria 3 erros (o z e as duas somas): aqui sai 1.
+mostra_so(z + 1 + 2);

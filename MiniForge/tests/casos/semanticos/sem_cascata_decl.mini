@@ -1,0 +1,4 @@
+// ERRO: 'q' é inteirim, mas tá recebendo booleanim
+// q é declarada mesmo com o inicializador errado: o mostra_so(q) não reclama.
+trem q: inteirim = eh_memo;
+mostra_so(q + 1);

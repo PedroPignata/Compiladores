@@ -1,0 +1,2 @@
+// ERRO: faltou o tipo ('inteirim' ou 'booleanim')
+trem x: float = 1;

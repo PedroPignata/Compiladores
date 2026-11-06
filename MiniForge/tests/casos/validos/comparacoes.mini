@@ -1,0 +1,9 @@
+// validos/comparacoes.mini: os seis comparadores, um por expressão
+trem a: inteirim = 1;
+trem b: inteirim = 2;
+mostra_so(a == b);
+mostra_so(a != b);
+mostra_so(a < b);
+mostra_so(a > b);
+mostra_so(a <= b);
+mostra_so(a >= b);

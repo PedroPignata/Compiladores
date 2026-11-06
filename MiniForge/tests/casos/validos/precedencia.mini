@@ -1,0 +1,3 @@
+// validos/precedencia.mini
+trem x: inteirim = 1 + 2 * 3 - -4;
+mostra_so((x - 1) / 2);

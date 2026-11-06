@@ -1,0 +1,2 @@
+// ERRO: faltou ';'
+trem c: booleanim = 1 < 2 < 3;

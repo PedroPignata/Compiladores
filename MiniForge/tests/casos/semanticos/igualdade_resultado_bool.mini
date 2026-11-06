@@ -1,0 +1,5 @@
+// ERRO: operador '+' num serve pra booleanim e inteirim
+// (a == b) é booleanim: somar com inteirim é inválido.
+trem a: inteirim = 1;
+trem b: inteirim = 2;
+mostra_so((a == b) + 1);

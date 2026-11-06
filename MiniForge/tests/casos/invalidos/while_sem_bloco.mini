@@ -1,0 +1,2 @@
+// ERRO: faltou '{'
+enquanto_tiver (x > 0) x = x - 1;
