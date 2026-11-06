@@ -1,0 +1,5 @@
+// ERRO: 'x' é booleanim, mas tá recebendo inteirim
+// No bloco, x é a variável booleanim interna, e não o inteirim externo.
+trem x: inteirim = 1;
+{ trem x: booleanim = eh_memo; x = 5; mostra_so(x); }
+mostra_so(x);

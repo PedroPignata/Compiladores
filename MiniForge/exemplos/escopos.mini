@@ -1,11 +1,11 @@
-// Válido. Saída esperada quando a VM existir: true, 2 e 1.
-var x: int = 1;
+// Válido. Saída esperada (python -m miniforge): eh_memo, 2 e 1.
+trem x: inteirim = 1;
 {
-    var y: int = 2;
+    trem y: inteirim = 2;
     {
-        var x: bool = true;
-        print(x);
+        trem x: booleanim = eh_memo;
+        mostra_so(x);
     }
-    print(y);
+    mostra_so(y);
 }
-print(x);
+mostra_so(x);

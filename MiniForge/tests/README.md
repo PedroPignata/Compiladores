@@ -1,10 +1,17 @@
-# Testes
+# Testes do frontend
 
-Esta primeira etapa entrega especificação, arquitetura e CLI de leitura.
-A CLI pode ser verificada executando os cinco arquivos de `exemplos/` e
-comparando sua saída com o conteúdo de cada arquivo.
+Preservamos os testes do ZIP para lexer, parser, casos, símbolos, semântica,
+tipos e vocabulário. Em `test_mineires.py`, os exemplos antes executados agora
+verificam a AST e os tipos. A formatação da saída da VM e divisão por zero
+permanecem no ZIP, fora do escopo desta suíte.
 
-A partir da próxima etapa, usar `python -m pytest -q` e criar progressivamente:
-`test_lexer.py`, `test_parser.py`, `test_casos.py`, `test_simbolos.py`,
-`test_semantica.py`, `test_ir.py`, `test_vm.py` e `test_otimizador.py`.
-Ainda não há testes automatizados nem validação da linguagem nesta versão.
+`test_cli_frontend.py` acrescenta testes do padrão sem execução, das 32
+combinações de opções, erros de argumentos e leitura, opções futuras recusadas,
+independência de imports e dos 40 pares de operadores/tipos.
+
+Banco original: 11 válidos, 13 inválidos sintáticos e 18 semânticos, estes com
+um erro por arquivo. Os inválidos começam com `// ERRO:` e o teste compara a
+mensagem. Novos casos podem ser incluídos sem alterar o parametrizador.
+
+Executar `python -m pytest -q`. Ambiente e resultados reais em
+[docs/testes.md](../docs/testes.md).

@@ -1,0 +1,6 @@
+// validos/aninhamento.mini
+trem i: inteirim = 0;
+enquanto_tiver (i < 3) {
+  uai (i == 1) { mostra_so(i); }
+  i = i + 1;
+}

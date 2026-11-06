@@ -1,0 +1,3 @@
+// ERRO: operador '-' num serve pra booleanim
+trem t: booleanim = eh_memo;
+mostra_so(-t);

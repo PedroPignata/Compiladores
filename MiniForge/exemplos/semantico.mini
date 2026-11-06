@@ -1,0 +1,3 @@
+trem x: inteirim = 1;
+trem b: booleanim = x + 1;
+uai (x) { y = 2; }

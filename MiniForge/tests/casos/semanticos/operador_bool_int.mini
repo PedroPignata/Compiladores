@@ -1,0 +1,2 @@
+// ERRO: operador '+' num serve pra booleanim e inteirim
+mostra_so(eh_memo + 1);

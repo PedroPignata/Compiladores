@@ -1,0 +1,8 @@
+// validos/if_else.mini: uai com e sem sinao
+trem n: inteirim = 7;
+uai (n >= 5) {
+  mostra_so(eh_memo);
+} sinao {
+  mostra_so(num_eh);
+}
+uai (n != 0) { n = 0; }

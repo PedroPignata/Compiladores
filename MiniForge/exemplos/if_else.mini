@@ -1,9 +1,9 @@
-// Válido. Saída esperada quando a VM existir: true e 0.
-var valor: int = 3;
-var pequeno: bool = valor < 5;
-print(pequeno);
-if (valor > 5) {
-    print(1);
-} else {
-    print(0);
+// Válido. Saída esperada (python -m miniforge): eh_memo e 0.
+trem valor: inteirim = 3;
+trem pequeno: booleanim = valor < 5;
+mostra_so(pequeno);
+uai (valor > 5) {
+    mostra_so(1);
+} sinao {
+    mostra_so(0);
 }

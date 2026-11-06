@@ -1,0 +1,12 @@
+// validos/blocos.mini: blocos soltos, aninhados e vazios
+trem x: inteirim = 1;
+{
+  trem y: inteirim = 2;
+  {
+    trem x: booleanim = eh_memo;
+    mostra_so(x);
+  }
+  mostra_so(y);
+}
+{ }
+mostra_so(x);

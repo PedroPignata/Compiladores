@@ -1,0 +1,4 @@
+// ERRO: operador '*' num serve pra inteirim e booleanim
+trem k: inteirim = 2;
+trem p: booleanim = num_eh;
+mostra_so(k * p);

@@ -1,0 +1,5 @@
+// validos/associatividade.mini: 10 - 3 - 2 = (10 - 3) - 2 e 8 / 4 / 2 = (8 / 4) / 2
+trem a: inteirim = 10 - 3 - 2;
+trem b: inteirim = 8 / 4 / 2;
+mostra_so(a);
+mostra_so(b);

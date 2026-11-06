@@ -1,0 +1,4 @@
+// ERRO: 'ok' é booleanim, mas tá recebendo inteirim
+trem ok: booleanim = eh_memo;
+ok = 0;
+mostra_so(ok);

@@ -1,0 +1,8 @@
+// validos/fatorial.mini
+trem n: inteirim = 5;
+trem f: inteirim = 1;
+enquanto_tiver (n > 0) {
+  f = f * n;
+  n = n - 1;
+}
+mostra_so(f);

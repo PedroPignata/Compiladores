@@ -1,2 +1,2 @@
-# Dependência das próximas etapas: testes com pytest.
+# Dependência de desenvolvimento: testes do frontend com pytest.
 pytest>=8,<9
