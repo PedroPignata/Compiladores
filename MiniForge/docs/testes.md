@@ -54,14 +54,3 @@ Não houve demonstração presencial à professora nem teste em Windows ou
 PowerPoint. O tempo da suíte varia e não mede desempenho do compilador.
 Entradas patológicas (profundidade extrema ou limite decimal do Python)
 não fazem parte dos testes acadêmicos e permanecem limitações documentadas.
-
-## Apresentação
-
-PPTX com 12 slides, texto e duas tabelas editáveis, notas do apresentador e
-roteiro separado. Validação estrutural do pacote e da geometria: nenhuma
-ocorrência. Revisão visual das 12 páginas renderizadas do PDF concluída.
-O PDF foi exportado pelo LibreOffice 24.2 a partir do PPTX validado, pois o
-exportador PDF da biblioteca de autoria encontrou uma dependência de fonte
-ausente. Nenhuma instalação ou alteração do runtime foi necessária.
-Cores e disposição seguem a referência visual do grupo, com fontes DejaVu
-Sans e DejaVu Sans Mono. Não houve teste no aplicativo Microsoft PowerPoint.

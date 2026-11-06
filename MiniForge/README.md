@@ -163,7 +163,6 @@ miniforge/  __main__.py, tokens.py, lexer.py, ast.py, parser.py,
 exemplos/   quatro programas válidos e quatro exemplos de erro
 tests/      lexer, parser, casos, símbolos, semântica, tipos, mineirês e CLI
 docs/       especificação, gramática, arquitetura, checkpoint e auditoria
-apresentacao/  PPTX editável, PDF e roteiro desta entrega
 ```
 
 - [Especificação](docs/especificacao.md) e [gramática](docs/gramatica.md).
