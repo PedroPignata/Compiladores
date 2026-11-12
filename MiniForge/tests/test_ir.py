@@ -455,5 +455,3 @@ def test_cli_verificar_mantem_a_mensagem_do_frontend():
 
 def test_cli_help_menciona_tac():
     assert "--tac" in rodar("--help").stdout
-
-

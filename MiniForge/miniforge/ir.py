@@ -226,5 +226,3 @@ def gerar_tac(programa):
 def formatar_tac(codigo):
     """Texto do TAC, uma instrução por linha (o que --tac imprime)."""
     return "\n".join(str(i) for i in codigo)
-
-
