@@ -1,21 +1,24 @@
-# Matriz de atendimento e diagnóstico
+# Matriz da entrega de 13/11/2026
 
-Diagnóstico realizado em 06/11/2026 antes da integração. Corte acadêmico: 16/10/2026.
-As páginas são físicas (1–56) do PDF da professora. Situação refere-se ao ZIP.
+Diagnóstico antes da integração em 12/11: main 2bb5b03, sem alterações locais.
+Os PDFs Projeto.pdf e Projeto-1.pdf são idênticos (SHA-256 d8acb1bb5d3ecd479f344be3a7148f4c274f0ea728ec018956b15f10be19485c).
+As apresentações anteriores têm conteúdo e hashes diferentes: foram usadas como referências de continuidade, não de escopo.
+Os nomes com (1) citados no pedido não estão disponíveis; os arquivos anexados sem esse sufixo são a referência efetiva.
 
-| Requisito | Aula / página | Implementação no ZIP | Situação | Adaptação para o corte | Evidência na entrega |
-|---|---|---|---|---|---|
-| Especificação e 5 exemplos | 06, pp. 4–6 | docs/especificacao.md, exemplos/ | Mineirês completo | Ajustar resultados futuros | test_mineires.py |
-| Tokens, posições, reservadas e EOF | 08, pp. 8–11 | tokens.py, lexer.py | Implementado | Preservar | test_lexer.py |
-| Recuperação e análise de lexer didático | 10, pp. 13–16 | lexer.py, docs/analise-lexer.md | Implementado | Preservar ficha | test_varios_erros_reportados_de_uma_vez |
-| EBNF, FIRST, derivação, 8 válidos e 8 inválidos | 12, pp. 18–21 | docs/gramatica.md, tests/casos/ | 11 válidos e 13 inválidos | Preservar | test_casos.py |
-| Parser, precedência, AST e diagnósticos | 14, pp. 23–26 | parser.py, ast.py | Implementado | Preservar | test_parser.py |
-| Integração e checkpoint | 16, pp. 28–31 | __main__.py, docs/checkpoint.md | CLI completa e contagens históricas | Cortar execução e atualizar evidências | test_cli_frontend.py |
-| Símbolos e quatro operações | 20, pp. 33–36 | simbolos.py | Cinco atributos mais usos | Preservar | test_simbolos.py |
-| Escopos, sombreamento e inicializador | 20, pp. 34–36 | semantica.py | Visitor e pilha implementados | Preservar | test_semantica.py |
-| Cinco regras e tabela de tipos | 22, pp. 38–41 | semantica.py | Implementado, tipos internos int/bool | Preservar | test_tipos.py e matriz de operadores |
-| AST anotada e supressão de cascata | 22, pp. 39–41 | ast.py, semantica.py | Implementado | Preservar | test_ast_anotada_em_todos_os_nos_de_expressao |
-| Contexto e avisos opcionais | 20/22, pp. 36 e 41 | semantica.py, __main__.py | Recursos adicionais implementados | Manter sem exigir para aprovação | test_cli_contexto_com_circunflexo |
-| CLI independente e tag semântica | 22, pp. 40–41 | __main__.py | Importa IR/VM/otimizador | Remover imports, opções e execução posteriores | test_cli_frontend.py |
-| Testes da linguagem | 08–22 | tests/test_mineires.py | Mistura frontend e VM | Separar testes e converter evidência para AST/tipos | test_mineires.py |
-| TAC, pilha, VM, otimização e artigo | 26–30, pp. 42–56 | ir.py, vm.py, otimizador.py e testes/docs | Concluídos no ZIP, futuros neste corte | Não integrar; original permanece intacto | Teste de ausência de módulos e imports |
+| Requisito / página física | Implementação | Diagnóstico / adaptação | Situação / evidência |
+|---|---|---|---|
+| Organização, aula 06 p.5 (4/5) | miniforge/, tests/, exemplos/, docs/ | minilang é o nome genérico do exemplo; preservado MiniForge | Atendido, árvore no README |
+| Frontend, aulas 08–22 pp.7–41 | tokens, lexer, parser, AST, símbolos e semântica | Preservar código e regressões | Atendido, testes anteriores |
+| TAC, aula 26 pp.42–46 | ir.py do ZIP | Remover bytecode e executor dos testes | Atendido, test_ir.py |
+| Temporários, escopos, saltos, origem | GeradorTAC do ZIP | Preservar nomes únicos; validar AST na API pública | Atendido, testes estruturais |
+| Cinco passes, aula 30 pp.52–56 | otimizador.py do ZIP | Extrair avaliação constante de vm.OPS | Atendido, testes isolados e ponto fixo |
+| Comparação antes/depois p.56 | docs/otimizacao.md | Contagem estática sem rótulos | Adaptado, medições desta versão |
+| Equivalência por execução p.56 | testes de execução no ZIP | Não integrar executor de TAC nem VM de teste | Excluído por pedido, sem prova geral de equivalência |
+| VM e estatísticas aulas 28 pp.47–51 | vm.py do ZIP | Não integrar | Excluído por pedido |
+| Desafio pilha p.46 | GeradorPilha | Não integrar | Excluído por pedido |
+| Extensões lógicas opcionais | proposta na gramática | Priorizar núcleo e segurança | Futuro, não implementado |
+
+Definições: dependência de vm.OPS é incompatibilidade de escopo, não defeito do projeto completo.
+Melhorias propostas: avaliação constante com tipos estritos; guarda semântica na API de geração.
+Riscos a testar: constantes em laços/junções, divisão por zero alcançável, mutação, idempotência e colisões.
+Nenhum bloqueio técnico identificado no diagnóstico.

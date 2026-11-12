@@ -1,4 +1,4 @@
-"""CLI do frontend mineirês: validação até a semântica, sem execução."""
+"""CLI mineirês: frontend, TAC e otimização, sem execução."""
 
 import argparse
 from pathlib import Path
@@ -8,13 +8,15 @@ from .ast import formatar_ast
 from .lexer import Lexer, formatar_token
 from .parser import ErroSintatico, Parser
 from .semantica import analisar
+from .ir import gerar_tac, formatar_tac
+from .otimizador import otimizar
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         prog="python -m miniforge",
         description="MiniForge: compilador didático da linguagem mineirês, "
-                    "sô. Sem opções, valida léxico, sintaxe e semântica "
+                    "sô. Sem opções, gera TAC após validar léxico, sintaxe e semântica, "
                     "sem executar o programa.",
     )
     parser.add_argument("arquivo", type=Path, help="caminho do programa .mini")
@@ -38,9 +40,15 @@ def main(argv=None) -> int:
     )
     parser.add_argument(
         "--verificar", action="store_true",
-        help="verifica léxico, sintaxe e semântica (também é o padrão)",
+        help="verifica léxico, sintaxe e semântica (sem gerar TAC)",
     )
+    parser.add_argument('--tac', action='store_true', help='imprime TAC, sem executar')
+    parser.add_argument('-O', action='store_true', dest='otimizar', help='otimiza o TAC')
     args = parser.parse_args(argv)
+    inspecao = args.tokens or args.ast or args.tipos or args.verificar or args.tac
+    gerar = args.tac or not inspecao
+    if args.otimizar and not gerar:
+        parser.error('-O exige geração de TAC: use --tac com opções de inspeção')
     # --ast é uma visão sintática. Com --tipos/--verificar, a análise
     # continua até a semântica. --tokens pode acompanhar qualquer visão.
 
@@ -67,7 +75,7 @@ def main(argv=None) -> int:
     if args.tokens:
         for tok in toks:
             print(formatar_token(tok))
-        if not (args.ast or args.tipos or args.verificar):
+        if not (args.ast or args.tipos or args.verificar or args.tac):
             # só --tokens: dispensa o parser
             return 0
 
@@ -80,7 +88,7 @@ def main(argv=None) -> int:
 
     if args.ast:
         print(formatar_ast(programa))
-        if not (args.tipos or args.verificar):
+        if not (args.tipos or args.verificar or args.tac):
             return 0
 
     # 3 · semântica: Programa -> AST validada e tipada (aulas 20 e 22)
@@ -100,9 +108,15 @@ def main(argv=None) -> int:
 
     if args.tipos:
         print(formatar_ast(programa))
-    if args.verificar or not args.tipos:
+    if args.verificar:
         print(f"{args.arquivo}: tudo certim, sem erros léxicos, sintáticos "
               "ou semânticos")
+    if gerar:
+        codigo = gerar_tac(programa)
+        if args.otimizar:
+            codigo = otimizar(codigo)
+        if codigo:
+            print(formatar_tac(codigo))
     return 0
 
 

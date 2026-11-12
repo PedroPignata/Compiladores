@@ -1,56 +1,16 @@
-# MiniForge — compilador de mineirês, sô
+# MiniForge - compilador de mineirês, sô
 
-Projeto didático de Compiladores 2026.2, professora Lorena Bezerra.
-**Pedro Dutra · Pedro Pignata · Lucas Rocha Dantas · Renato Portilho**
+Entrega para **13/11/2026**, versão **v0.5-otimizacao-sem-vm**.
+Pedro Dutra, Pedro Pignata, Lucas Rocha Dantas e Renato Portilho.
+Professora Lorena Bezerra, Compiladores 2026.2.
 
-**Entrega `v0.3-semantica`, corte de 16/10/2026 (aula 22).** Esta atualização
-integra o frontend da versão atual do grupo, entregue no ZIP v0.6-mineires,
-sobre a estrutura inicial do mesmo projeto. A CLI valida léxico, sintaxe,
-nomes, escopos e tipos, sem executar o programa-fonte. A data da integração
-é 06/11/2026, sem reconstruir artificialmente entregas anteriores.
+Continuação do frontend v0.3-semantica: agora o projeto valida o fonte,
+gera código de três endereços (TAC) e pode otimizá-lo. **Não executa programas**.
+A máquina virtual e o backend foram explicitamente excluídos desta entrega.
 
-```text
-trem n: inteirim = 5;
-trem f: inteirim = 1;
-enquanto_tiver (n > 0) {
-    f = f * n;
-    n = n - 1;
-}
-mostra_so(f);
-```
+## Instalar e conferir
 
-Validar esse fatorial confirma a correção do frontend. Não calcula `120`.
-
-## O mineirês em 1 minuto
-
-| Mineirês | Papel | Conceito nos slides |
-| --- | --- | --- |
-| `trem x: inteirim = 1;` | declara variável inteira | `var x: int = 1;` |
-| `trem ok: booleanim = eh_memo;` | declara variável booleana | `var ok: bool = true;` |
-| `eh_memo` / `num_eh` | verdadeiro / falso | `true` / `false` |
-| `uai (c) { ... } sinao { ... }` | condicional | `if (c) { ... } else { ... }` |
-| `enquanto_tiver (c) { ... }` | repetição | `while (c) { ... }` |
-| `mostra_so(x);` | saída | `print(x);` |
-
-As palavras são escritas sem acento (o lexer aceita só ASCII em nomes); as
-antigas (`var`, `while`...) viraram identificadores comuns. Operadores,
-comentários `//`, blocos e regras de tipo e escopo não mudaram. As mensagens
-também falam mineirês:
-
-```text
-1:3: erro léxico: caractere inválido '@', que trem é esse?
-3:8: erro sintático: faltou ':', sô: achei 'inteirim'
-linha 3: erro semântico: 'ausente' num foi declarado, sô
-linha 2: erro semântico: 'b' é booleanim, mas tá recebendo inteirim
-```
-
-Especificação completa em [docs/especificacao.md](docs/especificacao.md); a
-decisão de arquitetura que fez a troca caber em uma tabela está em
-[docs/arquitetura.md](docs/arquitetura.md#mineirês-só-a-superfície-muda).
-
-## Instalar e testar
-
-Requer Python 3.10+. Dentro de `MiniForge/`:
+Requer Python 3.10+. Dentro de MiniForge/:
 
 ```bash
 python3 -m venv .venv
@@ -58,130 +18,87 @@ source .venv/bin/activate
 # Windows: .venv\Scripts\activate
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
-```
-
-O compilador usa apenas a biblioteca padrão. O pytest serve aos testes.
-A suíte desta entrega tem **377 testes**, incluindo os 42 arquivos de casos
-(11 válidos, 13 inválidos sintáticos e 18 semânticos). Resultados, ambiente e
-segunda revisão estão em [docs/testes.md](docs/testes.md).
-
-## Comandos e combinações
-
-```bash
 python -m miniforge exemplos/fatorial.mini
-python -m miniforge exemplos/fatorial.mini --tokens
-python -m miniforge exemplos/fatorial.mini --ast
-python -m miniforge exemplos/fatorial.mini --tipos
-python -m miniforge exemplos/pao_de_queijo.mini --verificar
-python -m miniforge exemplos/semantico.mini --contexto
+python -m miniforge exemplos/constantes.mini --tac -O
 ```
 
-| Opções | Última fase / saída |
-| --- | --- |
-| Sem opções, ou `--verificar` | Semântica e mensagem `tudo certim` |
-| `--tokens` | Léxico e tokens, sem exigir sintaxe ou semântica |
-| `--ast` | Parser e AST sem anotação, sem exigir semântica |
-| `--tipos` | Semântica e AST anotada |
-| `--tokens` com outras opções | Tokens primeiro, depois as fases solicitadas |
-| `--ast --tipos` | AST sintática primeiro e AST anotada se a semântica passar |
-| `--ast --verificar` | AST sintática e validação semântica |
-| `--tipos --verificar` | AST anotada e mensagem de sucesso |
-| `--contexto` | Acrescenta linha e `^` aos erros semânticos, sem mudar a fase escolhida |
+O compilador usa a biblioteca padrão; pytest é dependência de desenvolvimento.
+A suíte desta entrega tem 696 testes. Resultados reais em docs/testes.md.
 
-Todas as combinações seguem essas regras, independentemente da ordem dos
-argumentos. Saídas de fases anteriores podem aparecer se uma fase posterior
-falhar. `--tac`, `--pilha`, `--vm-pilha`, `--stats` e `-O` são indisponíveis
-e rejeitados com código 2. Não há geração de código, execução ou métricas.
+## Linguagem
 
-Sucesso retorna 0. Leitura inválida ou análise com erro retorna 1. Argumentos
-inválidos retornam 2. Erros e avisos vão para stderr. Avisos de variável não
-lida não fazem a validação falhar e só aparecem quando não há erros.
+| Palavra | Papel | Exemplo |
+|---|---|---|
+| trem | declaração inicializada | trem x: inteirim = 1; |
+| inteirim | inteiro | trem n: inteirim = 5; |
+| booleanim | booleano | trem ok: booleanim = eh_memo; |
+| eh_memo / num_eh | verdadeiro / falso | ok = num_eh; |
+| uai / sinao | condicional | uai (ok) { mostra_so(1); } sinao { mostra_so(0); } |
+| enquanto_tiver | repetição | enquanto_tiver (n > 0) { n = n - 1; } |
+| mostra_so | comando de saída no TAC | mostra_so(n); |
 
-A análise semântica verifica as 5 regras da aula 22 (declaração antes do
-uso, sem redeclaração no mesmo escopo, tipo da expressão igual ao da variável
-em `trem` e `=`, condição `booleanim` em `uai`/`enquanto_tiver` e a tabela de tipos dos
-operadores) e lista todos os erros de uma vez, cada um com a linha do nó da
-AST. Com erro, a CLI sai com código 1 e não segue para a geração de código. É a saída do slide de entrega adaptada ao mineirês:
+Sem coerção int/bool. Chaves obrigatórias, comentários //, comparações não
+encadeadas. Tipos internos continuam int e bool. Nenhuma extensão de linguagem
+foi adicionada: operadores lógicos permanecem proposta futura na gramática.
+
+## Organização e pipeline
 
 ```text
-$ python -m miniforge exemplos/semantico.mini
-linha 2: erro semântico: 'b' é booleanim, mas tá recebendo inteirim
-linha 3: erro semântico: condição tem que ser booleanim, mas veio inteirim
-linha 3: erro semântico: 'y' num foi declarado, sô
+MiniForge/
+  miniforge/ __init__.py, __main__.py, tokens.py, lexer.py,
+             ast.py, parser.py, simbolos.py, semantica.py,
+             ir.py, otimizador.py, constantes.py
+  tests/     casos e testes por fase
+  exemplos/  programas .mini
+  docs/      especificacao.md, gramatica.md, arquitetura.md,
+             otimizacao.md, matriz-requisitos.md e relatórios
+  README.md, pytest.ini, requirements-dev.txt
+
+fonte -> tokens -> AST -> AST tipada -> TAC -> [otimização]
 ```
 
-Não há erros em cascata: uma expressão com erro devolve `None` e quem a usa
-não reclama de novo, então `mostra_so(z + 1 + 2);` gera só
-`'z' num foi declarado, sô`. Uma declaração com inicializador errado ainda declara
-o nome, para os usos seguintes não virarem `'x' num foi declarado, sô`.
+A estrutura corresponde ao slide inicial 4/5 (página física 5). O pacote
+genérico minilang do exemplo corresponde a MiniForge/miniforge. Não há
+exigência de renomear nossa linguagem. vm.py é a exceção deliberada, excluída.
+Não foram alterados os demais projetos de Compiladores.
 
-Desafio da aula 22: `--contexto` mostra a linha do fonte com um `^` sob o
-ponto do erro, no estilo GCC/Clang (os nós da AST agora guardam a coluna):
+## CLI e combinações
 
-```text
-$ python -m miniforge exemplos/semantico.mini --contexto
-linha 2: erro semântico: 'b' é booleanim, mas tá recebendo inteirim
- 2 | trem b: booleanim = x + 1;
-   | ^
-linha 3: erro semântico: condição tem que ser booleanim, mas veio inteirim
- 3 | uai (x) { y = 2; }
-   |      ^
-linha 3: erro semântico: 'y' num foi declarado, sô
- 3 | uai (x) { y = 2; }
-   |           ^
-```
+Sem opções, gera e imprime TAC original. -O sozinho imprime TAC otimizado.
+Essa é a evolução do padrão anterior, que apenas informava sucesso semântico.
 
-Variáveis declaradas e nunca lidas geram só um aviso em stderr, sem mudar o
-código de saída (se houver erros, só os erros são listados):
+| Opção | Comportamento |
+|---|---|
+| --tokens | Léxico e tokens |
+| --ast | Parser e AST sintática |
+| --tipos | Semântica e AST anotada |
+| --verificar | Só frontend, mensagem de sucesso |
+| --contexto | Acrescenta contexto aos diagnósticos semânticos |
+| --tac | Frontend e impressão do TAC |
+| --tac -O | Frontend e impressão do TAC otimizado |
 
-```text
-$ python -m miniforge tests/casos/validos/derivacao.mini --verificar
-linha 2: aviso: 'x' declarado e nunca usado, sô
-tests/casos/validos/derivacao.mini: tudo certim, sem erros léxicos, sintáticos ou semânticos
-```
+Inspeções combinadas são cumulativas, na ordem tokens, AST sintática, tipos,
+mensagem de verificação e TAC. O pipeline avança até a fase mais profunda
+pedida. Saídas de fases anteriores podem aparecer antes de erro posterior.
+Com uma inspeção explícita, TAC só aparece se --tac também for pedido.
+-O junto de inspeção exige --tac: combinações sem geração são erro de uso 2,
+para não ignorar silenciosamente a otimização. --contexto sozinho mantém o
+padrão de geração. Há testes das 128 combinações de sete sinalizadores.
 
-`--tipos` imprime a AST depois da semântica, com o tipo anotado em cada
-expressão (é o que a geração de TAC vai ler):
+0: sucesso; 1: erro de leitura/compilação; 2: argumentos inválidos.
+Diagnósticos e avisos vão para stderr; uma fase com erro bloqueia as seguintes.
+--pilha, --vm-pilha e --stats são rejeitados. Não há estatísticas de execução.
 
-```text
-$ python -m miniforge exemplos/if_else.mini --tipos
-Programa
-├── Decl valor: inteirim
-│   └── Num 3 : inteirim
-├── Decl pequeno: booleanim
-│   └── Binario < : booleanim
-│       ├── Var valor : inteirim
-│       └── Num 5 : inteirim
-...
-```
+## Documentação e limites
 
-## Estrutura e documentos
+- [Especificação](docs/especificacao.md), [gramática](docs/gramatica.md).
+- [Arquitetura](docs/arquitetura.md), [matriz](docs/matriz-requisitos.md).
+- [Otimizações e resultados estáticos](docs/otimizacao.md).
+- [Integração e revisão](docs/integracao.md), [testes](docs/testes.md).
+- [Demonstração conferida](docs/demonstracao.md).
 
-```text
-miniforge/  __main__.py, tokens.py, lexer.py, ast.py, parser.py,
-            simbolos.py, semantica.py, __init__.py
-exemplos/   quatro programas válidos e quatro exemplos de erro
-tests/      lexer, parser, casos, símbolos, semântica, tipos, mineirês e CLI
-docs/       especificação, gramática, arquitetura, checkpoint e auditoria
-```
-
-- [Especificação](docs/especificacao.md) e [gramática](docs/gramatica.md).
-- [Arquitetura e próximas fases](docs/arquitetura.md).
-- [Checkpoint](docs/checkpoint.md) e [análise de lexer didático](docs/analise-lexer.md).
-- [Matriz de requisitos](docs/matriz-requisitos.md).
-- [Integração do ZIP e adaptações](docs/integracao.md).
-- [Testes](docs/testes.md) e [demonstração](docs/demonstracao.md).
-
-## Limitações e continuidade
-
-Sem funções, strings, floats, vetores ou operadores lógicos. Os nomes usam
-ASCII, comentários aceitam UTF-8. O parser para no primeiro erro sintático.
-O atalho interno `parse(fonte)` pressupõe fonte lexicamente válido e não
-inspeciona `Lexer.erros`; para validar arquivos use a CLI, que verifica todas
-as fases. Não há limite de profundidade ou recuperação de estouro de recursão
-para entradas patológicas, nem análise de valores ou de terminação de laços.
-
-TAC, bytecode, VM, otimizações e artigo da A2 permanecem no ZIP completo
-original para as próximas entregas. Não foram publicados como implementação
-ativa. A branch `entrega/modulo-4-semantica` e o PR preservam o histórico,
-sem merge automático ou criação retroativa de marcos.
+Sem VM, pilha, backend ou artigo final da A2. Não há prova geral de equivalência
+por execução. O atalho interno parse() pressupõe fonte lexicamente válido;
+para compilar arquivos use a CLI. Entradas patológicas, profundidade extrema
+e limite decimal do Python continuam limitações. Funções, strings, vetores e
+novos tipos não foram acrescentados. Apresentações ficam locais, fora do Git.

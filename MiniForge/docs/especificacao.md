@@ -1,8 +1,8 @@
-# Especificação do mineirês — v0.3-semantica
+# Especificação do mineirês — v0.5-otimizacao-sem-vm
 
 MiniForge é o nome do projeto e do compilador. A linguagem do grupo é o
 **mineirês**, com as decisões da versão v0.6 do ZIP. Esta publicação entrega
-léxico, sintaxe, símbolos e análise semântica até a aula 22 (16/10/2026).
+léxico, sintaxe, símbolos, semântica, TAC e otimização até a aula 30 (13/11/2026), sem VM.
 A semântica dinâmica descrita abaixo orienta a execução futura, ainda ausente.
 
 ## Elementos léxicos
@@ -195,8 +195,8 @@ exigirão revisar gramática, lexer e testes.
 `fatorial.mini`, `if_else.mini`, `escopos.mini` e `pao_de_queijo.mini` são
 válidos. `erro_lexico.mini` falha no lexer, `erro_sintatico.mini` no parser,
 `erro_semantico.mini` e `semantico.mini` na semântica. Este último relata os
-três erros independentes da aula 22. A CLI padrão informa sucesso ou erro,
-sem calcular valores nem executar os comandos de saída e repetição.
+três erros independentes da aula 22. A CLI padrão gera TAC após a validação; -O seleciona TAC otimizado.
+Não executa os comandos de saída e repetição.
 
 O significado dinâmico descrito acima é o contrato da linguagem para a
-execução futura. O corte `v0.3-semantica` implementa apenas o frontend.
+execução futura. A entrega implementa frontend e middle-end, sem execução.

@@ -1,17 +1,9 @@
-# Testes do frontend
+# Testes até otimização
 
-Preservamos os testes do ZIP para lexer, parser, casos, símbolos, semântica,
-tipos e vocabulário. Em `test_mineires.py`, os exemplos antes executados agora
-verificam a AST e os tipos. A formatação da saída da VM e divisão por zero
-permanecem no ZIP, fora do escopo desta suíte.
-
-`test_cli_frontend.py` acrescenta testes do padrão sem execução, das 32
-combinações de opções, erros de argumentos e leitura, opções futuras recusadas,
-independência de imports e dos 40 pares de operadores/tipos.
-
-Banco original: 11 válidos, 13 inválidos sintáticos e 18 semânticos, estes com
-um erro por arquivo. Os inválidos começam com `// ERRO:` e o teste compara a
-mensagem. Novos casos podem ser incluídos sem alterar o parametrizador.
-
-Executar `python -m pytest -q`. Ambiente e resultados reais em
-[docs/testes.md](../docs/testes.md).
+Executar python -m pytest -q. Frontend original preservado. test_ir.py contém
+expectativas textuais e estruturais do ZIP, sem seu executor TAC e desafio de
+pilha. test_otimizador.py reaproveita os testes isolados dos cinco passes e
+ponto fixo, removendo dependências de VM. test_middleend.py acrescenta riscos,
+API semântica, divisão exata, tipos estritos e 128 combinações de CLI.
+Não há VM de testes ou executor de TAC. Evidência não é prova geral de
+equivalência. Relatório completo em ../docs/testes.md.
