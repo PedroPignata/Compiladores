@@ -1,0 +1,4 @@
+// Válido. Saída esperada (python -m miniforge): 10.
+// Tabela da aula 30: com -O, 5 instruções viram 2.
+trem x: inteirim = 2*3+4;
+mostra_so(x*1);

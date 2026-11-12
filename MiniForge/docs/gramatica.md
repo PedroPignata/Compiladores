@@ -4,7 +4,7 @@ Versão final da aula 12 (11/09), usada pelo parser recursivo descendente da
 aula 14 (`miniforge/parser.py`). Ela parte do rascunho de `v0.0-spec`, sem
 ambiguidade e sem recursão à esquerda, pronta para parsing descendente LL(1).
 
-**Mineirês do grupo, integrado em v0.3-semantica.** Os terminais agora são as palavras do mineirês (`trem`,
+**Mineirês do grupo, integrado em v0.5-otimizacao-sem-vm.** Os terminais agora são as palavras do mineirês (`trem`,
 `inteirim`, `booleanim`, `eh_memo`, `num_eh`, `uai`, `sinao`,
 `enquanto_tiver`, `mostra_so`). A estrutura da gramática não mudou: os não
 terminais mantêm os nomes técnicos (`decl`, `if`, `while`, `print`), que são

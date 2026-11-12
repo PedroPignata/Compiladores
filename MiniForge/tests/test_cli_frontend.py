@@ -19,11 +19,10 @@ def cli(*args):
                           cwd=RAIZ, capture_output=True, text=True, timeout=5)
 
 
-def test_padrao_apenas_valida():
+def test_padrao_gera_tac_sem_execucao():
     r = cli('exemplos/fatorial.mini')
     assert r.returncode == 0 and not r.stderr
-    assert r.stdout == ('exemplos/fatorial.mini: tudo certim, sem erros '
-                        'léxicos, sintáticos ou semânticos\n')
+    assert 'print f' in r.stdout and '120' not in r.stdout
 
 
 @pytest.mark.parametrize('fonte', [
@@ -35,10 +34,10 @@ def test_nao_executa_nem_avalia_expressoes(tmp_path, fonte):
     p.write_text(fonte, encoding='utf-8')
     r = cli(p)
     assert r.returncode == 0 and not r.stderr
-    assert r.stdout == f'{p}: tudo certim, sem erros léxicos, sintáticos ou semânticos\n'
+    assert 'goto' in r.stdout or '/ 0' in r.stdout
 
 
-@pytest.mark.parametrize('opcao', ['--tac', '--pilha', '--vm-pilha', '--stats', '-O'])
+@pytest.mark.parametrize('opcao', ['--pilha', '--vm-pilha', '--stats'])
 def test_opcoes_futuras_rejeitadas(opcao):
     r = cli('exemplos/fatorial.mini', opcao)
     assert r.returncode == 2 and not r.stdout
@@ -75,7 +74,7 @@ def test_combinacoes_documentadas(flags):
     assert ("VAR          'trem'" in r.stdout) == tokens
     assert r.stdout.count('Programa') == int(arvore) + int(tipos)
     assert ('Num 5 : inteirim' in r.stdout) == tipos
-    sucesso = verificar or (not tokens and not arvore and not tipos)
+    sucesso = verificar
     assert ('tudo certim' in r.stdout) == sucesso
 
 
@@ -88,7 +87,7 @@ def test_opcao_semantica_nao_e_ignorada(flags):
 
 
 def test_independencia_estatica_e_dinamica():
-    proibidos = {'ir', 'vm', 'otimizador'}
+    proibidos = {'vm'}
     for arquivo in (RAIZ / 'miniforge').glob('*.py'):
         assert arquivo.stem not in proibidos
     for pasta in ['miniforge', 'tests']:
@@ -99,7 +98,7 @@ def test_independencia_estatica_e_dinamica():
     script = ('import sys; from miniforge.__main__ import main; '
               'main(["exemplos/fatorial.mini"]); '
               'assert not any(n in sys.modules for n in '
-              '["miniforge.ir", "miniforge.vm", "miniforge.otimizador"])')
+              '["miniforge.vm"])')
     r = subprocess.run([sys.executable, '-c', script], cwd=RAIZ, capture_output=True)
     assert r.returncode == 0, r.stderr
 

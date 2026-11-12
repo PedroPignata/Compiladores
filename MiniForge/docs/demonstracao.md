@@ -1,31 +1,58 @@
-# Demonstração reproduzível do frontend
+# Demonstração para a professora
 
-Dentro de MiniForge, com o ambiente ativado, executar cada comando abaixo.
-Os exemplos de erro retornam 1 intencionalmente. Reserve cerca de 3 minutos.
+Instalação no README. Com ambiente ativado e dentro de MiniForge, executar separadamente. Erros retornam 1 intencionalmente.
 
-1. `python -m miniforge exemplos/fatorial.mini`
+## python -m miniforge exemplos/fatorial.mini
 
-```text
-exemplos/fatorial.mini: tudo certim, sem erros léxicos, sintáticos ou semânticos
-```
-
-2. `python -m miniforge exemplos/fatorial.mini --tokens`
-
-Primeiras linhas (espaços de alinhamento podem variar por terminal):
+Código 0
 
 ```text
-2:1   VAR          'trem'
-2:6   ID           'n'
-2:7   DOIS_PONTOS  ':'
-2:9   INT          'inteirim'
+    n = 5
+    f = 1
+L1:
+    t1 = n > 0
+    ifFalse t1 goto L2
+    t2 = f * n
+    f = t2
+    t3 = n - 1
+    n = t3
+    goto L1
+L2:
+    print f
 ```
 
-3. `python -m miniforge exemplos/if_else.mini --tipos`
+## python -m miniforge exemplos/constantes.mini --tac
 
-A AST começa em `Programa`, mostra `Decl valor: inteirim` e `Num 3 : inteirim`,
-e depois `Decl pequeno: booleanim` e `Binario < : booleanim`.
+Código 0
 
-4. `python -m miniforge exemplos/semantico.mini --contexto`
+```text
+    t1 = 2 * 3
+    t2 = t1 + 4
+    base = t2
+    t3 = base * 10
+    lim = t3
+    t4 = lim > 50
+    ifFalse t4 goto L1
+    print lim
+    goto L2
+L1:
+    print 0
+L2:
+```
+
+## python -m miniforge exemplos/constantes.mini --tac -O
+
+Código 0
+
+```text
+    base = 10
+    lim = 100
+    print 100
+```
+
+## python -m miniforge exemplos/semantico.mini --contexto
+
+Código 1
 
 ```text
 linha 2: erro semântico: 'b' é booleanim, mas tá recebendo inteirim
@@ -39,11 +66,58 @@ linha 3: erro semântico: 'y' num foi declarado, sô
    |           ^
 ```
 
-5. `python -m pytest -q` termina com `377 passed` (tempo varia).
+## python -m miniforge exemplos/erro_lexico.mini
 
-Opcional: demonstrar `--ast` com `erro_semantico.mini`, que aceita a sintaxe,
-e depois repetir sem opções para mostrar o nome não declarado. Mostrar
-`exemplos/escopos.mini --tipos` para comparar o `x` interno e o externo.
+Código 1
 
-Plano B: os comandos e saídas estão neste documento e na apresentação PDF.
-Não apresentar `120`, `72` ou `22` como resultados executados nesta entrega.
+```text
+1:3: erro léxico: caractere inválido '@', que trem é esse?
+4:9: erro léxico: caractere inválido '$', que trem é esse?
+```
+
+## python -m miniforge exemplos/erro_sintatico.mini
+
+Código 1
+
+```text
+3:8: erro sintático: faltou ':', sô: achei 'inteirim'
+```
+
+## python -m miniforge exemplos/if_else.mini --tipos
+
+Código 0
+
+```text
+Programa
+├── Decl valor: inteirim
+│   └── Num 3 : inteirim
+├── Decl pequeno: booleanim
+│   └── Binario < : booleanim
+│       ├── Var valor : inteirim
+│       └── Num 5 : inteirim
+├── Print
+│   └── Var pequeno : booleanim
+└── If
+    ├── Binario > : booleanim
+    │   ├── Var valor : inteirim
+    │   └── Num 5 : inteirim
+    ├── Bloco
+    │   └── Print
+    │       └── Num 1 : inteirim
+    └── Bloco
+        └── Print
+            └── Num 0 : inteirim
+```
+
+## Conferências adicionais
+
+```bash
+python -m miniforge exemplos/fatorial.mini --tokens
+python -m miniforge exemplos/escopos.mini --tac
+python -m pytest -q tests/test_ir.py tests/test_otimizador.py tests/test_middleend.py
+python -m pytest -q
+```
+
+Sem ganho: compare fatorial.mini com e sem -O; laços exigem conservadorismo.
+Segurança: mostre o caso divisão por zero em test_middleend.py; a instrução permanece.
+Plano B: saídas deste documento e PDF local. Não prometer imprimir 120: print f é TAC.
