@@ -57,4 +57,4 @@ enquanto_tiver (opcao != 0) {
         }
     }
 }
-mostra_so("Inté mais, sô!");
+mostra_so("Até mais, sô!");
