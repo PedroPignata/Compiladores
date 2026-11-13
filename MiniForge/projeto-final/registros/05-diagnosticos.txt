@@ -1,0 +1,10 @@
+$ python3 -m miniforge exemplos/semantico.mini --verificar --contexto
+linha 2: erro semântico: 'b' é booleanim, mas tá recebendo inteirim
+ 2 | trem b: booleanim = x + 1;
+   | ^
+linha 3: erro semântico: condição tem que ser booleanim, mas veio inteirim
+ 3 | uai (x) { y = 2; }
+   |      ^
+linha 3: erro semântico: 'y' num foi declarado, sô
+ 3 | uai (x) { y = 2; }
+   |           ^

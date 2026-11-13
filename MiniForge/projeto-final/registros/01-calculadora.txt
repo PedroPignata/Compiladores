@@ -1,0 +1,26 @@
+$ python3 -m miniforge exemplos/calculadora/interativa.mini --executar
+╭────────────────────────────────────────────────╮
+│            CALCULADORA MINEIRA, SÔ!            │
+├────────────────────────────────────────────────┤
+│        [1] Somar          [2] Subtrair         │
+│         [3] Multiplicar    [4] Dividir         │
+│                    [0] Sair                    │
+╰────────────────────────────────────────────────╯
+Escolhe a operação aí, sô:
+1
+Qual é o primeiro número, sô?
+18
+E o segundo número?
+6
+Tá na mão, sô! Resultado:
+24
+╭────────────────────────────────────────────────╮
+│            CALCULADORA MINEIRA, SÔ!            │
+├────────────────────────────────────────────────┤
+│        [1] Somar          [2] Subtrair         │
+│         [3] Multiplicar    [4] Dividir         │
+│                    [0] Sair                    │
+╰────────────────────────────────────────────────╯
+Escolhe a operação aí, sô:
+0
+Até mais, sô!

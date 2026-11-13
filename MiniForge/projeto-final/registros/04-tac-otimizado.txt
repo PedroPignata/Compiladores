@@ -1,0 +1,4 @@
+$ python3 -m miniforge exemplos/constantes.mini --tac -O
+    base = 10
+    lim = 100
+    print 100

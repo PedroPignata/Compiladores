@@ -1,0 +1,80 @@
+{
+  "codigo_referencia": "71c0eaea7e485f4c0f691b9f851bead7beda30a4",
+  "sessoes": [
+    {
+      "nome": "01-calculadora",
+      "comando": "python3 -m miniforge exemplos/calculadora/interativa.mini --executar",
+      "entradas": [
+        "1",
+        "18",
+        "6",
+        "0"
+      ],
+      "codigo": 0
+    },
+    {
+      "nome": "02-calculadora-fracao",
+      "comando": "python3 -m miniforge exemplos/calculadora/interativa.mini --executar -O",
+      "entradas": [
+        "4",
+        "2",
+        "5",
+        "0"
+      ],
+      "codigo": 0
+    },
+    {
+      "nome": "03-jogo",
+      "comando": "python3 -m miniforge exemplos/adivinha/adivinha.mini --executar -O",
+      "entradas": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "codigo": 0,
+      "segredo_confirmado_pela_sequencia": 15
+    },
+    {
+      "nome": "04-tac",
+      "comando": "python3 -m miniforge exemplos/constantes.mini --tac",
+      "codigo": 0
+    },
+    {
+      "nome": "04-tac-otimizado",
+      "comando": "python3 -m miniforge exemplos/constantes.mini --tac -O",
+      "codigo": 0
+    },
+    {
+      "nome": "05-diagnosticos",
+      "comando": "python3 -m miniforge exemplos/semantico.mini --verificar --contexto",
+      "codigo": 1
+    },
+    {
+      "nome": "06-testes",
+      "comando": "python -m pytest -q",
+      "interpretador": "/tmp/miniforge-relatorio-venv/bin/python",
+      "codigo": 0,
+      "resumo": "817 passed in 12.42s"
+    }
+  ],
+  "pdf": {
+    "arquivo": "MiniForge-Projeto-Final.pdf",
+    "paginas": 18,
+    "data": "2026-11-13",
+    "prints": 6,
+    "revisao_visual": "Todas as páginas renderizadas e inspecionadas; sem texto fora das margens."
+  },
+  "metodo_prints": "Transcrições reais de processos; visualizador HTML local capturado com Firefox headless. Jogo com recorte explícito; TXT completo preservado."
+}

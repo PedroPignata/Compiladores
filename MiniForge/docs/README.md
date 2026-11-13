@@ -4,6 +4,9 @@ Documentação da main com compilação, otimização, execução de TAC, entrad
 mensagens literais e sorteio inteiro. Aplicações: Calculadora Mineira e
 Adivinha o trem, sô!, com segredo aleatório por partida.
 
+PDF para entrega: [Projeto Final](../projeto-final/README.md), com documentação,
+arquitetura e capturas da versão indicada na pasta.
+
 ## Estado vigente
 
 | Documento | O que consultar |

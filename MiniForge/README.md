@@ -146,6 +146,14 @@ A instrução de sorteio permanece em execução. Medições de todos os exemplo
 convenção de contagem: [otimizacao.md](docs/otimizacao.md). Não são benchmarks
 nem contagem de instruções executadas, e não há prova geral de equivalência.
 
+## Pasta de entrega do Projeto Final
+
+O [PDF de documentação](projeto-final/MiniForge-Projeto-Final.pdf) tem 18 páginas
+com o relatório, a arquitetura e seis prints de execuções reais. A pasta
+[projeto-final/](projeto-final/README.md) inclui também o diagrama vetorial,
+texto editável e registros completos das capturas. É o material para anexar
+à atividade; as apresentações em slides continuam fora do Git.
+
 ## Documentação e histórico
 
 - [Índice da documentação](docs/README.md).

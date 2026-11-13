@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="507.27559055118115" height="440" preserveAspectRatio="xMinYMin meet" viewBox="0 0 507 440" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="507.27559055118115" height="440"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-440)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="388" width="507.27559055118115" height="49" style="stroke: rgb(82%,76%,66%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,89%,83%); fill-rule: evenodd;"/>
+			<text x="12" y="407" style="font-family: DB; font-size: 12px;fill: rgb(70%,30%,11%); stroke:none;" transform="translate(0,814) scale(1,-1)">01</text>
+			<text x="42" y="417" style="font-family: DB; font-size: 10px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,834) scale(1,-1)">Fonte UTF-8</text>
+			<text x="42" y="400" style="font-family: D; font-size: 8.5px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,800) scale(1,-1)">Arquivo .mini da calculadora, jogo ou outro programa.</text>
+			<path d="M 253.637795,388 L 253.637795,378 Z" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1;"/>
+			<polygon points="250.6378 382, 256.6378 382, 253.6378 377" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,30%,11%); fill-rule: evenodd;"/>
+			<rect x="0" y="327" width="507.27559055118115" height="49" style="stroke: rgb(82%,76%,66%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,89%,83%); fill-rule: evenodd;"/>
+			<text x="12" y="346" style="font-family: DB; font-size: 12px;fill: rgb(70%,30%,11%); stroke:none;" transform="translate(0,692) scale(1,-1)">02</text>
+			<text x="42" y="356" style="font-family: DB; font-size: 10px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,712) scale(1,-1)">Tokens</text>
+			<text x="42" y="339" style="font-family: D; font-size: 8.5px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,678) scale(1,-1)">lexer.py e tokens.py: lexemas, categorias, linha e coluna.</text>
+			<path d="M 253.637795,327 L 253.637795,317 Z" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1;"/>
+			<polygon points="250.6378 321, 256.6378 321, 253.6378 316" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,30%,11%); fill-rule: evenodd;"/>
+			<rect x="0" y="266" width="507.27559055118115" height="49" style="stroke: rgb(82%,76%,66%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,89%,83%); fill-rule: evenodd;"/>
+			<text x="12" y="285" style="font-family: DB; font-size: 12px;fill: rgb(70%,30%,11%); stroke:none;" transform="translate(0,570) scale(1,-1)">03</text>
+			<text x="42" y="295" style="font-family: DB; font-size: 10px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,590) scale(1,-1)">Árvore sintática</text>
+			<text x="42" y="278" style="font-family: D; font-size: 8.5px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,556) scale(1,-1)">parser.py e ast.py: comandos, expressões e precedência.</text>
+			<path d="M 253.637795,266 L 253.637795,256 Z" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1;"/>
+			<polygon points="250.6378 260, 256.6378 260, 253.6378 255" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,30%,11%); fill-rule: evenodd;"/>
+			<rect x="0" y="205" width="507.27559055118115" height="49" style="stroke: rgb(82%,76%,66%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,89%,83%); fill-rule: evenodd;"/>
+			<text x="12" y="224" style="font-family: DB; font-size: 12px;fill: rgb(70%,30%,11%); stroke:none;" transform="translate(0,448) scale(1,-1)">04</text>
+			<text x="42" y="234" style="font-family: DB; font-size: 10px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,468) scale(1,-1)">AST tipada</text>
+			<text x="42" y="217" style="font-family: D; font-size: 8.5px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,434) scale(1,-1)">simbolos.py e semantica.py: nomes, escopos e tipos.</text>
+			<path d="M 253.637795,205 L 253.637795,195 Z" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1;"/>
+			<polygon points="250.6378 199, 256.6378 199, 253.6378 194" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,30%,11%); fill-rule: evenodd;"/>
+			<rect x="0" y="144" width="507.27559055118115" height="49" style="stroke: rgb(82%,76%,66%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,89%,83%); fill-rule: evenodd;"/>
+			<text x="12" y="163" style="font-family: DB; font-size: 12px;fill: rgb(70%,30%,11%); stroke:none;" transform="translate(0,326) scale(1,-1)">05</text>
+			<text x="42" y="173" style="font-family: DB; font-size: 10px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,346) scale(1,-1)">Código intermediário</text>
+			<text x="42" y="156" style="font-family: D; font-size: 8.5px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,312) scale(1,-1)">ir.py: temporários, instruções, rótulos e origem.</text>
+			<path d="M 253.637795,144 L 253.637795,134 Z" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1;"/>
+			<polygon points="250.6378 138, 256.6378 138, 253.6378 133" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,30%,11%); fill-rule: evenodd;"/>
+			<rect x="0" y="83" width="507.27559055118115" height="49" style="stroke: rgb(82%,76%,66%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,89%,83%); fill-rule: evenodd;"/>
+			<text x="12" y="102" style="font-family: DB; font-size: 12px;fill: rgb(70%,30%,11%); stroke:none;" transform="translate(0,204) scale(1,-1)">06</text>
+			<text x="42" y="112" style="font-family: DB; font-size: 10px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,224) scale(1,-1)">Otimização opcional</text>
+			<text x="42" y="95" style="font-family: D; font-size: 8.5px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,190) scale(1,-1)">otimizador.py e constantes.py: cinco passes, ponto fixo.</text>
+			<path d="M 253.637795,83 L 253.637795,73 Z" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1;"/>
+			<polygon points="250.6378 77, 256.6378 77, 253.6378 72" style="stroke: rgb(70%,30%,11%); stroke-linecap: butt; stroke-width: 1; fill: rgb(70%,30%,11%); fill-rule: evenodd;"/>
+			<rect x="0" y="22" width="507.27559055118115" height="49" style="stroke: rgb(82%,76%,66%); stroke-linecap: butt; stroke-width: 0.6; fill: rgb(93%,89%,83%); fill-rule: evenodd;"/>
+			<text x="12" y="41" style="font-family: DB; font-size: 12px;fill: rgb(70%,30%,11%); stroke:none;" transform="translate(0,82) scale(1,-1)">07</text>
+			<text x="42" y="51" style="font-family: DB; font-size: 10px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,102) scale(1,-1)">Saída da CLI</text>
+			<text x="42" y="34" style="font-family: D; font-size: 8.5px;fill: rgb(18%,14%,11%); stroke:none;" transform="translate(0,68) scale(1,-1)">Imprimir TAC ou executar com execucao.py (--executar).</text>
+		</g>
+	</g>
+</svg>

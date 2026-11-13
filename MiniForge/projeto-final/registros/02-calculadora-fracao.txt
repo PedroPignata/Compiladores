@@ -1,0 +1,25 @@
+$ python3 -m miniforge exemplos/calculadora/interativa.mini --executar -O
+╭────────────────────────────────────────────────╮
+│            CALCULADORA MINEIRA, SÔ!            │
+├────────────────────────────────────────────────┤
+│        [1] Somar          [2] Subtrair         │
+│         [3] Multiplicar    [4] Dividir         │
+│                    [0] Sair                    │
+╰────────────────────────────────────────────────╯
+Escolhe a operação aí, sô:
+4
+Qual é o primeiro número, sô?
+2
+E o segundo número?
+5
+Resultado inválido, sô! Essa fração num cabe em inteirim.
+╭────────────────────────────────────────────────╮
+│            CALCULADORA MINEIRA, SÔ!            │
+├────────────────────────────────────────────────┤
+│        [1] Somar          [2] Subtrair         │
+│         [3] Multiplicar    [4] Dividir         │
+│                    [0] Sair                    │
+╰────────────────────────────────────────────────╯
+Escolhe a operação aí, sô:
+0
+Até mais, sô!

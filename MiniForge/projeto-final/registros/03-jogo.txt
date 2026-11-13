@@ -1,0 +1,57 @@
+$ python3 -m miniforge exemplos/adivinha/adivinha.mini --executar -O
+╭────────────────────────────────────────────────╮
+│             ADIVINHA O TREM, SÔ!               │
+╰────────────────────────────────────────────────╯
+Tem um número escondido neste intervalo:
+1
+até
+100
+Digite 0 pra sair, se precisar tomar um cafezim.
+Qual é seu palpite, sô?
+1
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+2
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+3
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+4
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+5
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+6
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+7
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+8
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+9
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+10
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+11
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+12
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+13
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+14
+Tá pequeno demais, sô! Tenta um maior.
+Qual é seu palpite, sô?
+15
+Acertou, trem bão!
+Quantidade de tentativas:
+15
+Até mais, sô!
