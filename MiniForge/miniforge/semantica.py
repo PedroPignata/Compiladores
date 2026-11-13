@@ -134,6 +134,16 @@ class AnalisadorSemantico(Visitor):
             self.erro(no, f"'{no.nome}' é {nome_tipo(s.tipo)}, mas tá "
                           f"recebendo {nome_tipo(t)}")
 
+    def visitar_Leitura(self, no):
+        s = self.tabela.buscar(no.nome)
+        if s is None:
+            self.erro(no, f"'{no.nome}' num foi declarado, sô")
+        elif s.tipo != INT:
+            self.erro(no, 'le_so exige variável inteirim')
+
+    def visitar_Mensagem(self, no):
+        pass  # Texto literal é permitido somente como comando de saída.
+
     def visitar_Print(self, no):
         self.visitar(no.expr)          # print aceita int e bool
 

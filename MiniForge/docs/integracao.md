@@ -44,3 +44,8 @@ middle-end reaproveita o trabalho do mesmo grupo.
 VM, Stack VM, execução de TAC, métricas dinâmicas e artigo final foram excluídos.
 A apresentação fica local conforme preferência do usuário. A branch, o PR e
 a tag v0.5-otimizacao-sem-vm identificam que a versão não inclui VM.
+
+
+Revisão posterior: a aplicação interativa em mineirês exigiu entrada e executor
+TAC; ver execucao.md. A exclusão de execução descrita acima é o estado histórico
+da tag v0.5-otimizacao-sem-vm, não uma descrição da main atual.

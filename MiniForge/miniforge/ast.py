@@ -65,6 +65,16 @@ class Print(No):         # mostra_so(expr);
 
 
 @dataclass
+class Leitura(No):
+    nome: str
+
+
+@dataclass
+class Mensagem(No):
+    texto: str
+
+
+@dataclass
 class Bloco(No):         # { comandos }
     comandos: List[No]
 
@@ -129,6 +139,10 @@ def rotulo(no):
 
 
 def _rotulo_sem_tipo(no):
+    if isinstance(no, Leitura):
+        return f"Leitura {no.nome}"
+    if isinstance(no, Mensagem):
+        return f"Mensagem {no.texto!r}"
     if isinstance(no, Decl):
         return f"Decl {no.nome}: {nome_tipo(no.tipo)}"
     if isinstance(no, Atrib):

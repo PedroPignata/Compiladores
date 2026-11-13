@@ -1,4 +1,4 @@
-"""CLI mineirês: frontend, TAC e otimização, sem execução."""
+"""CLI mineirês: compilação e execução explícita de TAC."""
 
 import argparse
 from pathlib import Path
@@ -17,7 +17,7 @@ def main(argv=None) -> int:
         prog="python -m miniforge",
         description="MiniForge: compilador didático da linguagem mineirês, "
                     "sô. Sem opções, gera TAC após validar léxico, sintaxe e semântica, "
-                    "sem executar o programa.",
+                    "sem executar por padrão. Use --executar para executar o TAC.",
     )
     parser.add_argument("arquivo", type=Path, help="caminho do programa .mini")
     parser.add_argument(
@@ -42,9 +42,12 @@ def main(argv=None) -> int:
         "--verificar", action="store_true",
         help="verifica léxico, sintaxe e semântica (sem gerar TAC)",
     )
+    parser.add_argument('--executar', action='store_true', help='executa o TAC após compilar')
     parser.add_argument('--tac', action='store_true', help='imprime TAC, sem executar')
     parser.add_argument('-O', action='store_true', dest='otimizar', help='otimiza o TAC')
     args = parser.parse_args(argv)
+    if args.executar and (args.tokens or args.ast or args.tipos or args.verificar or args.tac):
+        parser.error('--executar não pode acompanhar opções de inspeção')
     inspecao = args.tokens or args.ast or args.tipos or args.verificar or args.tac
     gerar = args.tac or not inspecao
     if args.otimizar and not gerar:
@@ -115,7 +118,17 @@ def main(argv=None) -> int:
         codigo = gerar_tac(programa)
         if args.otimizar:
             codigo = otimizar(codigo)
-        if codigo:
+        if args.executar:
+            from .execucao import executar, ErroExecucao
+            try:
+                executar(codigo)
+            except ErroExecucao as erro:
+                print(erro, file=sys.stderr)
+                return 1
+            except KeyboardInterrupt:
+                print('Execução interrompida.', file=sys.stderr)
+                return 130
+        elif codigo:
             print(formatar_tac(codigo))
     return 0
 

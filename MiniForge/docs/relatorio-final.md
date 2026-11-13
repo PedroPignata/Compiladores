@@ -16,12 +16,13 @@ O MiniForge é um compilador didático de uma linguagem própria chamada mineir�
 O trabalho transforma texto em tokens, constrói uma árvore sintática abstrata,
 verifica nomes e tipos, gera código de três endereços (TAC) e aplica cinco passes
 de otimização até um ponto fixo. A Calculadora Mineira é a aplicação demonstrativa, com fontes escritos nessa
-linguagem e uma interface de teclado em Python. O relatório descreve a implementação e suas evidências,
+linguagem, agora incluindo leitura pelo teclado e execução explícita. O relatório descreve a implementação e suas evidências,
 sem atribuir resultados de execução ao código que apenas foi compilado.
 
-A entrega final termina na otimização do código intermediário. A CLI imprime TAC
-original ou otimizado. Não há executor, backend, bytecode nem entrada pelo teclado.
-Essa delimitação é importante para interpretar os comandos de demonstração.
+O marco inicial terminava na otimização do código intermediário. Por solicitação
+posterior de uma aplicação interativa na própria linguagem, a revisão atual
+adicionou entrada, mensagens literais e um executor TAC. A CLI imprime TAC por
+padrão e só executa com --executar. Não há bytecode de pilha.
 
 ## 2. Objetivos e motivação
 
@@ -33,8 +34,7 @@ gramática. Python implementa o compilador, mas o fonte que ele aceita é mineir
 `uai (x > 0) { mostra_so(x); }` não é código Python e não é encaminhado a `eval`.
 
 A calculadora demonstra uma aplicação compreensível: recebe dois inteiros e
-uma operação no terminal, compila uma conta em mineirês e apresenta a constante
-produzida pelo otimizador. Exemplos fixos também mostram seleção e validade. Sua leitura
+uma operação no terminal e executa o programa mineirês compilado. Exemplos fixos também mostram seleção e validade. Sua leitura
 permite explicar decisões de projeto sem depender de interface gráfica.
 
 ## 3. Continuidade e método de desenvolvimento
@@ -62,6 +62,7 @@ está na página física 5, identificada como 4/5 da aula 06. TAC está nas pág
 
 | Palavra | Significado | Exemplo |
 |---|---|---|
+| `le_so` | Entrada inteira | `le_so(x);` |
 | `trem` | Declara variável inicializada | `trem x: inteirim = 18;` |
 | `inteirim` | Tipo inteiro | `trem y: inteirim = 6;` |
 | `booleanim` | Tipo booleano | `trem ok: booleanim = eh_memo;` |
@@ -101,6 +102,7 @@ MiniForge/
     ir.py             AST validada para instruções TAC
     constantes.py     avaliação estrita de uma operação literal
     otimizador.py     cinco passes e ponto fixo
+    execucao.py       executor genérico de TAC, entrada e saída
   tests/              regressões e cenários por fase
   exemplos/           fontes .mini
     calculadora/      interface interativa, fontes, README e TAC de referência
@@ -191,26 +193,33 @@ em `constantes.py` não percorre programas nem executa saltos.
 
 ## 11. Aplicação: Calculadora Mineira
 
-### 11.1. Interface interativa
+### 11.1. Programa interativo na própria linguagem
 
-O comando `python -m exemplos.calculadora.interativa` abre um menu de quatro
-operações. O usuário escolhe, digita os dois inteiros e recebe o resultado.
-O menu se repete até a opção 0. Entradas inválidas são solicitadas novamente;
-divisão por zero retorna ao menu com uma mensagem. Números negativos são aceitos.
-O modo `--detalhes` mostra o fonte gerado e o TAC antes e depois dos passes.
+O fonte `exemplos/calculadora/interativa.mini` contém todo o menu, leitura,
+validação de opção, escolha da conta e repetição. O comando para executar é
+`python -m miniforge exemplos/calculadora/interativa.mini --executar`.
+A opção `-O` permite executar a versão otimizada. Não existe aplicativo Python
+específico selecionando as contas ou produzindo programas para cada solicitação.
 
-A interação é implementada em `exemplos/calculadora/interativa.py`, em Python.
-Cada conta gera em memória declarações `trem` e um comando `mostra_so` usando
-o operador escolhido. Esse fonte percorre o lexer, o parser, a verificação
-semântica pela API `gerar_tac`, a geração de TAC e `otimizar`. A interface aceita
-somente uma saída inteira literal em TAC reduzido, sem instruções de fluxo,
-e apresenta esse valor. Não existe cálculo alternativo da operação na interface.
-Se a redução não obedecer ao contrato, a aplicação reporta falha.
+Foi necessário ampliar a linguagem com `le_so(nome);`, que exige variável
+inteira declarada, e mensagens literais em `mostra_so("texto");`. O lexer ganhou
+os tokens READ e TEXTO; o parser cria Leitura e Mensagem; a semântica verifica
+as leituras e o gerador produz read/texto. Mensagens não são expressões de um
+novo tipo: só podem aparecer como saída literal, sem escapes ou interpolação.
 
-Isso fornece uma experiência interativa sem ampliar a linguagem com entrada de
-dados nem integrar backend. O resultado é obtido em compilação por dobramento
-de constantes, não por execução geral de um programa mineirês. A distinção é
-explícita na documentação e pode ser observada com `--detalhes`.
+O novo módulo `miniforge/execucao.py` executa o TAC válido usando memória de
+nomes internos e contador de instruções. A aritmética usa as regras já existentes,
+inclusive divisão truncada para zero. O programa mineirês usa um laço para
+repetir o menu e condicionais para escolher a operação e evitar divisor zero.
+Entrada decimal ou texto é rejeitada pelo leitor inteiro, que solicita novamente.
+EOF e divisão por zero não protegida geram erro com linha de origem.
+
+Isso é uma extensão efetiva de execução/backend em relação ao marco anterior,
+autorizada pela necessidade posterior de uma aplicação interativa em mineirês.
+Não se descreve o novo produto como um compilador sem execução. Python continua
+sendo a linguagem de implementação do compilador e do executor, e mineirês é a
+linguagem em que a aplicação está escrita. O arquivo `interativa.py` anterior foi
+removido. Contratos e testes estão em [execucao.md](execucao.md).
 
 ### 11.2. Fonte fixo com seleção
 
@@ -224,8 +233,8 @@ A calculadora representa primeiro a validade e depois o resultado, apenas se
 válido. Essa separação evita usar um número especial como erro, pois zero e
 negativos também são respostas legítimas. Os operandos ficam no fonte porque
 a linguagem não possui entrada de dados. O programa é compilável e a aplicação
-fixa é demonstrada pela tradução e otimização. O uso interativo está na
-interface descrita na seção 11.1.
+fixa é demonstrada pela tradução e otimização. O programa interativo completo
+está descrito na seção 11.1.
 
 O segundo fonte, `constantes.mini`, demonstra todas as operações, truncamento
 negativo, precedência e parênteses. Os TAC originais e otimizados estão ao lado
@@ -247,22 +256,24 @@ Redução percentual: `100 * (antes - depois) / antes`.
 Na calculadora padrão, o TAC final contém `print eh_memo` e `print 24`. São
 instruções geradas. Nas contas diretas, os operandos de `print` são 24, 12, 108,
 3, -3, 14 e 20. As expectativas foram conferidas manualmente e por testes do
-TAC. Não há medição de velocidade nem execução comparativa antes/depois.
+TAC. Essas medidas históricas não incluem velocidade. A revisão atual acrescenta
+testes de execução com e sem otimização para os cenários da calculadora.
 Zero redução no fatorial é compatível com uma otimização local conservadora.
 
 Os testes cobrem fases do frontend, geração por construção, identidade de nomes,
 alvos de saltos, origem das instruções, cada passe, ponto fixo, não mutação,
 divisão por zero e inteiros grandes, CLI e importação independente de VM.
 `tests/test_calculadora.py` acrescenta cenários da aplicação e comparação das
-referências. `tests/test_calculadora_interativa.py` verifica respostas obtidas
-do compilador, rejeição de resultado não dobrado, sessões de terminal, entradas
-inválidas, divisão por zero, repetição, modo detalhado e encerramento. Comandos e resultados da execução atual estão em
+referências. `tests/test_calculadora_interativa.py` verifica execução real com
+e sem otimização, leitura, mensagens, entradas inválidas, EOF, erros de execução,
+repetição e contratos das novas fases. Comandos e resultados da execução atual estão em
 [testes-calculadora.md](testes-calculadora.md). Os 696 testes anteriores são um
 resultado histórico da integração, não a contagem da suíte ampliada.
 
 Testes estruturais e parametrizados oferecem evidências para os casos cobertos.
-Não constituem prova geral de equivalência semântica. Também não substituem
-testes de execução, que estão fora do produto implementado.
+Não constituem prova geral de equivalência semântica. A revisão atual inclui
+testes de execução da aplicação com e sem otimização, com alcance restrito aos
+casos cobertos.
 
 ## 13. Reproduzir a entrega
 
@@ -273,7 +284,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
-python -m exemplos.calculadora.interativa --detalhes
+python -m miniforge exemplos/calculadora/interativa.mini --executar
 python -m miniforge exemplos/calculadora/calculadora.mini --verificar
 python -m miniforge exemplos/calculadora/calculadora.mini --tokens
 python -m miniforge exemplos/calculadora/calculadora.mini --ast
@@ -299,11 +310,9 @@ otimizado. A separação de fases permite localizar responsabilidades e erros.
 A calculadora dá uma aplicação concreta às decisões da linguagem e demonstra
 como constantes e fluxo de controle oferecem oportunidades de simplificação.
 
-O produto final limita-se à compilação até otimização. Não inclui funções,
-strings, floats, vetores, operadores lógicos, leitura interativa nem execução.
-A leitura de teclado existe na interface Python, que fornece literais ao compilador.
-A ausência de entrada na linguagem limita o tipo de aplicação possível, mas não exige
-modificar a linguagem para demonstrar as fases implementadas. A documentação
+O produto inclui compilação até otimização e execução explícita de TAC para
+a aplicação interativa. Não inclui funções, variáveis string, floats, vetores
+ou operadores lógicos. A extensão de entrada e saída é restrita e documentada. A documentação
 e os testes registram o que foi efetivamente construído e o alcance das evidências.
 
 ## 15. Referências do trabalho

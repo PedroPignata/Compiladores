@@ -1,65 +1,74 @@
 # Calculadora Mineira
 
-Aplicação interativa que usa **mineirês**, a linguagem do MiniForge,
-para compilar as contas. A interface de teclado é implementada em Python. Autores do projeto: Pedro Dutra, Pedro Pignata, Lucas Rocha Dantas
+Aplicação escrita em **mineirês**, a linguagem do MiniForge.
+O programa é compilado e executado pelo MiniForge. Autores do projeto: Pedro Dutra, Pedro Pignata, Lucas Rocha Dantas
 e Renato Portilho. Disciplina: Compiladores, professora Lorena Bezerra.
 
-## Usar a calculadora interativa
+## Usar a calculadora em mineirês
 
-Na pasta `MiniForge/`, execute:
-
-```bash
-python3 -m exemplos.calculadora.interativa
-```
-
-No Windows ou com ambiente virtual ativo, use `python` no lugar de `python3`.
-Não é necessário instalar pytest para abrir a calculadora.
-Escolha 1 para soma, 2 para subtração, 3 para multiplicação ou 4 para divisão.
-Digite os dois inteiros quando solicitado. A resposta aparece imediatamente;
-o menu volta para permitir outra conta. Digite 0 no menu para sair.
-
-Exemplo de sessão (trecho):
-
-```text
-Escolha a operação: 1
-Primeiro número: 18
-Segundo número: 6
-Resultado: 18 + 6 = 24
-```
-
-Números negativos são aceitos. Entradas como `abc` e `2.5` são rejeitadas e o
-mesmo número é solicitado novamente. Divisão por zero mostra uma mensagem e
-volta ao menu. Ctrl+C ou fim de entrada encerram sem traceback.
-A divisão continua inteira: `-7 / 2 = -3`, pois a linguagem usa `inteirim`.
-
-### Mostrar o trabalho do compilador durante a conta
+O programa completo é [interativa.mini](interativa.mini). Execute na pasta
+MiniForge/, com Python 3.10+ instalado:
 
 ```bash
-python3 -m exemplos.calculadora.interativa --detalhes
+python3 -m miniforge exemplos/calculadora/interativa.mini --executar
 ```
 
-Esse modo mostra o programa mineirês gerado, o TAC original e o TAC otimizado,
-além do resultado. É o modo recomendado para apresentar à professora.
-Para 18 + 6, o fonte criado em memória é:
+O menu é impresso pelo próprio programa. Escolha 1 para soma, 2 para subtração,
+3 para multiplicação, 4 para divisão ou 0 para sair. Digite os dois inteiros.
+O resultado aparece e o menu volta. Negativos são aceitos, e a divisão trunca
+para zero: -7 / 2 resulta em -3. Texto ou decimal no lugar de inteiro gera uma
+mensagem e solicita novamente a mesma entrada. Divisor zero gera a mensagem
+escrita no fonte e volta ao menu. Fim inesperado da entrada retorna código 1;
+Ctrl+C interrompe a execução com código 130.
+
+Exemplo de sessão:
 
 ```text
-trem primeiro: inteirim = 18;
-trem segundo: inteirim = 6;
-mostra_so(primeiro + segundo);
+Calculadora Mineira
+1 - Somar / 2 - Subtrair / 3 - Multiplicar / 4 - Dividir / 0 - Sair
+1
+Primeiro numero:
+18
+Segundo numero:
+6
+Resultado:
+24
 ```
 
-A interface chama o lexer, o parser, a semântica (pela API de geração), o
-gerador TAC e o otimizador reais. Com operandos já conhecidos, os passes
-reduzem a expressão e produzem `print 24`. A interface apresenta esse literal.
-Ela não calcula a operação por um dicionário de funções Python, não usa `eval`
-e não interpreta programas ou saltos TAC. Se o resultado não for uma constante
-inteira no formato esperado, a interface reporta falha em vez de recalcular.
+### Onde está cada parte do programa?
 
-**Distinção para explicar na apresentação:** a interação acontece no aplicativo
-Python. O programa mineirês gerado recebe literais, não lê teclado. O resultado
-vem do dobramento de constantes durante a compilação, não de uma máquina virtual.
-A CLI `python -m miniforge` mantém seu comportamento de geração de TAC.
-O modo interativo não altera os arquivos `.mini` nem os `.tac` de referência.
+- `enquanto_tiver (opcao != 0)` mantém o menu ativo.
+- `mostra_so("texto")` imprime as mensagens literais.
+- `le_so(opcao)` e `le_so(primeiro)` recebem valores do teclado.
+- `uai` e `sinao` validam a opção e selecionam as operações.
+- A verificação de `segundo == 0` evita uma divisão inválida.
+- `mostra_so(resultado)` apresenta o valor calculado em execução.
+
+A linguagem recebeu `le_so`, que exige uma variável inteira já declarada.
+Literais entre aspas duplas só são aceitos em `mostra_so`; não há variáveis
+string, concatenação ou interpolação. Menu e lógica estão no `.mini`, não em
+uma interface específica escrita em Python. `miniforge/execucao.py` é o executor
+genérico do código TAC, implementado em Python como as demais fases.
+O antigo `interativa.py`, que gerava contas fechadas, foi removido.
+
+### Compilar, otimizar e executar
+
+```bash
+python -m miniforge exemplos/calculadora/interativa.mini --verificar
+python -m miniforge exemplos/calculadora/interativa.mini --tokens
+python -m miniforge exemplos/calculadora/interativa.mini --ast
+python -m miniforge exemplos/calculadora/interativa.mini --tipos
+python -m miniforge exemplos/calculadora/interativa.mini --tac
+python -m miniforge exemplos/calculadora/interativa.mini --tac -O
+python -m miniforge exemplos/calculadora/interativa.mini --executar -O
+```
+
+Só `--executar` roda o programa. Os outros comandos permitem estudar cada
+representação sem consumir teclado. `--executar` não pode ser combinado com
+inspeções como `--tokens` ou `--tac`: a CLI retorna código 2. `-O` é permitido.
+Em execução, `read` substitui o valor da variável por um novo inteiro; o
+otimizador invalida a constante anterior e preserva a leitura como efeito.
+Isso impede que números lidos em rodadas diferentes sejam congelados.
 
 ## Exemplos fixos em mineirês: objetivo e funcionamento
 
@@ -78,7 +87,7 @@ uma operação durante a compilação, sem executar o programa inteiro.
 
 | Arquivo | Finalidade |
 |---|---|
-| `interativa.py` | Menu, leitura de inteiros, chamada ao compilador e apresentação do literal |
+| `interativa.mini` | Programa interativo completo escrito em mineirês |
 | `calculadora.mini` | Calculadora com seleção e proteção da divisão |
 | `constantes.mini` | Contas diretas para demonstrar precedência e otimização |
 | `calculadora-original.tac` | TAC da configuração padrão da calculadora |
@@ -178,7 +187,7 @@ Contamos todas as instruções exceto `label`. A redução é
 
 | Fonte padrão | Antes | Depois | Redução |
 |---|---:|---:|---:|
-| `interativa.py` | Menu, leitura de inteiros, chamada ao compilador e apresentação do literal |
+| `interativa.mini` | Programa interativo completo escrito em mineirês |
 | `calculadora.mini` | 34 | 8 | 76,47% |
 | `constantes.mini` | 19 | 9 | 52,63% |
 
@@ -197,10 +206,11 @@ python -m pytest -q
 Os testes usam fontes configurados em memória para não modificar os exemplos.
 Cobrem as quatro operações, números negativos, divisor zero, operação inválida,
 TAC de referência, alvos de saltos, idempotência e compilação pela CLI.
-São evidências estruturais, sem executor de TAC e sem prova geral de equivalência.
+Os exemplos fixos têm testes estruturais. O programa interativo tem testes de
+execução com e sem otimização, sem constituir prova geral de equivalência.
 
-Roteiro sugerido: abrir a interface com `--detalhes`, fazer uma conta e mostrar
-as representações geradas; depois mostrar as configurações do exemplo fixo; validar o fonte; abrir tokens e AST
+Roteiro sugerido: executar `interativa.mini`, fazer uma conta e depois mostrar
+o TAC em uma chamada separada; depois mostrar as configurações do exemplo fixo; validar o fonte; abrir tokens e AST
 tipada; comparar os dois TAC; trocar operação para 4 e divisor para 0; explicar
 o ramo de validade falsa; mostrar a suíte. Mudar um tipo para `booleanim` com
 inicializador inteiro demonstra erro semântico com `--contexto` (desfaça depois).
@@ -208,7 +218,7 @@ inicializador inteiro demonstra erro semântico com `--contexto` (desfaça depoi
 ## Limitações e problemas comuns
 
 - A interface interativa é de terminal. Não há interface gráfica nem ponto flutuante.
-- A linguagem mineirês não ganhou um comando de entrada: o aplicativo Python prepara o fonte.
+- A linguagem agora possui `le_so` para inteiros; o menu é parte do programa mineirês.
 - Rode os comandos na raiz `MiniForge/`: em outra pasta pode ocorrer
   `No module named miniforge`. Confirme também o ambiente Python ativo.
 - Use `inteirim`, `booleanim`, `uai` e `sinao`, não as palavras de Python.

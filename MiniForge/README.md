@@ -1,12 +1,14 @@
 # MiniForge - compilador de mineirês, sô
 
-Entrega para **13/11/2026**, versão **v0.5-otimizacao-sem-vm**.
+Revisão interativa de **13/11/2026**.
+Marco anterior de compilação: **v0.5-otimizacao-sem-vm**.
 Pedro Dutra, Pedro Pignata, Lucas Rocha Dantas e Renato Portilho.
 Professora Lorena Bezerra, Compiladores 2026.2.
 
-Continuação do frontend v0.3-semantica: agora o projeto valida o fonte,
-gera código de três endereços (TAC) e pode otimizá-lo. **Não executa programas**.
-A máquina virtual e o backend foram explicitamente excluídos desta entrega.
+O projeto valida o fonte, gera código de três endereços (TAC) e pode otimizá-lo.
+A revisão atual acrescenta entrada e execução explícita para a calculadora
+inteiramente em mineirês. A tag v0.5-otimizacao-sem-vm preserva o marco anterior,
+sem execução; a main atual inclui o executor descrito em docs/execucao.md.
 
 ## Instalar e conferir
 
@@ -23,7 +25,8 @@ python -m miniforge exemplos/constantes.mini --tac -O
 ```
 
 O compilador usa a biblioteca padrão; pytest é dependência de desenvolvimento.
-A suíte ampliada tem 740 testes, incluindo 44 da Calculadora Mineira e sua interface.
+A suíte atual tem **754 testes**, incluindo entrada e execução. Resultado
+em docs/testes-calculadora.md.
 O registro histórico da integração está em docs/testes.md; a execução atual
 está em docs/testes-calculadora.md.
 
@@ -31,6 +34,7 @@ está em docs/testes-calculadora.md.
 
 | Palavra | Papel | Exemplo |
 |---|---|---|
+| le_so | leitura de inteiro | le_so(n); |
 | trem | declaração inicializada | trem x: inteirim = 1; |
 | inteirim | inteiro | trem n: inteirim = 5; |
 | booleanim | booleano | trem ok: booleanim = eh_memo; |
@@ -49,7 +53,7 @@ foi adicionada: operadores lógicos permanecem proposta futura na gramática.
 MiniForge/
   miniforge/ __init__.py, __main__.py, tokens.py, lexer.py,
              ast.py, parser.py, simbolos.py, semantica.py,
-             ir.py, otimizador.py, constantes.py
+             ir.py, otimizador.py, constantes.py, execucao.py
   tests/     casos e testes por fase
   exemplos/  programas .mini
   docs/      especificacao.md, gramatica.md, arquitetura.md,
@@ -61,7 +65,7 @@ fonte -> tokens -> AST -> AST tipada -> TAC -> [otimização]
 
 A estrutura corresponde ao slide inicial 4/5 (página física 5). O pacote
 genérico minilang do exemplo corresponde a MiniForge/miniforge. Não há
-exigência de renomear nossa linguagem. vm.py é a exceção deliberada, excluída.
+exigência de renomear nossa linguagem. O executor atual está em execucao.py; vm.py do ZIP não foi copiado.
 Não foram alterados os demais projetos de Compiladores.
 
 ## CLI e combinações
@@ -71,6 +75,7 @@ Essa é a evolução do padrão anterior, que apenas informava sucesso semântic
 
 | Opção | Comportamento |
 |---|---|
+| --executar | Compila e executa o TAC; aceita -O, rejeita inspeções combinadas |
 | --tokens | Léxico e tokens |
 | --ast | Parser e AST sintática |
 | --tipos | Semântica e AST anotada |
@@ -99,37 +104,42 @@ Diagnósticos e avisos vão para stderr; uma fase com erro bloqueia as seguintes
 - [Integração e revisão](docs/integracao.md), [testes](docs/testes.md).
 - [Demonstração conferida](docs/demonstracao.md).
 
-Sem VM, pilha, backend ou artigo final da A2. Não há prova geral de equivalência
-por execução. O atalho interno parse() pressupõe fonte lexicamente válido;
+Há execução explícita de TAC em execucao.py, sem bytecode de pilha.
+Não há prova geral de equivalência; os testes exercitam os casos cobertos. O atalho interno parse() pressupõe fonte lexicamente válido;
 para compilar arquivos use a CLI. Entradas patológicas, profundidade extrema
 e limite decimal do Python continuam limitações. Funções, strings, vetores e
-novos tipos não foram acrescentados. Apresentações ficam locais, fora do Git.
+tipos de variável não foram acrescentados; texto literal só é permitido em mostra_so. Apresentações ficam locais, fora do Git.
 
-## Calculadora interativa
+## Calculadora interativa escrita em mineirês
 
-Na pasta `MiniForge/`, execute:
+O programa está em [interativa.mini](exemplos/calculadora/interativa.mini).
+O próprio fonte contém menu, leitura dos números, seleção, operações,
+tratamento de divisor zero e repetição. Não há aplicativo Python específico
+fazendo as contas ou gerando fontes no lugar do programa.
 
-```bash
-python3 -m exemplos.calculadora.interativa
-```
-
-Escolha a operação, digite dois inteiros e veja o resultado. O menu permite
-novas contas e a opção 0 encerra. Há mensagens para números inválidos e divisor
-zero. A divisão trunca para zero, seguindo a linguagem (`7 / 2 = 3`).
-No Windows ou com ambiente virtual ativo, use `python` no lugar de `python3`.
-
-Para mostrar o fonte em mineirês e os dois TAC junto da resposta:
+Na raiz MiniForge/:
 
 ```bash
-python3 -m exemplos.calculadora.interativa --detalhes
+python3 -m miniforge exemplos/calculadora/interativa.mini --executar
 ```
 
-O aplicativo de terminal em Python gera uma conta em mineirês com os valores
-digitados, passa pelas fases reais do compilador e mostra a constante produzida
-pelo otimizador. Não é uma VM e não adiciona execução de programas à CLI.
-A linguagem não ganhou entrada pelo teclado: a interface fornece literais ao
-fonte compilado. Instruções completas no
-[README da calculadora](exemplos/calculadora/README.md).
+Escolha 1, 2, 3 ou 4, digite os dois inteiros e veja o resultado. Use 0 no
+menu para sair. No Windows ou com ambiente virtual ativo, use `python`.
+Para executar TAC otimizado, acrescente `-O`. Para estudar as fases:
+
+```bash
+python -m miniforge exemplos/calculadora/interativa.mini --tokens
+python -m miniforge exemplos/calculadora/interativa.mini --tipos
+python -m miniforge exemplos/calculadora/interativa.mini --tac
+python -m miniforge exemplos/calculadora/interativa.mini --tac -O
+```
+
+A extensão `le_so(nome);` lê um inteiro para uma variável `inteirim` já
+declarada. `mostra_so("texto");` imprime uma mensagem literal. Textos não são
+um novo tipo de variável: só são aceitos nessa forma de saída.
+O Python implementa o compilador e o executor genérico, enquanto o programa
+está escrito em mineirês. Detalhes no [README da calculadora](exemplos/calculadora/README.md)
+e em [execução e entrada](docs/execucao.md).
 
 ## Exemplos fixos da Calculadora Mineira
 
@@ -188,8 +198,8 @@ python -m pytest -q
 ```
 
 A primeira chamada testa a aplicação; a segunda inclui a suíte do compilador.
-Os testes não executam programas mineirês: comparam representações e contratos,
-incluindo saídas reais da CLI. Resultado atualizado e ambiente estão em
+Os testes cobrem representações e contratos e agora também sessões reais
+de programas mineirês pelo executor, com e sem otimização. Resultado atualizado e ambiente estão em
 [registro de testes da calculadora](docs/testes-calculadora.md).
 
 O fonte padrão da calculadora gera 34 instruções e 8 após otimização, redução

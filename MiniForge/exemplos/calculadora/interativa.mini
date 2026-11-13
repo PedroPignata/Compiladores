@@ -1,0 +1,48 @@
+// Programa inteiro em mineires: menu, leitura, selecao, contas e repeticao.
+trem opcao: inteirim = -1;
+enquanto_tiver (opcao != 0) {
+    mostra_so("Calculadora Mineira");
+    mostra_so("1 - Somar / 2 - Subtrair / 3 - Multiplicar / 4 - Dividir / 0 - Sair");
+    le_so(opcao);
+    uai (opcao != 0) {
+        uai (opcao < 1) {
+            mostra_so("Opcao invalida.");
+        } sinao {
+            uai (opcao > 4) {
+                mostra_so("Opcao invalida.");
+            } sinao {
+                trem primeiro: inteirim = 0;
+                trem segundo: inteirim = 0;
+                mostra_so("Primeiro numero:");
+                le_so(primeiro);
+                mostra_so("Segundo numero:");
+                le_so(segundo);
+                trem resultado: inteirim = 0;
+                trem valido: booleanim = eh_memo;
+                uai (opcao == 1) {
+                    resultado = primeiro + segundo;
+                } sinao {
+                    uai (opcao == 2) {
+                        resultado = primeiro - segundo;
+                    } sinao {
+                        uai (opcao == 3) {
+                            resultado = primeiro * segundo;
+                        } sinao {
+                            uai (segundo == 0) {
+                                mostra_so("Nao e possivel dividir por zero.");
+                                valido = num_eh;
+                            } sinao {
+                                resultado = primeiro / segundo;
+                            }
+                        }
+                    }
+                }
+                uai (valido) {
+                    mostra_so("Resultado:");
+                    mostra_so(resultado);
+                }
+            }
+        }
+    }
+}
+mostra_so("Ate mais, so!");

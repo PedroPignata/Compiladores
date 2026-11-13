@@ -1,4 +1,4 @@
-# Arquitetura até otimização, sem backend
+# Arquitetura do MiniForge
 
 A estrutura da página física 5 (slide 4/5) é mantida com o nome do pacote
 miniforge. Léxico e parser usam tokens e dataclasses da AST. A semântica usa
@@ -20,6 +20,8 @@ REGRAS da semântica. Não contém execução de instruções ou fluxo de contro
 O otimizador recebe TAC válido e tipado da geração. A CLI é o ponto de entrada
 que verifica também erros léxicos e sintáticos.
 
-Não existem vm.py, bytecode, pilha, contador de programa ou executor de testes.
-A saída print no TAC é uma instrução representada, não uma chamada executada.
+A revisão interativa inclui execucao.py, executor genérico de TAC, chamado
+somente com --executar. Não há vm.py nem bytecode de pilha. Na compilação,
+print é uma instrução representada; na execução explícita, produz a saída.
+Novas instruções read/texto, efeitos e contratos estão em execucao.md.
 Os contratos da CLI estão no README, e os limites da validação em testes.md.

@@ -11,6 +11,7 @@ class TipoToken(Enum):
     VAR = auto(); INT = auto(); BOOL = auto()
     TRUE = auto(); FALSE = auto(); IF = auto()
     ELSE = auto(); WHILE = auto(); PRINT = auto()
+    READ = auto(); TEXTO = auto()
     # operadores
     MAIS = auto(); MENOS = auto(); VEZES = auto()
     DIV = auto(); ATRIB = auto(); IGUAL = auto()
@@ -38,6 +39,7 @@ class Token:
 # programa foi escrito em mineirês. Trocar a linguagem de superfície é trocar
 # esta tabela.
 RESERVADAS = {
+    "le_so": TipoToken.READ,
     "trem": TipoToken.VAR,              # var   — "trem x: inteirim = 1;"
     "inteirim": TipoToken.INT,          # int
     "booleanim": TipoToken.BOOL,        # bool

@@ -1,9 +1,9 @@
-# Especificação do mineirês — v0.5-otimizacao-sem-vm
+# Especificação do mineirês — revisão interativa
 
 MiniForge é o nome do projeto e do compilador. A linguagem do grupo é o
 **mineirês**, com as decisões da versão v0.6 do ZIP. Esta publicação entrega
-léxico, sintaxe, símbolos, semântica, TAC e otimização até a aula 30 (13/11/2026), sem VM.
-A semântica dinâmica descrita abaixo orienta a execução futura, ainda ausente.
+léxico, sintaxe, símbolos, semântica, TAC e otimização. A revisão de 13/11
+adiciona entrada e execução explícita; contrato completo em [execucao.md](execucao.md).
 
 ## Elementos léxicos
 
@@ -23,6 +23,7 @@ A semântica dinâmica descrita abaixo orienta a execução futura, ainda ausent
   | `uai` | condicional | `if` | a interjeição mais mineira que há |
   | `sinao` | senão | `else` | "sinão" |
   | `enquanto_tiver` | repetição | `while` | "enquanto tiver" |
+  | `le_so` | leitura de inteiro | entrada | "lê, sô" |
   | `mostra_so` | saída | `print` | "mostra, sô" |
 
   Não podem ser nomes de variáveis. As palavras antigas (`var`, `while`...)
@@ -62,8 +63,8 @@ fixo de bits, seguindo a implementação de referência em Python.
 | `==`, `!=` | `inteirim`, `inteirim` ou `booleanim`, `booleanim` | `booleanim` |
 
 `/` faz divisão inteira truncando para zero: `7 / 2` resulta em `3` e
-`-7 / 2` em `-3`. A execução dessa regra e a detecção de divisão por zero ficam para a VM
-(em etapa futura). O frontend verifica somente os tipos dos operandos.
+`-7 / 2` em `-3`. O executor aplica essa regra e diagnostica divisão por zero.
+O frontend verifica somente os tipos dos operandos.
 
 ## Comandos
 
@@ -71,6 +72,8 @@ fixo de bits, seguindo a implementação de referência em Python.
 | --- | --- | --- |
 | Declaração | `trem nome: tipo = expr;` | Inicialização obrigatória e com o tipo declarado |
 | Atribuição | `nome = expr;` | Nome já declarado; expressão do mesmo tipo |
+| Entrada | `le_so(nome);` | Variável já declarada, do tipo `inteirim` |
+| Mensagem | `mostra_so("texto");` | Literal de uma linha, sem escapes ou interpolação |
 | Saída | `mostra_so(expr);` | Aceita `inteirim` ou `booleanim`; imprime uma linha |
 | Condicional | `uai (expr) { ... } sinao { ... }` | Condição `booleanim`; `sinao` opcional |
 | Repetição | `enquanto_tiver (expr) { ... }` | Condição `booleanim`, reavaliada antes de cada iteração |
@@ -82,7 +85,7 @@ final. Um programa é uma sequência de comandos, inclusive vazia. A execução 
 sequencial. `mostra_so` escreve booleanos como `eh_memo` / `num_eh`, do mesmo
 jeito que no fonte.
 
-Exemplo (`exemplos/pao_de_queijo.mini`, validado sem execução nesta entrega):
+Exemplo (`exemplos/pao_de_queijo.mini`, exemplo válido da linguagem):
 
 ```text
 trem fornada: inteirim = 1;
@@ -142,7 +145,7 @@ externo quando declara uma variável interna de mesmo nome.
 
 A análise semântica é estática: tudo é decidido olhando a AST, sem executar o
 programa. O que não puder ser decidido assim (como divisão por zero com valor
-calculado) fica para a VM, em tempo de execução. As 5 regras são:
+calculado) é verificado pelo executor em tempo de execução. As 5 regras são:
 
 1. Toda variável é declarada antes do uso.
 2. Não há redeclaração no mesmo escopo.
@@ -185,7 +188,7 @@ GCC). Atribuir um valor não conta como uso.
 
 ## Limites desta versão
 
-Não há funções, strings, floats, arrays, entrada de dados, `for`, `break`,
+Não há funções, variáveis string, floats, arrays, `for`, `break`,
 `continue`, operadores lógicos ou comentários de bloco. As extensões opcionais
 dos slides ficam para depois do pipeline completo. Mudanças nesta especificação
 exigirão revisar gramática, lexer e testes.
@@ -196,7 +199,7 @@ exigirão revisar gramática, lexer e testes.
 válidos. `erro_lexico.mini` falha no lexer, `erro_sintatico.mini` no parser,
 `erro_semantico.mini` e `semantico.mini` na semântica. Este último relata os
 três erros independentes da aula 22. A CLI padrão gera TAC após a validação; -O seleciona TAC otimizado.
-Não executa os comandos de saída e repetição.
+Somente --executar executa os comandos de saída e repetição.
 
 O significado dinâmico descrito acima é o contrato da linguagem para a
-execução futura. A entrega implementa frontend e middle-end, sem execução.
+execução em `miniforge/execucao.py`. A CLI executa somente com `--executar`.

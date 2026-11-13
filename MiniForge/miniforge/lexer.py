@@ -89,6 +89,17 @@ class Lexer:
         if c == FIM:
             return Token(T.EOF, "", lin, col)
 
+        if c == '"':
+            ini = self.pos
+            self.avancar()
+            while self.atual() not in ('"', '\n', FIM):
+                self.avancar()
+            if self.atual() != '"':
+                self.erros.append(f'{lin}:{col}: erro léxico: texto não fechado')
+                return None
+            self.avancar()
+            return Token(T.TEXTO, self.fonte[ini:self.pos], lin, col)
+
         if eh_letra(c):                                  # q0 --letra--> q1
             ini = self.pos
             while eh_letra(self.atual()) or eh_digito(self.atual()):

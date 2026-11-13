@@ -97,3 +97,25 @@ A interface mostra a constante inteira produzida pelo compilador para um fonte
 com operandos literais. A interação foi exercitada; não foi adicionado executor
 geral de TAC. O teste que fornece um resultado não dobrado exige falha, garantindo
 que a interface não recalcule a operação fora do pipeline para contornar isso.
+
+
+## Revisão: programa interativo realmente em mineirês
+
+A interface específica interativa.py e seus testes foram substituídos por
+interativa.mini e testes das fases e da execução real. O registro anterior de
+740 testes descreve a abordagem substituída, não a implementação atual.
+
+Execução completa com Python 3.12.3 e pytest 8.4.2:
+`python -m pytest -q`: **754 passed in 12.63s**.
+
+As extensões foram verificadas no lexer, parser, semântica, geração de TAC,
+otimizador e executor. Cobertura inclui leitura em variável inteira, nomes
+inválidos, mensagens restritas à saída, posição e texto sem fechamento,
+sessões das quatro operações com/sem -O, entradas inválidas, repetição,
+invalidação de constantes por read, preservação de leitura sem uso, EOF,
+divisão por zero e argumentos incompatíveis. As contagens de vocabulário e nós
+AST foram atualizadas preservando os testes de correspondência completos.
+
+Segunda execução da revisão interativa: **754 passed in 14.58s**.
+Sessão de terminal com --executar -O conferida: soma 18 + 6 apresentou 24,
+divisão -7 / 2 apresentou -3 e divisor zero mostrou mensagem e retornou ao menu.

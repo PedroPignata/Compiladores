@@ -49,7 +49,7 @@ def test_analisador_tem_metodo_para_todo_no_da_ast():
     nos = [c for c in vars(ast).values()
            if isinstance(c, type) and dataclasses.is_dataclass(c)
            and issubclass(c, ast.No) and c not in (ast.No, ast.Expr)]
-    assert len(nos) == 12
+    assert len(nos) == 14
     for classe in nos:
         assert hasattr(AnalisadorSemantico, "visitar_" + classe.__name__), classe
 

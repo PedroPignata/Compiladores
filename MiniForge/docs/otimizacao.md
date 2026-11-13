@@ -72,3 +72,13 @@ propagação, dobramento e eliminação de temporários. As referências complet
 estão junto dos fontes. Testes e modo de medir em
 [testes-calculadora.md](testes-calculadora.md); interpretação da aplicação no
 [README próprio](../exemplos/calculadora/README.md).
+
+
+## Extensão para entrada em execução
+
+Na revisão interativa, read foi incluído entre as instruções que escrevem no
+destino e invalidam constantes. A leitura é efeito observável e não pode ser
+removida por falta de uso. Mensagens literais usam texto e são preservadas
+quando alcançáveis. Casos executados com e sem otimização estão nos testes
+da calculadora. Ver execucao.md para o novo escopo; os números acima são
+medições dos exemplos fixos, não de tempo ou de instruções executadas.

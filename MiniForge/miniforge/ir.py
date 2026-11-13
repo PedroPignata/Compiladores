@@ -74,6 +74,10 @@ class Instr:
     def __str__(self):
         """Formato do slide 2: rótulo na margem, demais com 4 espaços."""
         a1, a2 = formatar(self.a1), formatar(self.a2)
+        if self.op == "read":
+            return f"    read {self.dest}"
+        if self.op == "texto":
+            return f"    texto {self.dest!r}"
         if self.op == "label":
             return f"{self.dest}:"
         if self.op == "=":
@@ -161,6 +165,12 @@ class GeradorTAC(_GeradorBase):
     def visitar_Atrib(self, no):
         a = self.visitar(no.expr)
         self.emitir("=", self.nome_interno(no.nome), a, linha=no.linha)
+
+    def visitar_Leitura(self, no):
+        self.emitir('read', self.nome_interno(no.nome), linha=no.linha)
+
+    def visitar_Mensagem(self, no):
+        self.emitir('texto', no.texto, linha=no.linha)
 
     def visitar_Print(self, no):
         a = self.visitar(no.expr)

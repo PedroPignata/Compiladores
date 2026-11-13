@@ -51,7 +51,7 @@ from .constantes import OPS, avaliar, tipo_constante
 _TEMPORARIO = re.compile(r"t[0-9]+")
 
 # Instruções que escrevem em dest (cópia, binárias e neg).
-_ESCREVEM = ("=", "neg") + OPERADORES
+_ESCREVEM = ("=", "neg", "read") + OPERADORES
 
 # Instruções que terminam um bloco básico (além do rótulo, que inicia outro).
 _SALTOS = ("goto", "iffalse")
@@ -69,7 +69,7 @@ def eh_temporario(nome):
 
 def _pode_falhar(ins):
     """Divisão cujo divisor pode ser zero: a VM levantaria ErroExecucao."""
-    return ins.op == "/" and not (eh_const(ins.a2) and ins.a2 != 0)
+    return ins.op == "read" or ins.op == "/" and not (eh_const(ins.a2) and ins.a2 != 0)
 
 
 def _trocar(ins, **campos):

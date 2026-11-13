@@ -41,10 +41,10 @@ def test_posicao():
 
 
 def test_todas_as_reservadas():
-    fonte = "trem inteirim booleanim eh_memo num_eh uai sinao enquanto_tiver mostra_so"
+    fonte = "trem inteirim booleanim eh_memo num_eh uai sinao enquanto_tiver mostra_so le_so"
     assert tipos(fonte)[:-1] == [
         T.VAR, T.INT, T.BOOL, T.TRUE, T.FALSE,
-        T.IF, T.ELSE, T.WHILE, T.PRINT]
+        T.IF, T.ELSE, T.WHILE, T.PRINT, T.READ]
     assert set(RESERVADAS) == set(fonte.split())
 
 

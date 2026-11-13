@@ -85,6 +85,7 @@ class Parser:
     def comando(self):             # escolhe pela FIRST
         if self.verificar(T.VAR):         return self.decl()
         if self.verificar(T.ID):          return self.atrib()
+        if self.verificar(T.READ):        return self.leitura()
         if self.verificar(T.PRINT):       return self.print_()
         if self.verificar(T.IF):          return self.if_()
         if self.verificar(T.WHILE):       return self.while_()
@@ -115,9 +116,22 @@ class Parser:
         return A.Atrib(nome.lexema, expr, linha=nome.linha,
                        coluna=nome.coluna)
 
+    def leitura(self):
+        ini = self.esperar(T.READ, "faltou 'le_so'")
+        self.esperar(T.ABRE_PAR, "faltou '('")
+        nome = self.esperar(T.ID, "faltou um nome")
+        self.esperar(T.FECHA_PAR, "faltou ')'")
+        self.esperar(T.PONTO_VIRG, "faltou ';'")
+        return A.Leitura(nome.lexema, linha=ini.linha, coluna=ini.coluna)
+
     def print_(self):              # print → "mostra_so" "(" expr ")" ";"
         ini = self.esperar(T.PRINT, "faltou 'mostra_so'")
         self.esperar(T.ABRE_PAR, "faltou '('")
+        if self.verificar(T.TEXTO):
+            texto = self.consumir().lexema[1:-1]
+            self.esperar(T.FECHA_PAR, "faltou ')'")
+            self.esperar(T.PONTO_VIRG, "faltou ';'")
+            return A.Mensagem(texto, linha=ini.linha, coluna=ini.coluna)
         expr = self.expr()
         self.esperar(T.FECHA_PAR, "faltou ')'")
         self.esperar(T.PONTO_VIRG, "faltou ';'")

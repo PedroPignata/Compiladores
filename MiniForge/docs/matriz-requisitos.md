@@ -22,3 +22,13 @@ Definições: dependência de vm.OPS é incompatibilidade de escopo, não defeit
 Melhorias propostas: avaliação constante com tipos estritos; guarda semântica na API de geração.
 Riscos a testar: constantes em laços/junções, divisão por zero alcançável, mutação, idempotência e colisões.
 Nenhum bloqueio técnico identificado no diagnóstico.
+
+
+## Revisão interativa posterior
+
+O pedido posterior exige a aplicação escrita na própria linguagem com entrada
+e resultado. Isso supera a exclusão anterior de execução para esta revisão.
+A tag v0.5-otimizacao-sem-vm continua representando o marco sem backend.
+A main inclui agora le_so, mensagens e executor TAC em execucao.py.
+O mapeamento histórico acima permanece válido para o marco; a extensão atual
+está documentada em execucao.md e nos testes da calculadora interativa.

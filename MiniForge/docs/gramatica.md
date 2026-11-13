@@ -6,7 +6,8 @@ ambiguidade e sem recursão à esquerda, pronta para parsing descendente LL(1).
 
 **Mineirês do grupo, integrado em v0.5-otimizacao-sem-vm.** Os terminais agora são as palavras do mineirês (`trem`,
 `inteirim`, `booleanim`, `eh_memo`, `num_eh`, `uai`, `sinao`,
-`enquanto_tiver`, `mostra_so`). A estrutura da gramática não mudou: os não
+`enquanto_tiver`, `mostra_so`). A estrutura original foi preservada; a extensão de leitura e texto está abaixo.
+Os os não
 terminais mantêm os nomes técnicos (`decl`, `if`, `while`, `print`), que são
 também os nomes dos métodos do parser, e os conjuntos FIRST continuam
 disjuntos, porque cada palavra reservada nova substitui exatamente uma antiga.
@@ -20,7 +21,7 @@ disjuntos, porque cada palavra reservada nova substitui exatamente uma antiga.
 | `a \| b` | alternativa |
 | `"x"`, MAIÚSC. | terminais (tokens do lexer) |
 
-`ID`, `NUM` e `EOF` são tokens do lexer. `ID` segue `[A-Za-z_][A-Za-z0-9_]*`,
+`ID`, `NUM`, `TEXTO` e `EOF` são tokens do lexer. `ID` segue `[A-Za-z_][A-Za-z0-9_]*`,
 excluídas as reservadas; `NUM` segue `[0-9]+`. Espaços e comentários `//` são
 removidos pelo lexer antes do parser. `EOF` representa o fim do arquivo.
 Chaves entre aspas (`"{"`, `"}"`) são caracteres da linguagem, não a notação
@@ -29,19 +30,20 @@ de repetição.
 ## Gramática G = (V, T, P, S)
 
 - **V** (não terminais): `programa`, `comando`, `decl`, `tipo`, `atrib`,
-  `print`, `if`, `while`, `bloco`, `expr`, `soma`, `termo`, `fator`.
+  `print`, `leitura`, `if`, `while`, `bloco`, `expr`, `soma`, `termo`, `fator`.
 - **T** (terminais): os tokens de `miniforge/tokens.py`.
 - **P** (produções): abaixo.
 - **S** (símbolo inicial): `programa`.
 
 ```ebnf
 programa → { comando } EOF
-comando  → decl | atrib | print | if | while | bloco
+comando  → decl | atrib | print | leitura | if | while | bloco
 
 decl     → "trem" ID ":" tipo "=" expr ";"
 tipo     → "inteirim" | "booleanim"
 atrib    → ID "=" expr ";"
-print    → "mostra_so" "(" expr ")" ";"
+print    → "mostra_so" "(" (expr | TEXTO) ")" ";"
+leitura  → "le_so" "(" ID ")" ";"
 if       → "uai" "(" expr ")" bloco [ "sinao" bloco ]
 while    → "enquanto_tiver" "(" expr ")" bloco
 bloco    → "{" { comando } "}"
@@ -248,3 +250,9 @@ operando seguinte. Árvore única de `!a || b && c` (AST):
 
 Se `!` ficasse acima de `||` (negando a expressão inteira), `!a || b` viraria
 `!(a || b)`, contrariando a leitura usual.
+
+## Extensão interativa de 13/11
+
+`le_so` é reservada. `TEXTO` é um literal entre aspas duplas, sem escapes
+e sem quebra de linha. Só aparece no comando de saída, não em `fator`.
+Contrato semântico e execução: [execucao.md](execucao.md).
