@@ -15,8 +15,8 @@
 O MiniForge é um compilador didático de uma linguagem própria chamada mineirês.
 O trabalho transforma texto em tokens, constrói uma árvore sintática abstrata,
 verifica nomes e tipos, gera código de três endereços (TAC) e aplica cinco passes
-de otimização até um ponto fixo. A Calculadora Mineira é a aplicação demonstrativa
-escrita nessa linguagem. O relatório descreve a implementação e suas evidências,
+de otimização até um ponto fixo. A Calculadora Mineira é a aplicação demonstrativa, com fontes escritos nessa
+linguagem e uma interface de teclado em Python. O relatório descreve a implementação e suas evidências,
 sem atribuir resultados de execução ao código que apenas foi compilado.
 
 A entrega final termina na otimização do código intermediário. A CLI imprime TAC
@@ -32,8 +32,9 @@ O vocabulário regional diferencia a linguagem sem aumentar excessivamente a
 gramática. Python implementa o compilador, mas o fonte que ele aceita é mineirês:
 `uai (x > 0) { mostra_so(x); }` não é código Python e não é encaminhado a `eval`.
 
-A calculadora demonstra uma aplicação compreensível: configura dois inteiros e
-uma operação, seleciona a conta e representa a validade e o resultado. Sua leitura
+A calculadora demonstra uma aplicação compreensível: recebe dois inteiros e
+uma operação no terminal, compila uma conta em mineirês e apresenta a constante
+produzida pelo otimizador. Exemplos fixos também mostram seleção e validade. Sua leitura
 permite explicar decisões de projeto sem depender de interface gráfica.
 
 ## 3. Continuidade e método de desenvolvimento
@@ -102,7 +103,7 @@ MiniForge/
     otimizador.py     cinco passes e ponto fixo
   tests/              regressões e cenários por fase
   exemplos/           fontes .mini
-    calculadora/      aplicação, README e TAC de referência
+    calculadora/      interface interativa, fontes, README e TAC de referência
   docs/               contratos, requisitos, relatórios e demonstração
   README.md           instalação e uso
   pytest.ini          configuração dos testes
@@ -190,7 +191,30 @@ em `constantes.py` não percorre programas nem executa saltos.
 
 ## 11. Aplicação: Calculadora Mineira
 
-A aplicação está em `exemplos/calculadora/calculadora.mini`. Configura
+### 11.1. Interface interativa
+
+O comando `python -m exemplos.calculadora.interativa` abre um menu de quatro
+operações. O usuário escolhe, digita os dois inteiros e recebe o resultado.
+O menu se repete até a opção 0. Entradas inválidas são solicitadas novamente;
+divisão por zero retorna ao menu com uma mensagem. Números negativos são aceitos.
+O modo `--detalhes` mostra o fonte gerado e o TAC antes e depois dos passes.
+
+A interação é implementada em `exemplos/calculadora/interativa.py`, em Python.
+Cada conta gera em memória declarações `trem` e um comando `mostra_so` usando
+o operador escolhido. Esse fonte percorre o lexer, o parser, a verificação
+semântica pela API `gerar_tac`, a geração de TAC e `otimizar`. A interface aceita
+somente uma saída inteira literal em TAC reduzido, sem instruções de fluxo,
+e apresenta esse valor. Não existe cálculo alternativo da operação na interface.
+Se a redução não obedecer ao contrato, a aplicação reporta falha.
+
+Isso fornece uma experiência interativa sem ampliar a linguagem com entrada de
+dados nem integrar backend. O resultado é obtido em compilação por dobramento
+de constantes, não por execução geral de um programa mineirês. A distinção é
+explícita na documentação e pode ser observada com `--detalhes`.
+
+### 11.2. Fonte fixo com seleção
+
+O exemplo fixo está em `exemplos/calculadora/calculadora.mini`. Configura
 `primeiro`, `segundo` e `operacao` com inteiros. Códigos 1, 2, 3 e 4 selecionam
 soma, subtração, multiplicação e divisão. Condicionais aninhadas substituem um
 comando de seleção que a linguagem não possui. Divisão por zero e código de
@@ -200,7 +224,8 @@ A calculadora representa primeiro a validade e depois o resultado, apenas se
 válido. Essa separação evita usar um número especial como erro, pois zero e
 negativos também são respostas legítimas. Os operandos ficam no fonte porque
 a linguagem não possui entrada de dados. O programa é compilável e a aplicação
-é demonstrada pela tradução e otimização, sem alegar interface interativa.
+fixa é demonstrada pela tradução e otimização. O uso interativo está na
+interface descrita na seção 11.1.
 
 O segundo fonte, `constantes.mini`, demonstra todas as operações, truncamento
 negativo, precedência e parênteses. Os TAC originais e otimizados estão ao lado
@@ -229,7 +254,9 @@ Os testes cobrem fases do frontend, geração por construção, identidade de no
 alvos de saltos, origem das instruções, cada passe, ponto fixo, não mutação,
 divisão por zero e inteiros grandes, CLI e importação independente de VM.
 `tests/test_calculadora.py` acrescenta cenários da aplicação e comparação das
-referências. Comandos e resultados da execução atual estão em
+referências. `tests/test_calculadora_interativa.py` verifica respostas obtidas
+do compilador, rejeição de resultado não dobrado, sessões de terminal, entradas
+inválidas, divisão por zero, repetição, modo detalhado e encerramento. Comandos e resultados da execução atual estão em
 [testes-calculadora.md](testes-calculadora.md). Os 696 testes anteriores são um
 resultado histórico da integração, não a contagem da suíte ampliada.
 
@@ -246,6 +273,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-dev.txt
 python -m pytest -q
+python -m exemplos.calculadora.interativa --detalhes
 python -m miniforge exemplos/calculadora/calculadora.mini --verificar
 python -m miniforge exemplos/calculadora/calculadora.mini --tokens
 python -m miniforge exemplos/calculadora/calculadora.mini --ast
@@ -273,7 +301,8 @@ como constantes e fluxo de controle oferecem oportunidades de simplificação.
 
 O produto final limita-se à compilação até otimização. Não inclui funções,
 strings, floats, vetores, operadores lógicos, leitura interativa nem execução.
-A ausência desses recursos limita o tipo de aplicação possível, mas não exige
+A leitura de teclado existe na interface Python, que fornece literais ao compilador.
+A ausência de entrada na linguagem limita o tipo de aplicação possível, mas não exige
 modificar a linguagem para demonstrar as fases implementadas. A documentação
 e os testes registram o que foi efetivamente construído e o alcance das evidências.
 

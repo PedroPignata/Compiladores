@@ -6,7 +6,7 @@ Instalação: `python3 -m venv /tmp/miniforge-relatorio-venv` e
 `/tmp/miniforge-relatorio-venv/bin/python -m pip install -r requirements-dev.txt`.
 Os comandos abaixo usam `python` para representar o Python desse ambiente.
 
-## Comandos executados e resultados
+## Validação inicial dos exemplos fixos
 
 | Comando a partir de MiniForge/ | Resultado real |
 |---|---|
@@ -76,3 +76,24 @@ Os resultados comprovam as expectativas dos casos testados e os invariantes
 estruturais verificados. Não são prova geral de equivalência, medição de tempo
 de execução nem saída de programa mineirês executado. A instalação e a suíte
 foram testadas em Linux; não houve validação desta revisão em Windows.
+
+
+## Validação da interface interativa (13/11/2026)
+
+Mesmo ambiente Python 3.12.3 e pytest 8.4.2.
+
+| Comando | Resultado real |
+|---|---|
+| `python -m pytest -q tests/test_calculadora_interativa.py` | 25 passed in 0.45s |
+| `python -m pytest -q` | 740 passed in 11.81s |
+| `python3 -m exemplos.calculadora.interativa --detalhes` | Sessão real em terminal: soma 18 + 6 apresentou 24; divisão 10 / 0 mostrou mensagem e voltou ao menu; divisão -7 / 2 apresentou -3; opção 0 encerrou com código 0 |
+
+Os 25 testes novos verificam dez contas (incluindo inteiro grande), quatro
+entradas inválidas na API, rejeição de TAC não reduzido, oito sessões por
+subprocesso, modo detalhado e Ctrl+C. A suíte total tem 740 casos, sendo 44 da
+aplicação e interface. Os resultados de 715/19 acima registram a revisão anterior.
+
+A interface mostra a constante inteira produzida pelo compilador para um fonte
+com operandos literais. A interação foi exercitada; não foi adicionado executor
+geral de TAC. O teste que fornece um resultado não dobrado exige falha, garantindo
+que a interface não recalcule a operação fora do pipeline para contornar isso.

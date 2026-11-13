@@ -23,7 +23,7 @@ python -m miniforge exemplos/constantes.mini --tac -O
 ```
 
 O compilador usa a biblioteca padrão; pytest é dependência de desenvolvimento.
-A suíte ampliada tem 715 testes, incluindo 19 da Calculadora Mineira.
+A suíte ampliada tem 740 testes, incluindo 44 da Calculadora Mineira e sua interface.
 O registro histórico da integração está em docs/testes.md; a execução atual
 está em docs/testes-calculadora.md.
 
@@ -105,7 +105,33 @@ para compilar arquivos use a CLI. Entradas patológicas, profundidade extrema
 e limite decimal do Python continuam limitações. Funções, strings, vetores e
 novos tipos não foram acrescentados. Apresentações ficam locais, fora do Git.
 
-## Aplicação demonstrativa: Calculadora Mineira
+## Calculadora interativa
+
+Na pasta `MiniForge/`, execute:
+
+```bash
+python3 -m exemplos.calculadora.interativa
+```
+
+Escolha a operação, digite dois inteiros e veja o resultado. O menu permite
+novas contas e a opção 0 encerra. Há mensagens para números inválidos e divisor
+zero. A divisão trunca para zero, seguindo a linguagem (`7 / 2 = 3`).
+No Windows ou com ambiente virtual ativo, use `python` no lugar de `python3`.
+
+Para mostrar o fonte em mineirês e os dois TAC junto da resposta:
+
+```bash
+python3 -m exemplos.calculadora.interativa --detalhes
+```
+
+O aplicativo de terminal em Python gera uma conta em mineirês com os valores
+digitados, passa pelas fases reais do compilador e mostra a constante produzida
+pelo otimizador. Não é uma VM e não adiciona execução de programas à CLI.
+A linguagem não ganhou entrada pelo teclado: a interface fornece literais ao
+fonte compilado. Instruções completas no
+[README da calculadora](exemplos/calculadora/README.md).
+
+## Exemplos fixos da Calculadora Mineira
 
 O programa [calculadora.mini](exemplos/calculadora/calculadora.mini) usa a nossa
 linguagem para selecionar soma, subtração, multiplicação ou divisão inteira.
@@ -157,7 +183,7 @@ O exemplo de contas diretas também mostra `-7 / 2`, precedência e parênteses.
 ### Testes e interpretação dos resultados
 
 ```bash
-python -m pytest -q tests/test_calculadora.py
+python -m pytest -q tests/test_calculadora.py tests/test_calculadora_interativa.py
 python -m pytest -q
 ```
 

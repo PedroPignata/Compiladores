@@ -121,3 +121,22 @@ python -m pytest -q
 Sem ganho: compare fatorial.mini com e sem -O; laços exigem conservadorismo.
 Segurança: mostre o caso divisão por zero em test_middleend.py; a instrução permanece.
 Plano B: saídas deste documento e PDF local. Não prometer imprimir 120: print f é TAC.
+
+
+## Calculadora com entrada pelo teclado
+
+Na raiz MiniForge/, abrir:
+
+```bash
+python3 -m exemplos.calculadora.interativa --detalhes
+```
+
+1. Escolher 1, digitar 18 e 6: observar o fonte mineirês, o TAC e o resultado 24.
+2. Escolher 4, digitar 10 e 0: observar a mensagem e o retorno ao menu.
+3. Escolher 4, digitar -7 e 2: resultado -3, divisão truncada para zero.
+4. Escolher 0 para sair. Sem `--detalhes`, aparece apenas a interface de uso.
+
+Explicação: Python faz a interface de teclado. A conta vira fonte mineirês e
+passa pelas fases do MiniForge. O otimizador dobra a expressão e a interface
+apresenta o literal final. Não há leitura pelo teclado na linguagem nem execução
+geral de TAC. Essa distinção pode ser demonstrada pelo modo detalhado.

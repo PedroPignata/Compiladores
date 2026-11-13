@@ -1,14 +1,71 @@
 # Calculadora Mineira
 
-Programa de demonstração escrito inteiramente em **mineirês**, a linguagem do
-MiniForge. Autores do projeto: Pedro Dutra, Pedro Pignata, Lucas Rocha Dantas
+Aplicação interativa que usa **mineirês**, a linguagem do MiniForge,
+para compilar as contas. A interface de teclado é implementada em Python. Autores do projeto: Pedro Dutra, Pedro Pignata, Lucas Rocha Dantas
 e Renato Portilho. Disciplina: Compiladores, professora Lorena Bezerra.
 
-## Objetivo e funcionamento
+## Usar a calculadora interativa
+
+Na pasta `MiniForge/`, execute:
+
+```bash
+python3 -m exemplos.calculadora.interativa
+```
+
+No Windows ou com ambiente virtual ativo, use `python` no lugar de `python3`.
+Não é necessário instalar pytest para abrir a calculadora.
+Escolha 1 para soma, 2 para subtração, 3 para multiplicação ou 4 para divisão.
+Digite os dois inteiros quando solicitado. A resposta aparece imediatamente;
+o menu volta para permitir outra conta. Digite 0 no menu para sair.
+
+Exemplo de sessão (trecho):
+
+```text
+Escolha a operação: 1
+Primeiro número: 18
+Segundo número: 6
+Resultado: 18 + 6 = 24
+```
+
+Números negativos são aceitos. Entradas como `abc` e `2.5` são rejeitadas e o
+mesmo número é solicitado novamente. Divisão por zero mostra uma mensagem e
+volta ao menu. Ctrl+C ou fim de entrada encerram sem traceback.
+A divisão continua inteira: `-7 / 2 = -3`, pois a linguagem usa `inteirim`.
+
+### Mostrar o trabalho do compilador durante a conta
+
+```bash
+python3 -m exemplos.calculadora.interativa --detalhes
+```
+
+Esse modo mostra o programa mineirês gerado, o TAC original e o TAC otimizado,
+além do resultado. É o modo recomendado para apresentar à professora.
+Para 18 + 6, o fonte criado em memória é:
+
+```text
+trem primeiro: inteirim = 18;
+trem segundo: inteirim = 6;
+mostra_so(primeiro + segundo);
+```
+
+A interface chama o lexer, o parser, a semântica (pela API de geração), o
+gerador TAC e o otimizador reais. Com operandos já conhecidos, os passes
+reduzem a expressão e produzem `print 24`. A interface apresenta esse literal.
+Ela não calcula a operação por um dicionário de funções Python, não usa `eval`
+e não interpreta programas ou saltos TAC. Se o resultado não for uma constante
+inteira no formato esperado, a interface reporta falha em vez de recalcular.
+
+**Distinção para explicar na apresentação:** a interação acontece no aplicativo
+Python. O programa mineirês gerado recebe literais, não lê teclado. O resultado
+vem do dobramento de constantes durante a compilação, não de uma máquina virtual.
+A CLI `python -m miniforge` mantém seu comportamento de geração de TAC.
+O modo interativo não altera os arquivos `.mini` nem os `.tac` de referência.
+
+## Exemplos fixos em mineirês: objetivo e funcionamento
 
 A calculadora recebe sua configuração nas três primeiras declarações do fonte:
 dois números inteiros e um código de operação. O programa seleciona a conta com
-condicionais e registra se a solicitação é válida. Não há leitura pelo teclado.
+condicionais e registra se a solicitação é válida. Nesse exemplo fixo não há leitura pelo teclado.
 Altere o arquivo, salve e compile novamente para experimentar outra conta.
 
 Este programa demonstra o uso do compilador, cujo produto é **TAC**, código de
@@ -21,6 +78,7 @@ uma operação durante a compilação, sem executar o programa inteiro.
 
 | Arquivo | Finalidade |
 |---|---|
+| `interativa.py` | Menu, leitura de inteiros, chamada ao compilador e apresentação do literal |
 | `calculadora.mini` | Calculadora com seleção e proteção da divisão |
 | `constantes.mini` | Contas diretas para demonstrar precedência e otimização |
 | `calculadora-original.tac` | TAC da configuração padrão da calculadora |
@@ -120,6 +178,7 @@ Contamos todas as instruções exceto `label`. A redução é
 
 | Fonte padrão | Antes | Depois | Redução |
 |---|---:|---:|---:|
+| `interativa.py` | Menu, leitura de inteiros, chamada ao compilador e apresentação do literal |
 | `calculadora.mini` | 34 | 8 | 76,47% |
 | `constantes.mini` | 19 | 9 | 52,63% |
 
@@ -131,7 +190,7 @@ do usuário podem permanecer: o otimizador é conservador.
 ## Testar e apresentar
 
 ```bash
-python -m pytest -q tests/test_calculadora.py
+python -m pytest -q tests/test_calculadora.py tests/test_calculadora_interativa.py
 python -m pytest -q
 ```
 
@@ -140,14 +199,16 @@ Cobrem as quatro operações, números negativos, divisor zero, operação invá
 TAC de referência, alvos de saltos, idempotência e compilação pela CLI.
 São evidências estruturais, sem executor de TAC e sem prova geral de equivalência.
 
-Roteiro sugerido: mostrar as configurações; validar o fonte; abrir tokens e AST
+Roteiro sugerido: abrir a interface com `--detalhes`, fazer uma conta e mostrar
+as representações geradas; depois mostrar as configurações do exemplo fixo; validar o fonte; abrir tokens e AST
 tipada; comparar os dois TAC; trocar operação para 4 e divisor para 0; explicar
 o ramo de validade falsa; mostrar a suíte. Mudar um tipo para `booleanim` com
 inicializador inteiro demonstra erro semântico com `--contexto` (desfaça depois).
 
 ## Limitações e problemas comuns
 
-- Não existe interface gráfica, entrada interativa, texto de menu ou ponto flutuante.
+- A interface interativa é de terminal. Não há interface gráfica nem ponto flutuante.
+- A linguagem mineirês não ganhou um comando de entrada: o aplicativo Python prepara o fonte.
 - Rode os comandos na raiz `MiniForge/`: em outra pasta pode ocorrer
   `No module named miniforge`. Confirme também o ambiente Python ativo.
 - Use `inteirim`, `booleanim`, `uai` e `sinao`, não as palavras de Python.
