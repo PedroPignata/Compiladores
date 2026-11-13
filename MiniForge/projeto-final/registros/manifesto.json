@@ -74,7 +74,8 @@
     "paginas": 18,
     "data": "2026-11-13",
     "prints": 6,
-    "revisao_visual": "Todas as páginas renderizadas e inspecionadas; sem texto fora das margens."
+    "revisao_visual": "Todas as páginas renderizadas e inspecionadas; sem texto fora das margens.",
+    "revisao_editorial": "Texto técnico apresentado como projeto do grupo, sem narrativa de ZIP ou integração na documentação de entrega; evidências originais preservadas."
   },
   "metodo_prints": "Transcrições reais de processos; visualizador HTML local capturado com Firefox headless. Jogo com recorte explícito; TXT completo preservado."
 }

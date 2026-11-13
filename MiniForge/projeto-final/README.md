@@ -55,7 +55,7 @@ Não são imagens inventadas de resultados nem capturas do desktop do usuário.
 
 ## Referência e atualização
 
-Captura em 13/11/2026. Base de código/documentação:
+Captura em 13/11/2026. Base do código e das capturas:
 `71c0eaea7e485f4c0f691b9f851bead7beda30a4`.
 O [manifesto](registros/manifesto.json) registra comandos, entradas e retornos.
 Nesta partida o segredo foi 15, descoberto por palpites crescentes; esse número

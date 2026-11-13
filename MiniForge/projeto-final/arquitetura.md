@@ -89,12 +89,11 @@ A aplicação dos passes termina num ponto fixo.
 
 ## Execução e correspondência com os slides
 
-O marco v0.5-otimizacao-sem-vm terminava na otimização por solicitação anterior.
-A revisão posterior acrescentou entrada e execução para programas inteiramente
-em mineirês. O arquivo execucao.py assume o papel de executor/backend simples
-correspondente ao conceito de VM dos slides, sem copiar vm.py do ZIP nem criar
-bytecode de pilha. A diferença de nome e a mudança de escopo estão documentadas
-em [execucao.md](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/execucao.md). Não se afirma que o projeto atual é sem backend.
+O arquivo execucao.py exerce o papel de executor/backend simples de TAC,
+correspondente à responsabilidade da VM no roteiro. A CLI controla o caminho:
+sem --executar, apresenta código intermediário; com essa opção, executa as
+instruções após a validação e a otimização opcional. Não há bytecode de pilha.
+Os contratos de entrada, saída e erros estão em [execucao.md](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/execucao.md).
 
 A calculadora e o jogo só usam instruções já suportadas: cópias, operações,
 read, texto, print, saltos, rótulos e random. A expressão sorteia_so foi

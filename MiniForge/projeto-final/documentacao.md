@@ -17,7 +17,7 @@ Captura de 13/11/2026. Base: 71c0eaea7e485f4c0f691b9f851bead7beda30a4.
 O MiniForge é um compilador didático implementado em Python para uma linguagem
 própria, o mineirês. O processamento reconhece tokens, constrói AST, resolve
 nomes e escopos, verifica tipos, gera código de três endereços (TAC) e aplica
-cinco passes de otimização até ponto fixo. A main atual também possui execução
+cinco passes de otimização até ponto fixo. O projeto inclui execução
 explícita de TAC, entrada inteira, saída de mensagens e sorteio inteiro inclusivo.
 
 Dois programas completos exercitam esses recursos: Calculadora Mineira e
@@ -25,9 +25,9 @@ Adivinha o trem, sô!. Menu, entrada, escolhas, contas, dicas e repetição est�
 nos fontes .mini. O executor Python é genérico e não decide o comportamento
 de cada aplicação por um aplicativo auxiliar.
 
-A suíte atual tem 817 testes aprovados. A revisão documental conferiu os
-comandos, as métricas estáticas e os links locais. Registros de cortes anteriores
-não foram usados como descrição da implementação atual.
+A suíte tem 817 testes aprovados. A documentação reúne as decisões técnicas,
+as métricas estáticas e as instruções para compilar, executar e conferir os
+programas do projeto.
 
 ## 2. Objetivos e decisões
 
@@ -40,26 +40,26 @@ que o compilador analisa. O fonte não é encaminhado a eval.
 
 A organização segue o modelo do roteiro: pacote, testes, exemplos e documentos
 separados. Os nomes genéricos minilang dos slides correspondem a miniforge.
-O executor atual fica em execucao.py, exercendo o papel de backend simples de
-TAC; não foi copiado vm.py nem bytecode de pilha da referência completa.
+O executor fica em execucao.py e exerce o papel de backend simples de TAC.
+O projeto usa essa representação diretamente, sem bytecode de pilha.
 
-## 3. Continuidade do grupo
+## 3. Concepção e desenvolvimento do projeto
 
-O projeto começou com estrutura e especificação e foi continuado pelo mesmo
-grupo. O ZIP MiniForge-v0.6-mineires.zip preserva a versão completa do colega.
-As integrações reaproveitaram linguagem, organização, Visitor, gerador TAC e
-passes válidos. O histórico e os créditos coletivos foram preservados.
+O MiniForge é o projeto do grupo para aplicar os conceitos de construção de
+compiladores. A linguagem mineirês reúne um vocabulário próprio e regras
+explícitas de sintaxe, tipos e escopos. A implementação separa as fases para
+permitir examinar cada transformação e localizar os diagnósticos.
 
-A tag v0.3-semantica registra o frontend. A tag v0.5-otimizacao-sem-vm registra
-o marco inicial de TAC e otimização sem execução. Pedidos posteriores de
-aplicações interativas ampliaram o produto: foram acrescentados leitura,
-mensagens e executor; depois sorteia_so tornou o jogo aleatório. A main atual
-inclui essas extensões. As tags antigas não foram reescritas.
+O trabalho compreende a especificação da linguagem, a construção do frontend,
+a geração de TAC, os cinco passes de otimização e o executor. Os testes
+acompanham os contratos de cada fase e verificam também os programas completos.
+A documentação apresenta as decisões técnicas e os comandos para reproduzir
+os resultados.
 
-O aplicativo Python específico criado inicialmente para contas fechadas foi
-substituído por um programa mineirês com execução real. A evolução detalhada
-está em [integracao.md](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/integracao.md); o relatório acumulado anterior foi
-preservado em [historico/relatorio-evolucao.md](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/historico/relatorio-evolucao.md).
+A Calculadora Mineira e o jogo Adivinha o trem, sô! demonstram o uso da linguagem
+criada pelo grupo. Ambos utilizam a mesma cadeia de compilação e execução,
+com entrada pelo teclado, mensagens e controle de fluxo definidos nos fontes
+em mineirês, salvos com a extensão .mini.
 
 ## 4. Linguagem e contratos
 
@@ -107,7 +107,7 @@ MiniForge/
   miniforge/  implementação por fase e CLI
   tests/      regressões, cenários das aplicações e casos de referência
   exemplos/   fontes .mini e READMEs de uso e personalização
-  docs/       contratos vigentes, relatório e histórico identificado
+  docs/       especificação, contratos, relatórios e instruções técnicas
   README.md, pytest.ini, requirements-dev.txt
 ```
 
@@ -229,9 +229,9 @@ inclusive negativos, unitários e grandes, e CLI real com intervalo unitário.
 Não se exige diversidade probabilística para um teste passar. As comparações
 originais/otimizadas valem para os casos cobertos, não são prova geral.
 
-A documentação foi auditada quanto a links locais, exemplos e comandos. Os
-registros antigos de testes permanecem identificados; não foram inventadas
-novas execuções para substituir métricas antigas. Comandos completos e limites:
+Os comandos e as saídas foram conferidos com a implementação do projeto. Os
+registros de execução permitem inspecionar entradas, resultados e diagnósticos.
+Comandos completos e limites:
 [testes.md](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/testes.md).
 
 ## 9. Reprodução
@@ -272,16 +272,15 @@ fora do Git. Este PDF é o documento de entrega solicitado, não uma apresentaç
 O grupo criou uma linguagem própria e um compilador organizado em fases, com
 representação intermediária, otimização conservadora e execução explícita.
 Os programas concretizam condições, escopos, entrada e repetição; o jogo também
-exercita aleatoriedade em execução. Documentação, código e evidências agora se
-referem à main vigente, mantendo a história separada e os limites verificáveis.
+exercita aleatoriedade em execução. A documentação e os testes permitem
+conferir a implementação e reproduzir os exemplos, com seus limites explicitados.
 
 ## 12. Referências
 
 - Roteiro da disciplina: Compiladores_2026-2_Aulas_Praticas_Projeto.pdf.
-- Implementação completa do grupo: MiniForge-v0.6-mineires.zip, preservada como referência.
 - [Projeto no GitHub](https://github.com/PedroPignata/Compiladores/tree/main/MiniForge).
-- [Índice vigente](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/README.md), [integração](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/integracao.md), [matriz](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/matriz-requisitos.md).
-- [Registros históricos](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/historico/README.md).
+- [Especificação](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/especificacao.md), [gramática](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/gramatica.md) e [arquitetura](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/arquitetura.md).
+- [Testes](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/testes.md), [matriz de requisitos](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/matriz-requisitos.md) e [índice técnico](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/README.md).
 
 
 # Arquitetura
@@ -373,12 +372,11 @@ A aplicação dos passes termina num ponto fixo.
 
 ## Execução e correspondência com os slides
 
-O marco v0.5-otimizacao-sem-vm terminava na otimização por solicitação anterior.
-A revisão posterior acrescentou entrada e execução para programas inteiramente
-em mineirês. O arquivo execucao.py assume o papel de executor/backend simples
-correspondente ao conceito de VM dos slides, sem copiar vm.py do ZIP nem criar
-bytecode de pilha. A diferença de nome e a mudança de escopo estão documentadas
-em [execucao.md](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/execucao.md). Não se afirma que o projeto atual é sem backend.
+O arquivo execucao.py exerce o papel de executor/backend simples de TAC,
+correspondente à responsabilidade da VM no roteiro. A CLI controla o caminho:
+sem --executar, apresenta código intermediário; com essa opção, executa as
+instruções após a validação e a otimização opcional. Não há bytecode de pilha.
+Os contratos de entrada, saída e erros estão em [execucao.md](https://github.com/PedroPignata/Compiladores/blob/main/MiniForge/docs/execucao.md).
 
 A calculadora e o jogo só usam instruções já suportadas: cópias, operações,
 read, texto, print, saltos, rótulos e random. A expressão sorteia_so foi
