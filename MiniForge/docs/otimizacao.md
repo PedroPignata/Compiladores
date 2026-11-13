@@ -56,3 +56,19 @@ Essas evidências estruturais não constituem prova geral de equivalência
 semântica. A comparação de saída por execução usada no slide p.56 foi excluída
 pelo pedido; não há VM nem executor substituto. A tabela não contém resultados
 copiados da apresentação completa do colega.
+
+## Aplicação Calculadora Mineira (13/11)
+
+A mesma convenção de contagem, excluindo rótulos, foi aplicada aos novos fontes:
+
+| Programa | Antes | Depois | Redução % |
+|---|---:|---:|---:|
+| calculadora/calculadora.mini (18, 6, soma) | 34 | 8 | 76.47 |
+| calculadora/constantes.mini | 19 | 9 | 52.63 |
+
+A seleção constante da operação permite propagação, dobramento, simplificação
+de saltos, remoção de código morto e limpeza. Nas contas diretas predominam
+propagação, dobramento e eliminação de temporários. As referências completas
+estão junto dos fontes. Testes e modo de medir em
+[testes-calculadora.md](testes-calculadora.md); interpretação da aplicação no
+[README próprio](../exemplos/calculadora/README.md).

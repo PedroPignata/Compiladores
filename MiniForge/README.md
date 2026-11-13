@@ -23,7 +23,9 @@ python -m miniforge exemplos/constantes.mini --tac -O
 ```
 
 O compilador usa a biblioteca padrão; pytest é dependência de desenvolvimento.
-A suíte desta entrega tem 696 testes. Resultados reais em docs/testes.md.
+A suíte ampliada tem 715 testes, incluindo 19 da Calculadora Mineira.
+O registro histórico da integração está em docs/testes.md; a execução atual
+está em docs/testes-calculadora.md.
 
 ## Linguagem
 
@@ -102,3 +104,80 @@ por execução. O atalho interno parse() pressupõe fonte lexicamente válido;
 para compilar arquivos use a CLI. Entradas patológicas, profundidade extrema
 e limite decimal do Python continuam limitações. Funções, strings, vetores e
 novos tipos não foram acrescentados. Apresentações ficam locais, fora do Git.
+
+## Aplicação demonstrativa: Calculadora Mineira
+
+O programa [calculadora.mini](exemplos/calculadora/calculadora.mini) usa a nossa
+linguagem para selecionar soma, subtração, multiplicação ou divisão inteira.
+Altere `primeiro`, `segundo` e `operacao` no início do fonte. Os códigos das
+operações são 1, 2, 3 e 4, respectivamente. Há verificação de divisor zero e
+indicação booleana de validade. A aplicação não lê dados do teclado: os valores
+são configurados no arquivo antes da compilação.
+
+O [README da aplicação](exemplos/calculadora/README.md) explica o programa,
+cada decisão, os arquivos TAC de referência, alterações possíveis, testes e
+roteiro de apresentação. O [relatório final](docs/relatorio-final.md) descreve
+todo o trabalho, da motivação ao otimizador e às evidências da aplicação.
+
+### Obter o projeto e escolher a pasta correta
+
+Para uma instalação nova:
+
+```bash
+git clone https://github.com/PedroPignata/Compiladores.git
+cd Compiladores/MiniForge
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
+```
+
+Se já tiver o repositório, use a pasta `MiniForge/` do checkout existente.
+No Windows, use `py -m venv .venv` e ative com `.venv\Scripts\Activate.ps1`
+no PowerShell. Execute os comandos seguintes com o ambiente ativo. Não é preciso
+instalar o pacote nem ajustar `PYTHONPATH` para usar a CLI a partir dessa pasta.
+
+### Acompanhar a calculadora pelas fases
+
+```bash
+python -m miniforge exemplos/calculadora/calculadora.mini --verificar
+python -m miniforge exemplos/calculadora/calculadora.mini --tokens
+python -m miniforge exemplos/calculadora/calculadora.mini --ast
+python -m miniforge exemplos/calculadora/calculadora.mini --tipos
+python -m miniforge exemplos/calculadora/calculadora.mini --tac
+python -m miniforge exemplos/calculadora/calculadora.mini --tac -O
+python -m miniforge exemplos/calculadora/constantes.mini --tac -O
+```
+
+Observe, nessa ordem, a validação, os lexemas com posições, a estrutura dos
+comandos, a anotação de tipos, os saltos de seleção e as simplificações.
+Na configuração inicial, o TAC otimizado termina em `print eh_memo` e `print 24`.
+São instruções do código gerado, não saída de execução da calculadora.
+O exemplo de contas diretas também mostra `-7 / 2`, precedência e parênteses.
+
+### Testes e interpretação dos resultados
+
+```bash
+python -m pytest -q tests/test_calculadora.py
+python -m pytest -q
+```
+
+A primeira chamada testa a aplicação; a segunda inclui a suíte do compilador.
+Os testes não executam programas mineirês: comparam representações e contratos,
+incluindo saídas reais da CLI. Resultado atualizado e ambiente estão em
+[registro de testes da calculadora](docs/testes-calculadora.md).
+
+O fonte padrão da calculadora gera 34 instruções e 8 após otimização, redução
+estática de 76,47%, excluindo rótulos. As contas diretas passam de 19 para 9,
+redução de 52,63%. Não são medidas de desempenho de execução. Arquivos `.tac`
+no diretório da aplicação permitem conferir os números e o código linha a linha.
+
+### Dificuldades frequentes
+
+- `No module named miniforge`: entre em `Compiladores/MiniForge` e confirme
+  que está usando o Python do ambiente ativado.
+- `No module named pytest`: instale `requirements-dev.txt` nesse ambiente.
+- Arquivo não encontrado: os caminhos dos exemplos são relativos à pasta atual.
+- `--tipos -O` retorna código 2: use `--tipos --tac -O` para pedir geração.
+- O programa com operação 9 compila: a escolha inválida é tratada pelo próprio
+  programa, não é um erro de tipos da linguagem.
+- Divisão não produz decimal: `inteirim` usa divisão truncada para zero.

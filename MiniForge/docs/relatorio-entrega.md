@@ -1,4 +1,7 @@
-# Relatório final - entrega 13/11/2026
+# Registro da integração até otimização - 13/11/2026
+
+Relatório acadêmico completo e aplicação demonstrativa: [relatorio-final.md](relatorio-final.md).
+Este documento preserva o diagnóstico e as medições da integração inicial.
 
 ## Estado inicial
 
@@ -46,7 +49,7 @@ A demonstração presencial em 13/11 ainda deve ser realizada pelo grupo.
 Apresentação local em apresentacao/13-11/: PPTX editável, PDF e roteiro,
 sem versionar mídia conforme preferência do usuário. Os comandos com saídas
 conferidas estão em demonstracao.md. A publicação usa branch
-entrega/otimizador-13-11 e tag v0.5-otimizacao-sem-vm; PR para main, sem merge.
+entrega/otimizador-13-11 e tag v0.5-otimizacao-sem-vm; PR #2 integrado à main em 12/11/2026, commit 749a919c7468a9bc3ffd1502d617b614a02a7054.
 
 ## Passo a passo para correção
 

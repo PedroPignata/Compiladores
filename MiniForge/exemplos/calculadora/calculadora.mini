@@ -1,0 +1,35 @@
+// Calculadora Mineira: altere apenas estas tres configuracoes.
+// operacao: 1 = soma, 2 = subtracao, 3 = multiplicacao, 4 = divisao inteira.
+trem primeiro: inteirim = 18;
+trem segundo: inteirim = 6;
+trem operacao: inteirim = 1;
+
+// Resultado so pode ser apresentado quando a operacao for valida.
+trem resultado: inteirim = 0;
+trem valido: booleanim = eh_memo;
+uai (operacao == 1) {
+    resultado = primeiro + segundo;
+} sinao {
+    uai (operacao == 2) {
+        resultado = primeiro - segundo;
+    } sinao {
+        uai (operacao == 3) {
+            resultado = primeiro * segundo;
+        } sinao {
+            uai (operacao == 4) {
+                uai (segundo != 0) {
+                    resultado = primeiro / segundo;
+                } sinao {
+                    valido = num_eh;
+                }
+            } sinao {
+                valido = num_eh;
+            }
+        }
+    }
+}
+// Primeiro indica validade. Depois representa o resultado, apenas se valido.
+mostra_so(valido);
+uai (valido) {
+    mostra_so(resultado);
+}

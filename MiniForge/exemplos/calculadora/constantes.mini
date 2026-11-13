@@ -1,0 +1,11 @@
+// Exemplo complementar: permite conferir manualmente o dobramento.
+// As instrucoes print no TAC representam saidas; o compilador nao as executa.
+trem primeiro: inteirim = 18;
+trem segundo: inteirim = 6;
+mostra_so(primeiro + segundo);
+mostra_so(primeiro - segundo);
+mostra_so(primeiro * segundo);
+mostra_so(primeiro / segundo);
+mostra_so(-7 / 2);
+mostra_so(2 + 3 * 4);
+mostra_so((2 + 3) * 4);
