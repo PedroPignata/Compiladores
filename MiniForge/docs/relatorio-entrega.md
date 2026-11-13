@@ -1,5 +1,9 @@
 # Registro da integração até otimização - 13/11/2026
 
+> **Registro histórico.** Registro da integração do marco v0.5-otimizacao-sem-vm. A main atual inclui execução e sorteio.
+> Documentação vigente: [índice](README.md), [relatório final](relatorio-final.md) e [testes](testes.md).
+
+
 Relatório acadêmico completo e aplicação demonstrativa: [relatorio-final.md](relatorio-final.md).
 Este documento preserva o diagnóstico e as medições da integração inicial.
 

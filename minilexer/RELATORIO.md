@@ -1,5 +1,9 @@
 # Relatório - Analisador Léxico MiniC
 
+> Contexto atual: esta atividade está em `Compiladores/minilexer/`.
+> Comandos de compilação e execução partem dessa pasta; consulte o [README](README.md).
+> Os resultados relatados pertencem a esta aplicação em C, não ao MiniForge.
+
 ## 1. Introdução
 
 A análise léxica é normalmente a primeira etapa de um compilador. Sua função

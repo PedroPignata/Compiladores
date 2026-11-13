@@ -193,4 +193,5 @@ Veja também a [Calculadora Mineira](../calculadora/README.md) e o
 Mesmo com limites constantes, `sorteia_so` não pode virar uma constante durante
 a compilação. O TAC contém uma instrução de sorteio, executada quando a partida
 começa. Os cinco passes preservam a chamada e suas possíveis falhas. Testes e
-medições da revisão atual estão em [testes-sorteio.md](../../docs/testes-sorteio.md).
+medições vigentes estão em [otimizacao.md](../../docs/otimizacao.md) e
+[testes.md](../../docs/testes.md).

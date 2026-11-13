@@ -1,53 +1,43 @@
-# Análise de um lexer didático (aula 10)
+# Reconhecimento léxico no MiniForge
 
-Projeto analisado: **jlox — Crafting Interpreters** (Java),
-`munificent/craftinginterpreters`, arquivo
-`java/com/craftinginterpreters/lox/Scanner.java`.
+Documento da implementação vigente em miniforge/lexer.py e tokens.py.
 
-1. **Onde está o laço principal do scanner?**
-   Em `scanTokens()`: enquanto `!isAtEnd()`, marca `start = current` e chama
-   `scanToken()`. Ao sair do laço, acrescenta o token `EOF`.
-   `scanToken()` lê um caractere com `advance()` e decide o token com um
-   `switch` sobre ele.
+## Fluxo de reconhecimento
 
-2. **Como diferencia reservada de identificador?**
-   Lê a palavra inteira em `identifier()` (laço com `isAlphaNumeric`) e só
-   depois consulta o mapa estático `keywords`; se não estiver lá, o tipo é
-   `IDENTIFIER`. É a mesma estratégia do nosso `RESERVADAS.get(lex, T.ID)`.
+Lexer.tokens() chama proximo_token() até EOF. Espaços, tabulações e quebras de
+linha separam tokens. Comentários // são consumidos até a quebra ou fim do
+arquivo. Cada token guarda categoria, lexema, linha e coluna a partir de 1.
 
-3. **Como reconhece operadores de 2 caracteres?**
-   Com `match(expected)`: consome o próximo caractere só se ele for o
-   esperado. Ex.: `case '<': addToken(match('=') ? LESS_EQUAL : LESS);`.
-   Assim o operador mais longo é sempre tentado primeiro.
+Identificadores seguem `[A-Za-z_][A-Za-z0-9_]*`. O lexer consome o nome inteiro
+e só depois consulta RESERVADAS. Portanto le_so2 e sorteia_so2 são nomes comuns.
+As onze palavras reservadas vigentes estão na [especificação](especificacao.md).
+Inteiros usam `[0-9]+`; o sinal negativo é um operador separado.
 
-4. **Ao achar caractere inválido: para ou continua?**
-   Continua. O `default` do `switch` chama
-   `Lox.error(line, "Unexpected character.")`, que imprime a mensagem e liga
-   `hadError`, mas o laço segue. O interpretador só se recusa a executar
-   depois que a varredura inteira termina.
+Operadores de dois caracteres são testados antes dos de um: <= não se divide
+em < e =. A vírgula é um delimitador usado nos argumentos de sorteia_so.
 
-5. **Que posição o token guarda (linha? coluna?)**
-   Apenas a linha (`Token(type, lexeme, literal, line)`). Não guarda coluna,
-   então as mensagens não apontam o caractere exato.
+## Texto literal
 
-6. **Uma ideia que vamos copiar e por quê.**
-   Continuar depois de um erro léxico e reportar todos de uma vez (modo
-   pânico): o programador corrige tudo em uma única compilação. No MiniForge,
-   `Lexer.erros` acumula as mensagens, o caractere inválido é descartado e a
-   CLI imprime todos os erros em stderr e sai com código 1. Diferente do jlox,
-   mantemos também a **coluna**, para mensagens no formato
-   `linha:coluna: erro léxico: caractere inválido '@', que trem é esse?`.
+Aspas duplas iniciam TEXTO. O lexer aceita conteúdo Unicode até a próxima
+aspa dupla na mesma linha; // dentro das aspas não inicia comentário.
+Não há escapes ou interpolação. TEXTO só é aceito pelo parser como argumento
+literal de mostra_so, não como expressão ou valor de variável.
+Texto sem fechamento antes da quebra ou EOF gera erro léxico com a posição
+inicial. Acentos são válidos em mensagens e comentários, mas não em identificadores.
 
-## Decisões do lexer do MiniForge
+## Recuperação e limites
 
-- Laço principal em `Lexer.tokens()`; um token por chamada de `proximo_token()`.
-- Maior casamento: identificadores e números consomem o lexema mais longo;
-  operadores de 2 caracteres (`==`, `!=`, `<=`, `>=`) testados antes dos de 1.
-- Reservadas por tabela (`RESERVADAS`) depois de ler a palavra inteira.
-- Identificadores e números só com caracteres ASCII (`[A-Za-z_][A-Za-z0-9_]*`
-  e `[0-9]+`); letras acentuadas são caracteres inválidos.
-- `!` sozinho é caractere inválido (só existe dentro de `!=`).
-- `12ab` não é erro léxico: pelo maior casamento vira `NUM '12'` seguido de
-  `ID 'ab'`, e o parser rejeita a sequência.
-- Não há strings nem comentários de bloco, então não existem erros de
-  "não fechado até o fim do arquivo".
+Caractere desconhecido é descartado e registrado em Lexer.erros; a leitura
+continua para listar erros independentes. A CLI imprime os diagnósticos em
+stderr e não passa ao parser se a lista de erros não estiver vazia.
+O token EOF é emitido mesmo após recuperação.
+
+12ab é NUM seguido de ID, não um erro léxico: a sequência será rejeitada pelo
+parser quando inadequada. ! sozinho é inválido; existe apenas o operador !=.
+Não há comentário de bloco, número decimal, notação científica ou identificador
+Unicode. Esses limites não devem ser confundidos com os recursos de outro
+projeto do repositório, como o MiniLexer escrito em C.
+
+Testes: test_lexer.py, test_mineires.py, test_calculadora_interativa.py e
+ test_sorteio.py em tests/. A comparação educacional com outros scanners não
+substitui os contratos do código atual.

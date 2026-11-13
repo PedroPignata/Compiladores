@@ -1,52 +1,43 @@
-# Matriz da entrega de 13/11/2026
+# Matriz vigente de requisitos e evidências
 
-Diagnóstico antes da integração em 12/11: main 2bb5b03, sem alterações locais.
-Os PDFs Projeto.pdf e Projeto-1.pdf são idênticos (SHA-256 d8acb1bb5d3ecd479f344be3a7148f4c274f0ea728ec018956b15f10be19485c).
-As apresentações anteriores têm conteúdo e hashes diferentes: foram usadas como referências de continuidade, não de escopo.
-Os nomes com (1) citados no pedido não estão disponíveis; os arquivos anexados sem esse sufixo são a referência efetiva.
+Referência acadêmica: Compiladores_2026-2_Aulas_Praticas_Projeto.pdf.
+A aula inicial usa o nome genérico MiniLang; o grupo usa MiniForge para o
+compilador e mineirês para a linguagem. A main atual inclui execução e sorteio,
+autorizados depois do marco v0.5-otimizacao-sem-vm.
 
-| Requisito / página física | Implementação | Diagnóstico / adaptação | Situação / evidência |
-|---|---|---|---|
-| Organização, aula 06 p.5 (4/5) | miniforge/, tests/, exemplos/, docs/ | minilang é o nome genérico do exemplo; preservado MiniForge | Atendido, árvore no README |
-| Frontend, aulas 08–22 pp.7–41 | tokens, lexer, parser, AST, símbolos e semântica | Preservar código e regressões | Atendido, testes anteriores |
-| TAC, aula 26 pp.42–46 | ir.py do ZIP | Remover bytecode e executor dos testes | Atendido, test_ir.py |
-| Temporários, escopos, saltos, origem | GeradorTAC do ZIP | Preservar nomes únicos; validar AST na API pública | Atendido, testes estruturais |
-| Cinco passes, aula 30 pp.52–56 | otimizador.py do ZIP | Extrair avaliação constante de vm.OPS | Atendido, testes isolados e ponto fixo |
-| Comparação antes/depois p.56 | docs/otimizacao.md | Contagem estática sem rótulos | Adaptado, medições desta versão |
-| Equivalência por execução p.56 | testes de execução no ZIP | Não integrar executor de TAC nem VM de teste | Excluído por pedido, sem prova geral de equivalência |
-| VM e estatísticas aulas 28 pp.47–51 | vm.py do ZIP | Não integrar | Excluído por pedido |
-| Desafio pilha p.46 | GeradorPilha | Não integrar | Excluído por pedido |
-| Extensões lógicas opcionais | proposta na gramática | Priorizar núcleo e segurança | Futuro, não implementado |
-
-Definições: dependência de vm.OPS é incompatibilidade de escopo, não defeito do projeto completo.
-Melhorias propostas: avaliação constante com tipos estritos; guarda semântica na API de geração.
-Riscos a testar: constantes em laços/junções, divisão por zero alcançável, mutação, idempotência e colisões.
-Nenhum bloqueio técnico identificado no diagnóstico.
-
-
-## Revisão interativa posterior
-
-O pedido posterior exige a aplicação escrita na própria linguagem com entrada
-e resultado. Isso supera a exclusão anterior de execução para esta revisão.
-A tag v0.5-otimizacao-sem-vm continua representando o marco sem backend.
-A main inclui agora le_so, mensagens e executor TAC em execucao.py.
-O mapeamento histórico acima permanece válido para o marco; a extensão atual
-está documentada em execucao.md e nos testes da calculadora interativa.
-
-## Aplicações e organização revisada
-
-| Item | Implementação | Evidência |
+| Requisito / referência | Implementação vigente | Situação e evidência |
 |---|---|---|
-| Separação do pacote, exemplos, testes e docs, p.5 (4/5) | miniforge/, exemplos/calculadora/, exemplos/adivinha/, tests/, docs/ | Árvore e contratos em arquitetura.md |
-| Dois programas na linguagem do grupo | interativa.mini e adivinha.mini | Execução pelo mesmo compilador, testes dos programas |
-| Instruções para instalar, usar e editar | README principal, exemplos/README.md e READMEs das aplicações | Comandos e cenários correspondentes aos testes |
-| Jogo sem extensão do compilador | Declarações, le_so, mostra_so, comparações, uai e enquanto_tiver existentes | 26 casos novos e suíte completa |
+| Organização, aula 06, p.5 física (4/5) | miniforge/, tests/, exemplos/, docs/, README | Atendido com o nome do grupo; árvore em arquitetura.md |
+| Especificação e EBNF | especificacao.md e gramatica.md | Atualizadas com le_so, mensagens e sorteia_so |
+| Frontend, aulas 08–22, pp.7–41 | tokens, lexer, AST, parser, símbolos e semântica | Implementado; regressões e diagnósticos testados |
+| Escopos e tipos | simbolos.py e semantica.py | Redeclaração, sombreamento, inicializador, condições e operadores testados |
+| TAC, aula 26, pp.42–46 | ir.py | Identidades, temporários, rótulos e origem; testes estruturais |
+| Execução, aula 28, pp.47–51 | execucao.py | Executor/backend simples de TAC; papel da VM, sem copiar vm.py |
+| Cinco passes, aula 30, pp.52–56 | otimizador.py e constantes.py | Contrato (novo_codigo, mudou), efeitos, divisões, ponto fixo e idempotência |
+| Comparação antes/depois, p.56 | otimizacao.md e testes de execução | Medidas estáticas; sessões originais/otimizadas nos casos cobertos |
+| Instruções executadas e desempenho, p.56 | Não instrumentados | Sem alegação de aceleração ou conformidade com métricas dinâmicas |
+| Bytecode/VM de pilha, desafio p.46 | Não implementado | Recurso adicional excluído; não é necessário para os programas atuais |
+| Extensões lógicas opcionais | Não implementadas | Não constam da gramática efetiva; sem promessa de entrega futura |
+| Aplicações solicitadas posteriormente | Calculadora e jogo em exemplos/ | Programas em mineirês, READMEs próprios e guia conjunto |
+| Aleatoriedade solicitada posteriormente | sorteia_so e random | Integrados em todas as fases, preservados com -O; test_sorteio.py |
+| CLI e instruções | __main__.py e READMEs | Default TAC; execução explícita; combinações e códigos conferidos |
 
-O segundo programa não é uma exigência literal identificada na árvore dos
-slides; atende ao pedido posterior de aplicações. Não foi criado recurso de
-aleatoriedade nem movido código de outros projetos.
+## Adaptações e alcance
 
+O corte antigo sem backend foi substituído pelo pedido de programas interativos.
+A execução atual é real e genérica, não um aplicativo Python específico de cada
+programa. O nome execucao.py tem correspondência de responsabilidade com a VM
+dos slides. A árvore mantém as pastas solicitadas; não se afirma equivalência
+literal de nomes de módulos auxiliares adicionais.
 
-Revisão aleatória: sorteia_so foi integrada às fases existentes e substitui o
-segredo fixo do primeiro jogo. A linha anterior “jogo sem extensão” descreve
-a versão inicial. Sorteio, erros, efeitos e testes atuais: sorteio.md.
+Os testes de execução com/sem otimização reforçam os casos cobertos, mas não
+provam equivalência geral de qualquer TAC. Não há contagem dinâmica, benchmark,
+bytecode de pilha ou artigo final da A2. Essas limitações permanecem explícitas.
+
+A calculadora rejeita numerador não nulo dividido para quociente inteiro zero
+como regra da aplicação. O jogo sorteia uma vez por partida. Nenhuma dessas
+regras deve ser confundida com alteração do operador / ou sorteio em compilação.
+
+Registros dos cortes anteriores: [integração histórica](historico/integracao-v0.5.md).
+Evidência vigente: [testes.md](testes.md). Resultados estáticos:
+[otimizacao.md](otimizacao.md).

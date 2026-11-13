@@ -1,5 +1,9 @@
 # Validação conjunta dos programas mineirês
 
+> **Registro histórico.** Registro da primeira versão do jogo, com segredo fixo. O jogo atual é aleatório e suas métricas são diferentes.
+> Documentação vigente: [índice](README.md), [relatório final](relatorio-final.md) e [testes](testes.md).
+
+
 ## Ambiente e estado inicial
 
 Revisão de 13/11/2026 em Linux, Python 3.12.3, pytest 8.4.2, ambiente

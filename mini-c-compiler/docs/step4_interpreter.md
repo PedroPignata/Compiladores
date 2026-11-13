@@ -55,7 +55,7 @@ switch(node->value) {
 
 ## Notes
 
-- The interpreter traverses the AST **top-down**, executing statements in the order they appear.
+- interpret() walks the statement chain through right; eval_expression() recursively evaluates operands before applying a binary operator.
 - Statements are linked using the **right** pointer of each AST node, forming a right-skewed list.
 - Division by zero or access to undefined variables will terminate execution with a runtime error.
 - Printing is handled immediately when an **AST_PRINT** node is encountered.
@@ -72,13 +72,13 @@ print(x);
 Execution proceeds as follows:
 
 ```c
-AST_LET(x)
+AST_ASSIGN(x)
   AST_BINARY_OP(+)
     AST_NUMBER(5)
     AST_NUMBER(3)
 
 AST_PRINT
-  AST_IDENTIFIER(x)
+  AST_VAR(x)
 ```
 
 Output:
@@ -94,3 +94,10 @@ Output:
 - **Invalid expression node**: Encountering a malformed or unsupported AST node.
 
 Each runtime error prints a descriptive message and terminates the program.
+
+## Implementation reference
+
+The supported node names come from include/parser.h. This example describes
+conceptual nodes rather than the full output of print_ast, whose statement
+printing limitations are documented in [RELATORIO.md](../RELATORIO.md).
+Run commands from Compiladores/mini-c-compiler; see [README](../README.md).

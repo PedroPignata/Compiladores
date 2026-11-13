@@ -1,5 +1,9 @@
 # Registro de validação da Calculadora Mineira
 
+> **Registro histórico.** Registros da evolução da calculadora, anteriores à revisão aleatória atual. Incluem comandos de um aplicativo Python removido; não use esses comandos na main.
+> Documentação vigente: [índice](README.md), [relatório final](relatorio-final.md) e [testes](testes.md).
+
+
 Data: 13/11/2026. Linux, Python 3.12.3, pytest 8.4.2.
 Ambiente isolado: `/tmp/miniforge-relatorio-venv`, criado para a revisão.
 Instalação: `python3 -m venv /tmp/miniforge-relatorio-venv` e

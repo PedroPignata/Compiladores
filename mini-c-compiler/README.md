@@ -4,7 +4,7 @@ Projeto educacional escrito em **C** para estudo das etapas envolvidas no proces
 
 Apesar do nome **Mini C Compiler**, a implementação atual funciona tecnicamente como um **interpretador baseado em AST**, pois o programa analisa o código-fonte e executa diretamente a árvore sintática, sem gerar código de máquina, assembly ou bytecode.
 
-Este repositório contém a análise individual realizada para a disciplina de **Compiladores**, incluindo testes, documentação, evidências e uma melhoria no parser.
+Esta pasta do repositório Compiladores contém a análise individual realizada para a disciplina de **Compiladores**, incluindo testes, documentação, evidências e uma melhoria no parser.
 
 ---
 
@@ -87,9 +87,10 @@ Nenhuma biblioteca externa é necessária.
 
 ## Compilação
 
-Na raiz do projeto:
+A partir da raiz Compiladores, entre na pasta desta aplicação:
 
 ```bash
+cd mini-c-compiler
 gcc src/main.c src/lexer.c src/parser.c src/interpreter.c src/utils.c -Iinclude -o mini-c
 ```
 
@@ -442,3 +443,10 @@ Para a análise completa, resultados dos testes, ASTs, explicação da melhoria 
 ```text
 RELATORIO.md
 ```
+
+## Contexto da documentação
+
+Os documentos em docs/ descrevem os módulos desta implementação em C.
+O [relatório](RELATORIO.md) preserva a análise e os resultados da atividade.
+A linguagem let/print deste projeto é independente do mineirês e do executor
+TAC do MiniForge. Veja o [índice do repositório](../README.md).

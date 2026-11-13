@@ -1,5 +1,9 @@
 # Validação da revisão aleatória
 
+> **Registro histórico.** Registro executado na integração do sorteio em 7e1408a. A validação documental mais recente está em testes.md.
+> Documentação vigente: [índice](README.md), [relatório final](relatorio-final.md) e [testes](testes.md).
+
+
 Data: 13/11/2026. Linux, Python 3.12.3, pytest 8.4.2.
 Ambiente: `/tmp/miniforge-relatorio-venv`.
 

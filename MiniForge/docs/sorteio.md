@@ -70,4 +70,5 @@ contagem e ordem de chamadas sem fragilidade probabilística. Também existem
 execuções com SystemRandom real verificando limites, inclusive negativos e
 grandes, e CLI com intervalo de um elemento. Os testes não exigem resultados
 aleatórios diferentes como condição para passar.
-Registro atual em [testes-sorteio.md](testes-sorteio.md).
+Validação vigente em [testes.md](testes.md). O registro da integração está
+em [testes-sorteio.md](testes-sorteio.md).

@@ -31,7 +31,7 @@ Nenhuma API externa ou chave secreta é necessária.
 
 ## Como instalar e executar
 
-No terminal, entre nesta pasta e crie um ambiente virtual:
+A partir da raiz Compiladores, entre na pasta da aplicação e crie um ambiente virtual:
 
 ```bash
 cd transformer-simulator
@@ -244,3 +244,12 @@ transformer-simulator/
 - [x] Capturas de tela.
 - [x] Vídeo curto.
 - [x] Registro dos principais prompts.
+
+
+## Contexto no repositório
+
+Esta aplicação é independente do MiniForge, MiniLexer e Mini C Compiler.
+Se já abriu um terminal em transformer-simulator/, não repita o comando cd.
+Dependências, testes e os resultados de 31 casos acima pertencem somente a
+este simulador; a revisão dos documentos não apresenta esses resultados como
+uma nova execução. Veja o [índice do repositório](../README.md).

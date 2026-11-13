@@ -41,7 +41,7 @@ As análises sempre ocorrem antes de qualquer leitura ou saída do programa.
 
 O executor recebe TAC válido, mantém memória de nomes internos, indexa rótulos
 e avança um contador de instruções. Executa cópias, operações, leitura, saída,
-saltos e rótulos. Os tipos e os escopos já foram verificados; identidades internas
+saltos, rótulos e sorteio random. Os tipos e os escopos já foram verificados; identidades internas
 preservam o sombreamento. A aritmética compartilha as regras de `constantes.py`,
 inclusive divisão truncada para zero, sem float. Divisão por zero gera diagnóstico
 com linha do fonte. EOF gera código 1; Ctrl+C é tratado pela CLI, com código 130.
@@ -65,3 +65,11 @@ de vocabulário e quantidade de nós AST foram atualizadas para os recursos novo
 Não há bytecode de pilha, JIT, tempo de execução medido ou prova geral de
 equivalência. O executor novo não é uma cópia do `vm.py` do ZIP e esse arquivo
 continua ausente. Documentos de integração anteriores registram o escopo histórico.
+
+
+## Sorteio na versão vigente
+
+O executor também interpreta random para sorteia_so. Essa operação usa os
+limites avaliados em execução e não é dobrada pelo otimizador. Contrato em
+[sorteio.md](sorteio.md). Validação atual em [testes.md](testes.md); a tag
+sem-vm citada no histórico não contém este executor.

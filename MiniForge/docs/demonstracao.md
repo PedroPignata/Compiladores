@@ -1,10 +1,17 @@
-# Demonstração para a professora
+# Demonstração da versão vigente
 
-Instalação no README. Com ambiente ativado e dentro de MiniForge, executar separadamente. Erros retornam 1 intencionalmente.
+Na pasta MiniForge/, com Python ativo, execute cada comando separadamente.
+As saídas abaixo foram obtidas na revisão documental de 13/11/2026. Erros
+intencionais retornam código 1. Sem --executar há compilação, não execução.
+Instalação: [README](../README.md). Guias: [programas](../exemplos/README.md).
 
-## python -m miniforge exemplos/fatorial.mini
+## Fatorial: gerar TAC
 
-Código 0
+```bash
+python -m miniforge exemplos/fatorial.mini
+```
+
+Código 0. Saída em stdout.
 
 ```text
     n = 5
@@ -21,9 +28,25 @@ L2:
     print f
 ```
 
-## python -m miniforge exemplos/constantes.mini --tac
+## Fatorial: executar
 
-Código 0
+```bash
+python -m miniforge exemplos/fatorial.mini --executar
+```
+
+Código 0. Saída em stdout.
+
+```text
+120
+```
+
+## Constantes: TAC original
+
+```bash
+python -m miniforge exemplos/constantes.mini --tac
+```
+
+Código 0. Saída em stdout.
 
 ```text
     t1 = 2 * 3
@@ -40,9 +63,13 @@ L1:
 L2:
 ```
 
-## python -m miniforge exemplos/constantes.mini --tac -O
+## Constantes: TAC otimizado
 
-Código 0
+```bash
+python -m miniforge exemplos/constantes.mini --tac -O
+```
+
+Código 0. Saída em stdout.
 
 ```text
     base = 10
@@ -50,9 +77,13 @@ Código 0
     print 100
 ```
 
-## python -m miniforge exemplos/semantico.mini --contexto
+## Erros independentes com contexto
 
-Código 1
+```bash
+python -m miniforge exemplos/semantico.mini --verificar --contexto
+```
+
+Código 1. Diagnósticos em stderr.
 
 ```text
 linha 2: erro semântico: 'b' é booleanim, mas tá recebendo inteirim
@@ -66,26 +97,38 @@ linha 3: erro semântico: 'y' num foi declarado, sô
    |           ^
 ```
 
-## python -m miniforge exemplos/erro_lexico.mini
+## Erro léxico
 
-Código 1
+```bash
+python -m miniforge exemplos/erro_lexico.mini --verificar
+```
+
+Código 1. Diagnósticos em stderr.
 
 ```text
 1:3: erro léxico: caractere inválido '@', que trem é esse?
 4:9: erro léxico: caractere inválido '$', que trem é esse?
 ```
 
-## python -m miniforge exemplos/erro_sintatico.mini
+## Erro sintático
 
-Código 1
+```bash
+python -m miniforge exemplos/erro_sintatico.mini --verificar
+```
+
+Código 1. Diagnósticos em stderr.
 
 ```text
 3:8: erro sintático: faltou ':', sô: achei 'inteirim'
 ```
 
-## python -m miniforge exemplos/if_else.mini --tipos
+## Árvore anotada
 
-Código 0
+```bash
+python -m miniforge exemplos/if_else.mini --tipos
+```
+
+Código 0. Saída em stdout.
 
 ```text
 Programa
@@ -109,46 +152,41 @@ Programa
             └── Num 0 : inteirim
 ```
 
-## Conferências adicionais
+## Calculadora Mineira
 
 ```bash
-python -m miniforge exemplos/fatorial.mini --tokens
-python -m miniforge exemplos/escopos.mini --tac
-python -m pytest -q tests/test_ir.py tests/test_otimizador.py tests/test_middleend.py
-python -m pytest -q
+python -m miniforge exemplos/calculadora/interativa.mini --executar
+python -m miniforge exemplos/calculadora/interativa.mini --executar -O
 ```
 
-Sem ganho: compare fatorial.mini com e sem -O; laços exigem conservadorismo.
-Segurança: mostre o caso divisão por zero em test_middleend.py; a instrução permanece.
-Plano B: saídas deste documento e PDF local. Não prometer imprimir 120: print f é TAC.
-
-
-## Calculadora inteiramente em mineirês
-
-```bash
-python3 -m miniforge exemplos/calculadora/interativa.mini --executar
-```
-
-Escolher 1, digitar 18 e 6: o programa mostra Resultado: e 24. Escolher 4,
-digitar 10 e 0: mensagem de divisor zero e retorno ao menu. Escolher 4,
-digitar -7 e 2: resultado -3. Experimentar 2 / 5: Resultado inválido,
-pois a fração seria truncada para zero. Comparar com 0 / 5: zero válido.
-Escolher 0 para encerrar.
-Repetir com `--executar -O` para usar TAC otimizado.
-Para explicar o código, abrir interativa.mini: o próprio fonte contém
-mostra_so, le_so, enquanto_tiver, uai e sinao. Inspecionar o TAC em comando
-separado com --tac; não combinar inspeção com execução.
+Na sessão, escolher 1, digitar 18 e 6: resultado 24. Escolher 4, digitar 2 e 5:
+mensagem de resultado inválido sem mostrar zero truncado. Comparar com 0 / 5,
+que é zero válido. Divisor zero também retorna ao menu. A opção 0 encerra.
+Inspecione o fonte e o TAC numa chamada separada, sem combinar execução e inspeção.
 
 ## Adivinha o trem, sô!
 
 ```bash
 python -m miniforge exemplos/adivinha/adivinha.mini --executar
-python -m miniforge exemplos/adivinha/adivinha.mini --executar -O
+python -m miniforge exemplos/adivinha/adivinha.mini --tac -O
 ```
 
-O segredo agora é sorteado entre 1 e 100. Fazer palpites e seguir as dicas até
-acertar ou usar 0 para sair. Não prometer que 40/80/65 acertam: essa sequência
-só ilustra uma partida cujo sorteio fosse 65. Para demonstração previsível,
-configurar temporariamente minimo e maximo iguais a 42 e acertar com 42;
-depois restaurar os limites normais. Mostrar sorteia_so fora do laço no fonte
-e a instrução de sorteio preservada com --tac -O. Guias em exemplos/README.md.
+O segredo é aleatório entre 1 e 100. Siga as dicas ou use 0 para abandonar.
+Mostrar a chamada sorteia_so fora do laço e a instrução random preservada no TAC.
+Não prometer que 40/80/65 acertam; são só exemplo de uma partida que sorteasse 65.
+Para acerto previsível, configure temporariamente minimo e maximo iguais a 42,
+execute e digite 42. Restaure os limites depois para manter a configuração padrão.
+O [manual do jogo](../exemplos/adivinha/README.md) explica como editar o intervalo.
+
+## Testes e plano de apoio
+
+```bash
+python -m pytest -q
+python -m pytest -q tests/test_adivinha.py tests/test_sorteio.py
+```
+
+Resultado vigente em [testes.md](testes.md). A tabela de otimização é estática,
+não medição de velocidade. Se não houver oportunidade segura de redução no
+fatorial, isso é resultado esperado, não falha. Os dois TAC e as saídas reais
+deste documento servem como apoio; não substituem afirmar o que foi executado.
+A apresentação local não foi atualizada por esta revisão dos documentos do Git.

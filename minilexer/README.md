@@ -14,13 +14,14 @@ são informados sem interromper a análise do restante do arquivo.
 
 ## Compilação
 
-Na raiz do repositório, execute:
+A partir da raiz Compiladores, entre na pasta desta aplicação:
 
 ```bash
+cd minilexer
 gcc -Wall -Wextra -pedantic -std=c11 minilexer.c -o minilexer
 ```
 
-No Windows, o executável pode ser gerado como `minilexer.exe`:
+No Windows, já na pasta `Compiladores/minilexer`, o executável pode ser gerado como `minilexer.exe`:
 
 ```bash
 gcc -Wall -Wextra -pedantic -std=c11 minilexer.c -o minilexer.exe
@@ -168,3 +169,10 @@ Conforme o escopo da atividade, o programa não implementa:
 
 Portanto, uma sequência como `int = 10;` possui tokens léxicos válidos, embora
 seja sintaticamente incorreta.
+
+
+## Localização e outros projetos
+
+Este README descreve somente o MiniLexer em C, na pasta minilexer/.
+A linguagem MiniC desta atividade não é o mineirês do MiniForge.
+Consulte o [índice do repositório](../README.md) e o [relatório local](RELATORIO.md).

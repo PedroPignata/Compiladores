@@ -1,4 +1,4 @@
-# Relatório final do projeto MiniForge
+# Relatório final do MiniForge
 
 **Disciplina:** Compiladores, 2026.2
 
@@ -6,398 +6,276 @@
 
 **Integrantes:** Pedro Dutra, Pedro Pignata, Lucas Rocha Dantas e Renato Portilho
 
-**Data:** 13/11/2026
+**Revisão documental:** 13/11/2026
 
-**Projeto:** MiniForge. **Linguagem:** mineirês. **Implementação:** Python 3.10+.
+## 1. Resumo e resultado atual
 
-## 1. Resumo
+O MiniForge é um compilador didático implementado em Python para uma linguagem
+própria, o mineirês. O processamento reconhece tokens, constrói AST, resolve
+nomes e escopos, verifica tipos, gera código de três endereços (TAC) e aplica
+cinco passes de otimização até ponto fixo. A main atual também possui execução
+explícita de TAC, entrada inteira, saída de mensagens e sorteio inteiro inclusivo.
 
-O MiniForge é um compilador didático de uma linguagem própria chamada mineirês.
-O trabalho transforma texto em tokens, constrói uma árvore sintática abstrata,
-verifica nomes e tipos, gera código de três endereços (TAC) e aplica cinco passes
-de otimização até um ponto fixo. A Calculadora Mineira é a aplicação demonstrativa, com fontes escritos nessa
-linguagem, agora incluindo leitura pelo teclado e execução explícita. O relatório descreve a implementação e suas evidências,
-sem atribuir resultados de execução ao código que apenas foi compilado.
+Dois programas completos exercitam esses recursos: Calculadora Mineira e
+Adivinha o trem, sô!. Menu, entrada, escolhas, contas, dicas e repetição estão
+nos fontes .mini. O executor Python é genérico e não decide o comportamento
+de cada aplicação por um aplicativo auxiliar.
 
-O marco inicial terminava na otimização do código intermediário. Por solicitação
-posterior de uma aplicação interativa na própria linguagem, a revisão atual
-adicionou entrada, mensagens literais e um executor TAC. A CLI imprime TAC por
-padrão e só executa com --executar. Não há bytecode de pilha.
+A suíte atual tem 817 testes aprovados. A revisão documental conferiu os
+comandos, as métricas estáticas e os links locais. Registros de cortes anteriores
+não foram usados como descrição da implementação atual.
 
-## 2. Objetivos e motivação
+## 2. Objetivos e decisões
 
-O objetivo acadêmico é implementar as responsabilidades de cada fase de um
-compilador, com interfaces explícitas e testes. A linguagem pequena permite
-acompanhar uma expressão desde o lexema até a instrução intermediária.
-O vocabulário regional diferencia a linguagem sem aumentar excessivamente a
-gramática. Python implementa o compilador, mas o fonte que ele aceita é mineirês:
-`uai (x > 0) { mostra_so(x); }` não é código Python e não é encaminhado a `eval`.
+O objetivo acadêmico é implementar as responsabilidades das fases de um
+compilador e acompanhar a transformação de representações. A linguagem pequena
+permite observar uma expressão desde os caracteres até a instrução intermediária.
+O vocabulário mineiro dá identidade ao projeto, mantendo regras sintáticas e de
+tipos explícitas. Python é a linguagem de implementação; mineirês é a linguagem
+que o compilador analisa. O fonte não é encaminhado a eval.
 
-A calculadora demonstra uma aplicação compreensível: recebe dois inteiros e
-uma operação no terminal e executa o programa mineirês compilado. Exemplos fixos também mostram seleção e validade. Sua leitura
-permite explicar decisões de projeto sem depender de interface gráfica.
+A organização segue o modelo do roteiro: pacote, testes, exemplos e documentos
+separados. Os nomes genéricos minilang dos slides correspondem a miniforge.
+O executor atual fica em execucao.py, exercendo o papel de backend simples de
+TAC; não foi copiado vm.py nem bytecode de pilha da referência completa.
 
-## 3. Continuidade e método de desenvolvimento
+## 3. Continuidade do grupo
 
-O projeto começou com estrutura, especificação, gramática e exemplos. O grupo
-continuou o mesmo trabalho e produziu a versão completa preservada no ZIP
-`MiniForge-v0.6-mineires.zip`. A integração anterior publicou o frontend na tag
-`v0.3-semantica`. A versão `v0.5-otimizacao-sem-vm` incorporou TAC e otimização,
-com adaptações de dependências e testes para o escopo final solicitado.
+O projeto começou com estrutura e especificação e foi continuado pelo mesmo
+grupo. O ZIP MiniForge-v0.6-mineires.zip preserva a versão completa do colega.
+As integrações reaproveitaram linguagem, organização, Visitor, gerador TAC e
+passes válidos. O histórico e os créditos coletivos foram preservados.
 
-O PR #2 foi integrado à `main`, no commit
-`749a919c7468a9bc3ffd1502d617b614a02a7054`. A calculadora e este relatório são
-complementos posteriores a esse marco. Não representam novas fases do compilador.
-O histórico real e os créditos coletivos foram preservados. Os arquivos completos
-do ZIP permanecem referência, sem duplicar a implementação integral no repositório.
+A tag v0.3-semantica registra o frontend. A tag v0.5-otimizacao-sem-vm registra
+o marco inicial de TAC e otimização sem execução. Pedidos posteriores de
+aplicações interativas ampliaram o produto: foram acrescentados leitura,
+mensagens e executor; depois sorteia_so tornou o jogo aleatório. A main atual
+inclui essas extensões. As tags antigas não foram reescritas.
 
-A metodologia foi comparar requisitos dos slides e contratos do código, integrar
-somente fases autorizadas, testar regressões e riscos, medir o TAC gerado e
-registrar os limites das conclusões. A matriz detalhada é
-[matriz-requisitos.md](matriz-requisitos.md). O roteiro inicial de organização
-está na página física 5, identificada como 4/5 da aula 06. TAC está nas páginas
-42–46 e otimização nas páginas 52–56 do PDF da professora.
+O aplicativo Python específico criado inicialmente para contas fechadas foi
+substituído por um programa mineirês com execução real. A evolução detalhada
+está em [integracao.md](integracao.md); o relatório acumulado anterior foi
+preservado em [historico/relatorio-evolucao.md](historico/relatorio-evolucao.md).
 
-## 4. Linguagem e decisões
+## 4. Linguagem e contratos
 
-| Palavra | Significado | Exemplo |
+| Palavra | Representação | Exemplo |
 |---|---|---|
-| `le_so` | Entrada inteira | `le_so(x);` |
-| `trem` | Declara variável inicializada | `trem x: inteirim = 18;` |
-| `inteirim` | Tipo inteiro | `trem y: inteirim = 6;` |
-| `booleanim` | Tipo booleano | `trem ok: booleanim = eh_memo;` |
-| `eh_memo` | Literal verdadeiro | `ok = eh_memo;` |
-| `num_eh` | Literal falso | `ok = num_eh;` |
-| `uai` | Condicional | `uai (y != 0) { mostra_so(x / y); }` |
-| `sinao` | Alternativa | `uai (ok) { mostra_so(1); } sinao { mostra_so(0); }` |
-| `enquanto_tiver` | Repetição | `enquanto_tiver (x > 0) { x = x - 1; }` |
-| `mostra_so` | Comando de saída representado no TAC | `mostra_so(x);` |
+| trem | Declaração inicializada | `trem x: inteirim = 18;` |
+| inteirim | Inteiro | `trem y: inteirim = 6;` |
+| booleanim | Booleano | `trem ok: booleanim = eh_memo;` |
+| eh_memo | Verdadeiro | `ok = eh_memo;` |
+| num_eh | Falso | `ok = num_eh;` |
+| uai | Condicional | `uai (ok) { mostra_so(1); }` |
+| sinao | Alternativa | `uai (ok) { mostra_so(1); } sinao { mostra_so(0); }` |
+| enquanto_tiver | Repetição | `enquanto_tiver (x > 0) { x = x - 1; }` |
+| mostra_so | Saída | `mostra_so("Bão demais!");` |
+| le_so | Leitura inteira | `le_so(x);` |
+| sorteia_so | Sorteio inclusivo em execução | `x = sorteia_so(1, 100);` |
 
-Os tipos internos são `int` e `bool`; não há coerção implícita entre eles.
-A aritmética recebe inteiros, comparações ordenadas produzem booleanos e igualdade
-exige tipos iguais. Condições exigem booleanos. A divisão inteira trunca para zero,
-inclusive com operandos negativos. Comentários começam em `//`; o fonte é UTF-8.
-As chaves são obrigatórias, declarações precisam de inicialização e comparações
-não podem ser encadeadas. Multiplicação e divisão têm prioridade sobre soma e
-subtração, e parênteses alteram o agrupamento. O menos unário tem prioridade maior.
+Tipos internos int e bool não possuem coerção implícita. A aritmética recebe
+inteiros; comparações ordenadas produzem booleanos; igualdade exige operandos
+do mesmo tipo. Condições exigem booleanos. Divisão inteira trunca para zero,
+inclusive com negativos, sem conversão intermediária para float.
 
-Cada bloco abre escopo. Redeclaração no mesmo escopo é erro, mas sombreamento
-interno é permitido. A análise do inicializador ocorre antes de inserir o novo
-nome. A especificação completa está em [especificacao.md](especificacao.md) e a
-EBNF em [gramatica.md](gramatica.md).
+Declarações são inicializadas, blocos exigem chaves e comparações não podem
+ser encadeadas. Cada bloco abre escopo. Redeclaração no mesmo escopo é erro;
+sombreamento interno é permitido. O inicializador é analisado antes da inserção
+do novo símbolo. Comentários começam com //; os fontes são UTF-8.
 
-## 5. Organização e interfaces
+Mensagens entre aspas duplas só são permitidas como saída literal. Não são
+valores de um novo tipo de variável e não possuem escapes ou interpolação.
+le_so exige variável inteira já declarada e solicita novamente quando a entrada
+não representa inteiro. EOF durante leitura é erro de execução.
+
+sorteia_so recebe duas expressões inteiras, avaliadas da esquerda para a direita.
+Os extremos são inclusivos; limites invertidos causam erro em execução.
+Cada chamada alcançada sorteia novamente usando SystemRandom, sem semente fixa.
+Repetição de valores entre chamadas é possível. A compilação não faz sorteio.
+
+Contratos completos: [especificacao.md](especificacao.md), [gramatica.md](gramatica.md)
+e [sorteio.md](sorteio.md).
+
+## 5. Arquitetura e fases
 
 ```text
 MiniForge/
-  miniforge/
-    __init__.py       pacote
-    __main__.py       CLI e controle das fases
-    tokens.py         categorias e palavras reservadas
-    lexer.py          texto para tokens e posições
-    ast.py            nós e apresentação da árvore
-    parser.py         tokens para AST
-    simbolos.py       símbolos e pilha de escopos
-    semantica.py      resolução e verificação de tipos
-    ir.py             AST validada para instruções TAC
-    constantes.py     avaliação estrita de uma operação literal
-    otimizador.py     cinco passes e ponto fixo
-    execucao.py       executor genérico de TAC, entrada e saída
-  tests/              regressões e cenários por fase
-  exemplos/           fontes .mini
-    calculadora/      interface interativa, fontes, README e TAC de referência
-  docs/               contratos, requisitos, relatórios e demonstração
-  README.md           instalação e uso
-  pytest.ini          configuração dos testes
-  requirements-dev.txt
+  miniforge/  implementação por fase e CLI
+  tests/      regressões, cenários das aplicações e casos de referência
+  exemplos/   fontes .mini e READMEs de uso e personalização
+  docs/       contratos vigentes, relatório e histórico identificado
+  README.md, pytest.ini, requirements-dev.txt
 ```
 
-O nome genérico `minilang/` do roteiro corresponde a `miniforge/` neste projeto.
-`constantes.py` é um auxiliar do middle-end. A organização mantém um arquivo por
-responsabilidade e separa implementação, dados de exemplo e documentação.
+### 5.1. Tokens e lexer
 
-## 6. Análise léxica
+O lexer lê o identificador completo antes de consultar as reservadas. Operadores
+de dois caracteres têm prioridade sobre os de um. Tokens guardam linha e coluna,
+e EOF encerra a lista. Caracteres inválidos são registrados e descartados,
+permitindo reportar mais de um erro. A CLI impede o avanço se houver erros.
+Texto literal é reconhecido numa linha; aspas sem fechamento geram diagnóstico.
 
-`Lexer(fonte).tokens()` devolve tokens com categoria, lexema e posição. O scanner
-lê o identificador inteiro antes de consultar as reservadas, portanto nomes como
-`enquanto_tiver2` continuam identificadores. Reconhece operadores de dois
-caracteres antes de seus prefixos, ignora comentários e espaços e termina com EOF.
-Caracteres inválidos geram diagnósticos; a leitura continua para listar outros
-erros léxicos. A CLI interrompe o avanço antes do parser se houver erros.
+### 5.2. Parser e AST
 
-Na declaração `trem primeiro: inteirim = 18;`, o lexer distingue a reservada de
-declaração, o nome, dois-pontos, tipo, atribuição, literal e ponto e vírgula.
-A posição preservada permite localizar o problema nas fases seguintes.
+O parser descendente usa métodos por nível de precedência. Multiplicação e
+divisão ligam mais forte que soma; os laços do parser constroem associatividade
+à esquerda; o menos unário é recursivo. Parênteses alteram a árvore sem gerar
+nós extras. O nó Sorteio contém as duas expressões de limite. Leitura e Mensagem
+são comandos, enquanto Num, Bool, Var e operadores compõem expressões.
 
-## 7. Gramática, parser e AST
+### 5.3. Símbolos e semântica
 
-`Parser(tokens).programa()` constrói a AST por análise descendente recursiva.
-Níveis diferentes de expressão implementam precedência. O agrupamento está nos
-nós, não nos delimitadores: `2 + 3 * 4` contém uma multiplicação dentro da soma;
-`(2 + 3) * 4` contém a soma dentro da multiplicação. Os comandos possuem nós de
-declaração, atribuição, saída, bloco, condicional e laço.
+A tabela é uma pilha de escopos. Cada símbolo guarda nome, tipo, categoria,
+linha, nível e contagem de usos. A busca começa no escopo mais interno.
+O visitante verifica declaração, redeclaração, compatibilidade, condições e
+operandos, anotando as expressões. Expressão inválida não fornece tipo válido
+aos pais, evitando diagnósticos derivados; erros independentes ainda são encontrados.
+Avisos de variável não lida não impedem a compilação. --contexto aponta o fonte.
 
-Erros como ponto e vírgula ausente ou chave não fechada impedem a geração de AST
-completa. `--ast` permite examinar a árvore sintática sem exigir semântica válida.
-A representação de saída e repetição na árvore não executa esses comandos.
+### 5.4. Geração de TAC
 
-## 8. Símbolos e análise semântica
+A API gerar_tac rejeita AST semanticamente inválida. Expressões são geradas em
+pós-ordem e retornam endereços. Instr guarda operação, destino, operandos e linha.
+Temporários e rótulos usam contadores distintos. Sombreamento recebe identidades
+internas; nomes do usuário como t1 não colidem com temporários gerados.
+O laço posiciona a condição após o rótulo inicial, permitindo reavaliação.
+Geração equivalente é determinística, inclusive quando o TAC contém random:
+a aleatoriedade só ocorre depois, durante a execução.
 
-`TabelaSimbolos` mantém uma pilha de dicionários. Símbolos registram nome, tipo,
-categoria, linha da declaração e nível de escopo. A busca começa no bloco mais
-interno. Ao encerrar um bloco, os nomes locais deixam de ser visíveis.
+### 5.5. Executor
 
-O visitante semântico percorre a AST, resolve nomes, verifica operadores e anota
-expressões com tipo. As cinco regras centrais são declaração antes do uso,
-redeclaração proibida no mesmo escopo, compatibilidade em inicialização e
-atribuição, condições booleanas e operandos adequados aos operadores.
-Expressão inválida não fornece tipo válido aos pais, evitando mensagens em
-cascata; erros independentes continuam sendo acumulados. Avisos de nomes sem
-uso não impedem a compilação. `--contexto` acrescenta a linha e o marcador `^`.
+execucao.py mantém memória de nomes internos, índice de rótulos e contador de
+instruções. Executa cópias, operadores, saltos, read, texto, print e random.
+As operações compartilham as regras de constantes.py. Divisão por zero e EOF
+produzem erros com origem; limites invertidos também falham em execução.
+A saída é liberada antes de esperar teclado. Laços infinitos do fonte não têm
+um limite artificial imposto pelo executor. Não há bytecode de pilha.
 
-## 9. Geração de TAC
+Responsabilidades e interfaces: [arquitetura.md](arquitetura.md) e [execucao.md](execucao.md).
 
-`gerar_tac(programa)` rejeita AST semanticamente inválida e usa `GeradorTAC`.
-Expressões são percorridas em pós-ordem: primeiro os operandos, depois a operação.
-Cada resultado intermediário recebe um temporário. `Instr` guarda operação,
-destino, operandos e linha de origem. A formatação é uma instrução por linha.
+## 6. Otimização e segurança
 
-```text
-// Fonte: mostra_so(primeiro + segundo);
-    t1 = primeiro + segundo
-    print t1
-```
+Cada passe devolve (novo_codigo, mudou), preservando a entrada. otimizar repete
+os cinco passes até não haver alteração:
 
-Condicionais usam `iffalse`, `goto` e rótulos. A condição de laço fica após seu
-rótulo inicial para ser alcançada novamente pelo salto de retorno. Variáveis
-sombreadas recebem identidades distintas. Nomes do usuário como `t1` são
-adaptados internamente para não colidir com temporários. A geração é determinística.
-
-## 10. Otimizador e segurança
-
-Cada passe recebe TAC e devolve `(novo_codigo, mudou)`. `otimizar()` repete os
-cinco passes até não haver alteração. A entrada não é modificada inesperadamente.
-
-| Passe | Transformação e cuidado |
+| Passe | Transformação e limite |
 |---|---|
-| Propagação de constantes | Substitui leituras por literais conhecidos dentro do bloco básico; invalida destinos escritos e esquece valores em limites de fluxo |
-| Dobramento de constantes | Avalia operações literais com tipos estritos e divisão inteira sem conversão para float |
-| Saltos constantes | Resolve condição literal, criando oportunidades de remover caminhos inalcançáveis |
-| Código morto | Remove código inalcançável e temporários dispensáveis, preservando divisões alcançáveis potencialmente falhas |
-| Limpeza de rótulos | Remove rótulos sem referência e saltos para o ponto imediatamente seguinte |
+| Propagação | Usa literais conhecidos dentro de bloco básico e invalida cada destino escrito |
+| Dobramento | Avalia operações literais válidas; preserva divisão por zero |
+| Saltos constantes | Resolve condições booleanas literais |
+| Código morto | Retira caminhos inalcançáveis e temporários dispensáveis, preservando efeitos e falhas |
+| Limpeza | Retira saltos para o ponto seguinte e rótulos sem referência |
 
-Não se aplica `0 / x = 0` sem garantia sobre o divisor. Divisões por zero não
-são dobradas. Propagar constantes anteriores a um laço como se fossem invariantes
-seria incorreto; os limites de blocos evitam essa suposição. A avaliação literal
-em `constantes.py` não percorre programas nem executa saltos.
+Os limites de fluxo impedem supor que valores anteriores a laços permaneçam
+constantes em todas as iterações. read e random invalidam o destino e são efeitos
+observáveis: não desaparecem por falta de uso. random não é uma operação constante,
+mesmo com limites literais. Não se aplica 0 / x = 0 sem garantia sobre x.
+A origem acompanha instruções substituídas. A avaliação literal não executa fluxo.
 
-## 11. Aplicação: Calculadora Mineira
+Medições estáticas atuais, contando instruções exceto label:
 
-### 11.1. Programa interativo na própria linguagem
-
-O fonte `exemplos/calculadora/interativa.mini` contém todo o menu, leitura,
-validação de opção, escolha da conta e repetição. O comando para executar é
-`python -m miniforge exemplos/calculadora/interativa.mini --executar`.
-A opção `-O` permite executar a versão otimizada. Não existe aplicativo Python
-específico selecionando as contas ou produzindo programas para cada solicitação.
-
-Foi necessário ampliar a linguagem com `le_so(nome);`, que exige variável
-inteira declarada, e mensagens literais em `mostra_so("texto");`. O lexer ganhou
-os tokens READ e TEXTO; o parser cria Leitura e Mensagem; a semântica verifica
-as leituras e o gerador produz read/texto. Mensagens não são expressões de um
-novo tipo: só podem aparecer como saída literal, sem escapes ou interpolação.
-
-O novo módulo `miniforge/execucao.py` executa o TAC válido usando memória de
-nomes internos e contador de instruções. A aritmética usa as regras já existentes,
-inclusive divisão truncada para zero. O programa mineirês usa um laço para
-repetir o menu e condicionais para escolher a operação e evitar divisor zero.
-O visual usa molduras e mensagens mineiras. Uma verificação adicional impede
-apresentar zero quando um numerador não nulo dividido por outro inteiro gera
-quociente truncado zero (como 2 / 5). Zero verdadeiro, como 0 / 5, continua válido.
-Essa validação pertence ao programa interativo, sem alterar o operador da linguagem.
-Entrada decimal ou texto é rejeitada pelo leitor inteiro, que solicita novamente.
-EOF e divisão por zero não protegida geram erro com linha de origem.
-
-Isso é uma extensão efetiva de execução/backend em relação ao marco anterior,
-autorizada pela necessidade posterior de uma aplicação interativa em mineirês.
-Não se descreve o novo produto como um compilador sem execução. Python continua
-sendo a linguagem de implementação do compilador e do executor, e mineirês é a
-linguagem em que a aplicação está escrita. O arquivo `interativa.py` anterior foi
-removido. Contratos e testes estão em [execucao.md](execucao.md).
-
-### 11.2. Fonte fixo com seleção
-
-O exemplo fixo está em `exemplos/calculadora/calculadora.mini`. Configura
-`primeiro`, `segundo` e `operacao` com inteiros. Códigos 1, 2, 3 e 4 selecionam
-soma, subtração, multiplicação e divisão. Condicionais aninhadas substituem um
-comando de seleção que a linguagem não possui. Divisão por zero e código de
-operação desconhecido atribuem falso à variável `valido`.
-
-A calculadora representa primeiro a validade e depois o resultado, apenas se
-válido. Essa separação evita usar um número especial como erro, pois zero e
-negativos também são respostas legítimas. Os operandos ficam no fonte porque
-a linguagem não possui entrada de dados. O programa é compilável e a aplicação
-fixa é demonstrada pela tradução e otimização. O programa interativo completo
-está descrito na seção 11.1.
-
-O segundo fonte, `constantes.mini`, demonstra todas as operações, truncamento
-negativo, precedência e parênteses. Os TAC originais e otimizados estão ao lado
-dos fontes para comparação. O README próprio explica todas as configurações,
-comandos, cenários e limitações: [Calculadora Mineira](../exemplos/calculadora/README.md).
-
-## 12. Medições e forma de validação
-
-Contagem estática exclui instruções `label` e inclui cópias, saídas e saltos.
-Redução percentual: `100 * (antes - depois) / antes`.
-
-| Programa e configuração | Antes | Depois | Redução |
+| Programa | Antes | Depois | Redução |
 |---|---:|---:|---:|
-| Calculadora: 18, 6, operação 1 | 34 | 8 | 76,47% |
-| Contas diretas da calculadora | 19 | 9 | 52,63% |
-| Exemplo anterior `constantes.mini` na raiz de exemplos | 10 | 3 | 70,00% |
+| Calculadora interativa | 68 | 67 | 1,47% |
+| Jogo aleatório | 62 | 48 | 22,58% |
+| Calculadora fixa | 34 | 8 | 76,47% |
+| Contas diretas | 19 | 9 | 52,63% |
 | Fatorial | 10 | 10 | 0,00% |
 
-Na calculadora padrão, o TAC final contém `print eh_memo` e `print 24`. São
-instruções geradas. Nas contas diretas, os operandos de `print` são 24, 12, 108,
-3, -3, 14 e 20. As expectativas foram conferidas manualmente e por testes do
-TAC. Essas medidas históricas não incluem velocidade. A revisão atual acrescenta
-testes de execução com e sem otimização para os cenários da calculadora.
-Zero redução no fatorial é compatível com uma otimização local conservadora.
+As configurações constantes dão oportunidades de simplificação; entradas dinâmicas
+limitam a redução segura. Ausência de ganho pode ser correta. Os números não medem
+velocidade ou instruções executadas. Tabela completa e reprodução:
+[otimizacao.md](otimizacao.md).
 
-Os testes cobrem fases do frontend, geração por construção, identidade de nomes,
-alvos de saltos, origem das instruções, cada passe, ponto fixo, não mutação,
-divisão por zero e inteiros grandes, CLI e importação independente de VM.
-`tests/test_calculadora.py` acrescenta cenários da aplicação e comparação das
-referências. `tests/test_calculadora_interativa.py` verifica execução real com
-e sem otimização, leitura, mensagens, entradas inválidas, EOF, erros de execução,
-repetição e contratos das novas fases. Comandos e resultados da execução atual estão em
-[testes-calculadora.md](testes-calculadora.md). Os 696 testes anteriores são um
-resultado histórico da integração, não a contagem da suíte ampliada.
+## 7. Aplicações
 
-Testes estruturais e parametrizados oferecem evidências para os casos cobertos.
-Não constituem prova geral de equivalência semântica. A revisão atual inclui
-testes de execução da aplicação com e sem otimização, com alcance restrito aos
-casos cobertos.
+### 7.1. Calculadora Mineira
 
-## 13. Reproduzir a entrega
+O fonte exemplos/calculadora/interativa.mini contém menu, quatro operações,
+leitura e repetição. Zero encerra. O programa verifica divisor zero e não apresenta
+quociente truncado zero para numerador não nulo: 2 / 5 recebe resultado inválido.
+Zero verdadeiro, como 0 / 5, é permitido. Frações como 7 / 2 continuam truncadas
+para 3; essa é a regra inteira da linguagem. Os exemplos fixos são demonstrações
+separadas de geração e dobramento, não a aplicação de teclado.
 
-A partir da pasta `MiniForge/`, com Python 3.10+ instalado:
+### 7.2. Adivinha o trem, sô!
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-dev.txt
-python -m pytest -q
-python -m miniforge exemplos/calculadora/interativa.mini --executar
-python -m miniforge exemplos/calculadora/calculadora.mini --verificar
-python -m miniforge exemplos/calculadora/calculadora.mini --tokens
-python -m miniforge exemplos/calculadora/calculadora.mini --ast
-python -m miniforge exemplos/calculadora/calculadora.mini --tipos
-python -m miniforge exemplos/calculadora/calculadora.mini --tac
-python -m miniforge exemplos/calculadora/calculadora.mini --tac -O
-```
+O fonte exemplos/adivinha/adivinha.mini valida limites positivos e ordenados,
+sorteia uma vez antes do laço e pede palpites. O intervalo padrão é 1 a 100.
+Dicas indicam maior ou menor; só palpites válidos contam; zero abandona.
+Ao acertar, mostra o total e encerra. Outra partida exige nova execução e novo
+sorteio. Não se promete que números consecutivos sejam diferentes.
+Para demonstração previsível, intervalo unitário 42 a 42 é válido; o padrão
+normal continua aleatório. Não há limite de tentativas ou reinício automático.
 
-No Windows: `py -m venv .venv` e `.venv\Scripts\Activate.ps1` no PowerShell.
-Inspeções podem ser combinadas. `-O` com inspeção exige `--tac`; por exemplo,
-`--tipos --tac -O` é válido, mas `--tipos -O` retorna erro de uso.
-Códigos: 0 para sucesso, 1 para leitura/análise e 2 para argumentos inválidos.
-Erros e avisos vão para stderr. Uma fase com erro bloqueia as seguintes.
-
-Para apresentar diagnósticos, use `exemplos/erro_lexico.mini`,
-`exemplos/erro_sintatico.mini` e `exemplos/erro_semantico.mini` com
-`--verificar --contexto`. Consulte também [demonstracao.md](demonstracao.md).
-
-## 14. Conclusão e limites
-
-O grupo criou uma linguagem própria e implementou o caminho do texto ao TAC
-otimizado. A separação de fases permite localizar responsabilidades e erros.
-A calculadora dá uma aplicação concreta às decisões da linguagem e demonstra
-como constantes e fluxo de controle oferecem oportunidades de simplificação.
-
-O produto inclui compilação até otimização e execução explícita de TAC para
-a aplicação interativa. Não inclui funções, variáveis string, floats, vetores
-ou operadores lógicos. A extensão de entrada e saída é restrita e documentada. A documentação
-e os testes registram o que foi efetivamente construído e o alcance das evidências.
-
-## 15. Referências do trabalho
-
-- Material da disciplina: `Compiladores_2026-2_Aulas_Praticas_Projeto.pdf`.
-- Versão completa do mesmo grupo: `MiniForge-v0.6-mineires.zip`.
-- Repositório: https://github.com/PedroPignata/Compiladores/tree/main/MiniForge
-- Integração principal: https://github.com/PedroPignata/Compiladores/pull/2
-- Documentos internos: especificação, gramática, arquitetura, matriz,
-  integração, testes e otimização, na pasta `docs/`.
-
-## 16. Revisão de clareza e apresentação
-
-Os comentários do código foram reduzidos a explicações de contratos e decisões
-específicas, removendo referências a aulas e desafios. A lógica dos módulos
-Python foi comparada por AST sem docstrings para assegurar que essa limpeza
-não alterou a implementação. Comentários de casos de erro usados pelos testes
-continuam presentes quando funcionam como expectativas dos arquivos de referência.
-
-O terminal da calculadora recebeu uma moldura, opções alinhadas e frases
-mineiras. A verificação de frações truncadas para zero fica no programa
-interativo: se o numerador é não nulo e o quociente inteiro é zero, a resposta
-é inválida. Zero matematicamente verdadeiro continua permitido. Essa decisão
-não muda o contrato de divisão do compilador nem dos exemplos fixos.
-A revisão anterior passou com 766 testes; o registro detalhado está em testes-calculadora.md.
-
-## 17. Primeira versão do segundo programa (histórico)
-
-O segundo programa completo fica em `exemplos/adivinha/adivinha.mini`. Ele é
-inteiramente mineirês e usa os recursos existentes: declarações, entrada inteira,
-saída de texto e valores, condicionais, comparações e repetição. Nenhum módulo
-do compilador precisou mudar para acomodar o jogo.
-
-O objetivo é descobrir um segredo fixo, padrão 65, no intervalo de 1 a 100.
-O jogador recebe dicas para aumentar ou diminuir o próximo palpite. O contador
-incrementa somente quando o inteiro está dentro do intervalo. Palpites válidos
-repetidos contam novamente. Zero abandona a partida. Ao acertar, o programa
-mostra a quantidade de tentativas e encerra; uma nova partida exige rodar de novo.
-O segredo não é aleatório e deve ser alterado no fonte antes da compilação.
-
-A configuração valida mínimo positivo, ordem dos limites e segredo dentro do
-intervalo. Se houver incoerência, apresenta mensagem e não pede teclado.
-A escolha de mínimo positivo preserva zero como comando de saída. Textos e
-decimais no lugar de palpite são recusados pelo leitor de inteiros.
-
-Na organização do roteiro, fontes e manuais das aplicações ficam em exemplos/,
-testes em tests/, módulos em miniforge/ e registros técnicos em docs/. O novo
-`exemplos/README.md` ensina a instalar, executar, inspecionar, editar os dois
-programas e criar um fonte mínimo. Cada aplicação possui README próprio com
-mapa do código, regras, personalizações e dificuldades frequentes. A estrutura
-foi conferida novamente com a página física 5 (4/5) do material da professora.
-
-Os 26 testes novos cobrem CLI original/otimizada, dicas, contagem, limites,
-saída, personalização e invariantes do TAC. A suíte ampliada passou com
-**792 testes em 14,21 s**. Foi também conferida uma sessão de terminal otimizada
-com palpites 40, 80 e 65, encerrando com três tentativas e código 0.
-O TAC padrão passou de 66 a 46 instruções sem rótulos (30,30% de redução
-estática). Esses números não medem velocidade nem equivalência geral.
-
-Na revisão inicial foi encontrada uma expectativa antiga da despedida nos
-testes da calculadora. O fonte atual foi preservado e os testes passaram a
-exigir “Até mais, sô!”, sem retirar asserções das operações ou dos erros.
-Detalhes em [testes-programas.md](testes-programas.md). Guias:
+Os guias explicam instalação, arquivos, regras, edição e dificuldades:
 [programas](../exemplos/README.md), [calculadora](../exemplos/calculadora/README.md)
 e [jogo](../exemplos/adivinha/README.md).
 
+## 8. Testes e evidências
 
-## 18. Jogo com segredo aleatório
+A revisão documental executou a suíte real: **817 passed in 15.48s**, Linux,
+Python 3.12.3, pytest 8.4.2. Não houve skips ou xfails. São regressões do frontend,
+TAC e passes, CLI, casos de execução, operações inválidas, entrada, sorteio,
+não mutação, idempotência, rótulos, origem e segurança de divisões.
 
-A versão atual substitui o segredo fixo por `sorteia_so(minimo, maximo)`.
-Essa expressão inteira foi implementada no lexer, parser, AST, semântica,
-TAC, otimizador e executor, mantendo a arquitetura de um módulo por fase.
-O jogo sorteia uma vez, antes do laço, após validar os limites. Cada nova
-partida chama novamente o gerador, podendo repetir um número por acaso.
+Testes do jogo controlam o gerador quando precisam de respostas exatas para
+verificar dicas e contagem. Há também testes com gerador real verificando limites,
+inclusive negativos, unitários e grandes, e CLI real com intervalo unitário.
+Não se exige diversidade probabilística para um teste passar. As comparações
+originais/otimizadas valem para os casos cobertos, não são prova geral.
 
-O executor usa SystemRandom, sem semente fixa. A instrução random é efeito
-observável e não pode ser dobrada nem removida quando alcançável por falta
-de uso. A execução otimizada também sorteia normalmente. Não há aplicativo
-Python auxiliar decidindo o segredo fora do programa mineirês.
+A documentação foi auditada quanto a links locais, exemplos e comandos. Os
+registros antigos de testes permanecem identificados; não foram inventadas
+novas execuções para substituir métricas antigas. Comandos completos e limites:
+[testes.md](testes.md).
 
-Os guias agora ensinam a personalizar limites em vez de fixar a resposta.
-Para demonstração previsível, um intervalo de um elemento é permitido.
-O TAC passou de 62 para 48 instruções sem rótulos (22,58% de redução estática).
-Resultados da validação completa em testes-sorteio.md e contrato em sorteio.md.
+## 9. Reprodução
+
+Na pasta MiniForge/, com ambiente Python ativo:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+python -m miniforge exemplos/calculadora/interativa.mini --verificar
+python -m miniforge exemplos/calculadora/interativa.mini --executar
+python -m miniforge exemplos/adivinha/adivinha.mini --executar -O
+python -m miniforge exemplos/adivinha/adivinha.mini --tipos
+python -m miniforge exemplos/adivinha/adivinha.mini --tac -O
+```
+
+Sem --executar, os comandos inspecionam ou geram TAC. Execução não pode acompanhar
+opções de inspeção; -O e --contexto podem acompanhar execução. Códigos: 0 sucesso,
+1 erro tratado de leitura/análise/execução, 2 argumentos e 130 Ctrl+C em execução.
+O [README principal](../README.md) contém instalação limpa Linux/Windows e
+[demonstracao.md](demonstracao.md) organiza a apresentação.
+
+## 10. Correspondência acadêmica e limites
+
+A árvore da página física 5 (4/5) é mantida por responsabilidade. O frontend
+corresponde às aulas 08–22, TAC às páginas 42–46, execução às páginas 47–51 e
+os passes às páginas 52–56. A matriz explicita diferenças de nomes e escopo,
+inclusive o acréscimo posterior de execução e sorteio.
+
+Não há bytecode de pilha, JIT, funções definidas pelo usuário, variáveis string,
+float, vetores ou operadores lógicos. Não foram medidos aceleração ou total de
+instruções executadas. Fontes patológicos, profundidade extrema e limites de
+conversão decimal do Python continuam limitações. Não houve validação em Windows
+nesta revisão. Apresentações ficam fora do Git e não foram atualizadas por esta
+revisão dos documentos versionados.
+
+## 11. Conclusão
+
+O grupo criou uma linguagem própria e um compilador organizado em fases, com
+representação intermediária, otimização conservadora e execução explícita.
+Os programas concretizam condições, escopos, entrada e repetição; o jogo também
+exercita aleatoriedade em execução. Documentação, código e evidências agora se
+referem à main vigente, mantendo a história separada e os limites verificáveis.
+
+## 12. Referências
+
+- Roteiro da disciplina: Compiladores_2026-2_Aulas_Praticas_Projeto.pdf.
+- Implementação completa do grupo: MiniForge-v0.6-mineires.zip, preservada como referência.
+- [Projeto no GitHub](https://github.com/PedroPignata/Compiladores/tree/main/MiniForge).
+- [Índice vigente](README.md), [integração](integracao.md), [matriz](matriz-requisitos.md).
+- [Registros históricos](historico/README.md).

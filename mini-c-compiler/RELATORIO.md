@@ -1,5 +1,10 @@
 # Relatório — Análise do Mini C Compiler
 
+> Localização atual: `Compiladores/mini-c-compiler/`. Os comandos deste
+> relatório partem dessa pasta. As referências ao repositório original e
+> individual registram a origem do trabalho; o [README local](README.md)
+> contém as instruções desta cópia. Esta atividade é independente do MiniForge.
+
 ## 1. Identificação do estudante
 
 **Nome:** Pedro Rafael Santos Pignata

@@ -154,7 +154,7 @@ literais só são aceitos como saída `mostra_so("texto");`.
 ## 7. Conferir depois de editar
 
 ```bash
-python -m pytest -q tests/test_calculadora.py tests/test_calculadora_interativa.py tests/test_adivinha.py
+python -m pytest -q tests/test_calculadora.py tests/test_calculadora_interativa.py tests/test_adivinha.py tests/test_sorteio.py
 python -m pytest -q
 ```
 

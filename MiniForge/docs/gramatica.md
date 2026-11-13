@@ -1,16 +1,9 @@
 # Gramática da MiniForge
 
-Versão final da aula 12 (11/09), usada pelo parser recursivo descendente da
-aula 14 (`miniforge/parser.py`). Ela parte do rascunho de `v0.0-spec`, sem
-ambiguidade e sem recursão à esquerda, pronta para parsing descendente LL(1).
-
-**Mineirês do grupo, integrado em v0.5-otimizacao-sem-vm.** Os terminais agora são as palavras do mineirês (`trem`,
-`inteirim`, `booleanim`, `eh_memo`, `num_eh`, `uai`, `sinao`,
-`enquanto_tiver`, `mostra_so`). A estrutura original foi preservada; a extensão de leitura e texto está abaixo.
-Os os não
-terminais mantêm os nomes técnicos (`decl`, `if`, `while`, `print`), que são
-também os nomes dos métodos do parser, e os conjuntos FIRST continuam
-disjuntos, porque cada palavra reservada nova substitui exatamente uma antiga.
+Gramática vigente do mineirês, implementada por miniforge/parser.py.
+Inclui declaração, atribuição, saída de expressão ou mensagem, leitura,
+blocos, condicionais, repetição e sorteio inteiro. As palavras reservadas
+são as de tokens.py; não há chamadas de funções definidas pelo usuário.
 
 ## Notação
 
@@ -123,12 +116,14 @@ de cada não terminal precisam ser disjuntos.
 | `decl` | `trem` |
 | `atrib` | `ID` |
 | `print` | `mostra_so` |
+| `leitura` | `le_so` |
 | `if` | `uai` |
 | `while` | `enquanto_tiver` |
 | `bloco` | `{` |
 
 | Alternativa de `fator` | FIRST |
 | --- | --- |
+| `sorteio` | `sorteia_so` |
 | `NUM` | `NUM` |
 | `"eh_memo"` | `eh_memo` |
 | `"num_eh"` | `num_eh` |
@@ -136,11 +131,11 @@ de cada não terminal precisam ser disjuntos.
 | `"(" expr ")"` | `(` |
 | `"-" fator` | `-` |
 
-Os dois conjuntos são disjuntos, então `comando()` e `fator()` decidem com um
+As alternativas de cada tabela têm FIRST disjuntos, então `comando()` e `fator()` decidem com um
 `if` do Python por token, sem voltar atrás. Também valem:
 
 - `FIRST(expr) = FIRST(soma) = FIRST(termo) = FIRST(fator) =
-  { NUM, eh_memo, num_eh, ID, (, - }`.
+  { sorteia_so, NUM, eh_memo, num_eh, ID, (, - }`.
 - `tipo`: `inteirim` e `booleanim` são disjuntos.
 - Repetições e opcionais: o laço de `programa` para em `EOF`; o de `bloco`,
   em `}`; o de `soma` continua só com `+`/`-`; o de `termo`, com `*`/`/`; o
@@ -220,37 +215,12 @@ posição é a do token em que o erro foi percebido: em `mostra_so(x)` sem `;`, 
 erro aparece no `EOF`; se houver uma linha seguinte, aparece no primeiro
 token dela (como GCC e Clang, que dizem "expected ';' before …").
 
-## Desafio: `&&`, `||` e `!`
+## Recursos não implementados
 
-Não fazem parte da MiniForge (a especificação congelada não tem operadores
-lógicos e o lexer rejeita `!` sozinho), mas a resposta do desafio é esta.
-Seguindo C, Java e Python, `||` tem a menor precedência, depois `&&`, depois as
-comparações; `!` é unário e liga tanto quanto o `-` unário:
-
-```ebnf
-expr  → ou
-ou    → e { "||" e }
-e     → comp { "&&" comp }
-comp  → soma [ ( "==" | "!=" | "<" | ">" | "<=" | ">=" ) soma ]
-soma  → termo { ( "+" | "-" ) termo }
-termo → fator { ( "*" | "/" ) fator }
-fator → NUM | "eh_memo" | "num_eh" | ID | "(" expr ")" | "-" fator | "!" fator
-```
-
-Justificativa: `&&` abaixo de `||` faz `a || b && c` valer `a || (b && c)`,
-como na álgebra booleana (o produto antes da soma); `!` em `fator` nega só o
-operando seguinte. Árvore única de `!a || b && c` (AST):
-
-```text
-              ||
-        ┌─────┴─────┐
-        !           &&
-        │        ┌──┴──┐
-        a        b     c          agrupa (!a) || (b && c)
-```
-
-Se `!` ficasse acima de `||` (negando a expressão inteira), `!a || b` viraria
-`!(a || b)`, contrariando a leitura usual.
+&&, || e ! não fazem parte da gramática vigente. Adicionar operadores lógicos
+exigiria alterar todas as fases e, se houver curto-circuito, a geração de
+controle de fluxo. A documentação não apresenta uma gramática alternativa
+como se fosse aceita pelo parser atual.
 
 ## Extensão interativa de 13/11
 

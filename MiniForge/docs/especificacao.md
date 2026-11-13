@@ -31,11 +31,14 @@ adiciona entrada e execução explícita; contrato completo em [execucao.md](exe
   agora são identificadores comuns.
 - O `_` faz parte das palavras: `enquanto_tiver` é um token só (maior
   casamento), e `enquanto_tiver2` é um identificador.
-- Acentos continuam fora do alfabeto: `mostra_sô` gera erro léxico no `ô`.
+- Acentos não são aceitos em identificadores: `mostra_sô` gera erro léxico no `ô`.
   Por isso as palavras são escritas sem acento (`mostra_so`, `sinao`,
   `eh_memo`); comentários `//` aceitam qualquer caractere.
 - Espaços, tabulações e quebras de linha separam tokens e são ignorados.
 - Comentários começam com `//` e terminam na quebra de linha ou no fim do arquivo.
+- TEXTO é delimitado por aspas duplas, aceita Unicode numa única linha, sem
+  escapes. Só é permitido em mostra_so; // dentro das aspas é conteúdo.
+  Texto não fechado antes de quebra ou EOF é erro léxico.
 - Delimitadores: `(`, `)`, `{`, `}`, `:`, `;`, `,`.
 - Operadores: `=`, `+`, `-`, `*`, `/`, `==`, `!=`, `<`, `>`, `<=`, `>=`.
 - O lexer reconhece o maior lexema possível e guarda linha e coluna,
@@ -81,7 +84,7 @@ O frontend verifica somente os tipos dos operandos.
 | Bloco | `{ ... }` | Zero ou mais comandos em um novo escopo |
 
 Chaves são obrigatórias nos corpos de `uai`, `sinao` e `enquanto_tiver`.
-Declaração, atribuição e `mostra_so` terminam em `;`; blocos não levam `;`
+Declaração, atribuição, `le_so` e `mostra_so` terminam em `;`; blocos não levam `;`
 final. Um programa é uma sequência de comandos, inclusive vazia. A execução é
 sequencial. `mostra_so` escreve booleanos como `eh_memo` / `num_eh`, do mesmo
 jeito que no fonte.
@@ -180,8 +183,9 @@ o tipo escrito, para os usos seguintes não gerarem `'x' num foi declarado, sô`
 Se houver erros, os avisos não são listados.
 
 **AST anotada.** Cada nó de expressão recebe o campo `tipo` (`int` ou
-`bool` por dentro; a CLI imprime `inteirim` ou `booleanim`). Uma AST sem erros semânticos está toda tipada, e as fases seguintes
-não precisam checar mais nada. A CLI mostra essa árvore com `--tipos`.
+`bool` por dentro; a CLI imprime `inteirim` ou `booleanim`). Uma AST sem erros semânticos está toda tipada. As fases seguintes ainda
+respeitam seus contratos e verificam falhas dinâmicas, como divisão por zero,
+intervalo de sorteio invertido e fim da entrada. A CLI mostra essa árvore com `--tipos`.
 
 Variáveis declaradas e nunca lidas geram um **aviso**, não um erro
 (`linha L: aviso: 'x' declarado e nunca usado, sô`, como o `-Wunused-variable` do
@@ -189,9 +193,9 @@ GCC). Atribuir um valor não conta como uso.
 
 ## Limites desta versão
 
-Não há funções, variáveis string, floats, arrays, `for`, `break`,
-`continue`, operadores lógicos ou comentários de bloco. As extensões opcionais
-dos slides ficam para depois do pipeline completo. Mudanças nesta especificação
+Não há funções definidas pelo usuário, variáveis string, floats, arrays, `for`, `break`,
+`continue`, operadores lógicos ou comentários de bloco. Os recursos opcionais dos slides
+não implementados não são entregas futuras prometidas. Mudanças nesta especificação
 exigirão revisar gramática, lexer e testes.
 
 ## Exemplos da entrega

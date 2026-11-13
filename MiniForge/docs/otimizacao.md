@@ -1,95 +1,92 @@
-# Otimização do TAC - entrega 13/11/2026
+# Otimização do TAC vigente
 
-Versão v0.5-otimizacao-sem-vm. Cada passe recebe uma lista e devolve
-(novo_codigo, mudou), sem modificar as instruções da entrada. A aplicação
-repetida termina em ponto fixo: operações viram cópias, operandos viram
-constantes, saltos se simplificam e instruções redundantes desaparecem.
+Cada passe devolve (novo_codigo, mudou), sem modificar as instruções recebidas.
+otimizar aplica os cinco passes até ponto fixo. O TAC continua tipado e com
+posição de origem. A otimização pode anteceder tanto impressão quanto execução.
 
-| Passe | Exemplo antes | Depois |
+| Passe | Antes | Depois |
 |---|---|---|
 | Propagação | x = 5; t1 = x + 1 | x = 5; t1 = 5 + 1 |
 | Dobramento | t1 = 2 * 3 | t1 = 6 |
 | Salto constante | ifFalse num_eh goto L | goto L |
 | Código morto | goto L; print 1; L: | goto L; L: |
-| Limpeza | goto L; L: | sem salto redundante |
+| Limpeza | goto L; L: | Sem salto redundante |
 
 ## Segurança
 
-A propagação invalida cada destino escrito e esquece constantes em rótulos
-e saltos. Não atravessa junções ou laços presumindo valores de entrada.
-A remoção de temporários não lidos mantém divisões cujo divisor pode ser zero.
-Uma divisão alcançável por zero não é dobrada nem removida; uma operação
-comprovadamente inalcançável após salto incondicional pode desaparecer.
-Saídas alcançáveis permanecem. Não há regra 0/x = 0 nem outras identidades
-algébricas arriscadas. Linhas de origem acompanham instruções substituídas.
+A propagação invalida cada destino escrito e esquece constantes em rótulos e
+saltos. Não propaga valores anteriores a um laço como se fossem invariantes.
+read e random escrevem no destino e são efeitos observáveis, preservados quando
+alcançáveis mesmo se seu resultado não for lido. random nunca é dobrado.
+Saídas alcançáveis permanecem. Divisão potencialmente falha não é removida por
+falta de uso. Divisão por zero não é dobrada. Código comprovadamente inalcançável
+pode ser removido. Não existe a regra insegura 0 / x = 0.
 
-constantes.py avalia somente operações literais, sem memória, contador de
-programa, saltos ou execução de TAC. Usa int/bool estritos e as regras
-semânticas do frontend. Divisão usa módulos e sinais, sem float, inclusive
-para inteiros grandes. Bytecode e backend não fazem parte deste módulo.
+constantes.py avalia operações literais com int/bool estritos e as regras da
+semântica. Divisão usa módulos e sinais, sem float, inclusive para inteiros grandes.
+Não há dependência do executor nesse avaliador ou nos passes. Linhas de origem
+acompanham instruções substituídas e a entrada não sofre mutação inesperada.
 
-## Resultados estáticos medidos nesta versão
+## Resultados estáticos conferidos em 13/11/2026
 
-Convenção única: número de instruções TAC **sem rótulos**. Rótulos são
-marcadores, não operações. Não se medem instruções executadas nem aceleração.
-Redução = 100 * (antes - depois) / antes.
+Contagem única: instruções TAC **exceto label**. Rótulos são marcadores, não
+operações. Redução = 100 * (antes - depois) / antes. Não é medição de tempo,
+aceleração ou instruções executadas.
 
-| Programa | Antes | Depois | Redução % |
+| Fonte em exemplos/ | Antes | Depois | Redução % |
 |---|---:|---:|---:|
-| constantes.mini | 10 | 3 | 70.0 |
-| escopos.mini | 6 | 6 | 0.0 |
-| expressao.mini | 5 | 2 | 60.0 |
-| fatorial.mini | 10 | 10 | 0.0 |
-| if_constante.mini | 7 | 2 | 71.43 |
-| if_else.mini | 9 | 4 | 55.56 |
-| pao_de_queijo.mini | 18 | 18 | 0.0 |
+| adivinha/adivinha.mini | 62 | 48 | 22,58 |
+| calculadora/interativa.mini | 68 | 67 | 1,47 |
+| calculadora/calculadora.mini | 34 | 8 | 76,47 |
+| calculadora/constantes.mini | 19 | 9 | 52,63 |
+| constantes.mini | 10 | 3 | 70,00 |
+| escopos.mini | 6 | 6 | 0,00 |
+| expressao.mini | 5 | 2 | 60,00 |
+| fatorial.mini | 10 | 10 | 0,00 |
+| if_constante.mini | 7 | 2 | 71,43 |
+| if_else.mini | 9 | 4 | 55,56 |
+| pao_de_queijo.mini | 18 | 18 | 0,00 |
 
-Os cinco passes são aplicados em todos os programas; nem todos produzem
-mudanças em cada caso. Constantes/expressões envolvem propagação, dobramento
-e remoção de temporários; condicionais constantes permitem ainda simplificar
-saltos, eliminar caminhos mortos e limpar rótulos. Fatorial e laços variáveis
-podem não oferecer ganho seguro com passes locais.
+Todos recebem os cinco passes, mas nem todos os passes mudam cada programa.
+Contas fixas oferecem propagação, dobramento e remoção de temporários. Condições
+constantes permitem simplificar saltos e caminhos. No jogo, os limites constantes
+simplificam validações, mas a única instrução random permanece. Na calculadora
+interativa, valores de teclado limitam a redução. Fatorial e laços sem oportunidade
+local podem corretamente apresentar redução zero.
 
-Validação: TAC esperado em casos pequenos, testes parametrizados de operações,
-limites de fluxo, origem, não mutação, alvos válidos, idempotência e regressões.
-Essas evidências estruturais não constituem prova geral de equivalência
-semântica. A comparação de saída por execução usada no slide p.56 foi excluída
-pelo pedido; não há VM nem executor substituto. A tabela não contém resultados
-copiados da apresentação completa do colega.
+## Reproduzir a contagem
 
-## Aplicação Calculadora Mineira (13/11)
+Na pasta MiniForge/:
 
-A mesma convenção de contagem, excluindo rótulos, foi aplicada aos novos fontes:
+```bash
+python - <<'PY'
+from pathlib import Path
+from miniforge.lexer import Lexer
+from miniforge.parser import Parser
+from miniforge.ir import gerar_tac
+from miniforge.otimizador import otimizar
+for caminho in ('adivinha/adivinha.mini', 'calculadora/interativa.mini', 'constantes.mini'):
+    lexer = Lexer(Path('exemplos', caminho).read_text(encoding='utf-8'))
+    tokens = lexer.tokens()
+    assert not lexer.erros
+    original = gerar_tac(Parser(tokens).programa())
+    novo = otimizar(original)
+    a = sum(i.op != 'label' for i in original)
+    b = sum(i.op != 'label' for i in novo)
+    print(caminho, a, b, round(100 * (a - b) / a, 2))
+PY
+```
 
-| Programa | Antes | Depois | Redução % |
-|---|---:|---:|---:|
-| calculadora/calculadora.mini (18, 6, soma) | 34 | 8 | 76.47 |
-| calculadora/constantes.mini | 19 | 9 | 52.63 |
+## Validação e limites
 
-A seleção constante da operação permite propagação, dobramento, simplificação
-de saltos, remoção de código morto e limpeza. Nas contas diretas predominam
-propagação, dobramento e eliminação de temporários. As referências completas
-estão junto dos fontes. Testes e modo de medir em
-[testes-calculadora.md](testes-calculadora.md); interpretação da aplicação no
-[README próprio](../exemplos/calculadora/README.md).
+Há expectativas de TAC, parametrização de operadores, verificação de rótulos,
+origem, não mutação, indicador mudou, ponto fixo e idempotência. As aplicações
+também são executadas com/sem otimização em casos controlados. Testes de sorteio
+controlam o gerador só quando precisam de respostas exatas; o uso normal sorteia
+com SystemRandom. Evidências não são prova geral de equivalência.
 
-
-## Extensão para entrada em execução
-
-Na revisão interativa, read foi incluído entre as instruções que escrevem no
-destino e invalidam constantes. A leitura é efeito observável e não pode ser
-removida por falta de uso. Mensagens literais usam texto e são preservadas
-quando alcançáveis. Casos executados com e sem otimização estão nos testes
-da calculadora. Ver execucao.md para o novo escopo; os números acima são
-medições dos exemplos fixos, não de tempo ou de instruções executadas.
-
-## Jogo Adivinha o trem, sô!
-
-Configuração atual: segredo sorteado em execução, intervalo 1 a 100.
-Medição estática sem rótulos: 62 instruções antes, 48 depois, redução de 22,58%.
-A instrução random permanece no TAC otimizado: não se pode congelar o segredo
-em compilação. A propagação invalida destinos de random e a eliminação mantém
-chamadas alcançáveis mesmo sem uso do resultado. Condições iniciais constantes
-continuam podendo ser simplificadas. Não se mediu tempo de execução.
-Registro da versão aleatória em testes-sorteio.md; testes-programas.md registra
-a versão anterior de segredo fixo.
+O roteiro menciona comparação por execução e métricas dinâmicas. A revisão atual
+tem execução, mas não instrumenta número de instruções executadas nem desempenho.
+Não se afirma atendimento desses itens de medição. A antiga exclusão de toda
+execução descreve só o marco sem-vm, não a main atual. Registros anteriores em
+[histórico](historico/README.md); validação vigente em [testes.md](testes.md).

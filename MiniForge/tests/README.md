@@ -23,9 +23,9 @@ Personalizações de programas podem exigir atualização deliberada dos cenári
 mas não remoção de asserções para esconder falhas.
 
 Resultados históricos em [testes.md](../docs/testes.md), revisão da calculadora
-em [testes-calculadora.md](../docs/testes-calculadora.md) e validação conjunta
-em [testes-programas.md](../docs/testes-programas.md). Os casos cobertos não
+em [testes-calculadora.md](../docs/testes-calculadora.md) e primeira validação conjunta
+em [testes-programas.md](../docs/testes-programas.md). Validação vigente: [testes.md](../docs/testes.md). Os casos cobertos não
 constituem prova geral de equivalência entre TAC original e otimizado.
 
 Sorteio: test_sorteio.py verifica tipos, sintaxe, ordem, limites e preservação
-de efeitos pelo otimizador. Resultados atuais em [testes-sorteio.md](../docs/testes-sorteio.md).
+de efeitos pelo otimizador. Resultados atuais em [testes.md](../docs/testes.md).

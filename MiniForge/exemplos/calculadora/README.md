@@ -286,3 +286,11 @@ use `calculadora.mini`, conforme a seção de exemplos fixos acima.
 Próximo programa: [Adivinha o trem, sô!](../adivinha/README.md).
 Guia conjunto com instalação, comandos e criação de fontes:
 [exemplos/README.md](../README.md).
+
+
+## Documentação vigente e validação
+
+O [índice técnico](../../docs/README.md) reúne os contratos atuais. A suíte
+completa do projeto passou com 817 testes; comandos, ambiente e limites em
+[testes.md](../../docs/testes.md). Os registros de versões anteriores não
+substituem as instruções deste manual.
