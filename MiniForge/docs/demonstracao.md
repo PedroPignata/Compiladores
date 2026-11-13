@@ -138,3 +138,17 @@ Repetir com `--executar -O` para usar TAC otimizado.
 Para explicar o código, abrir interativa.mini: o próprio fonte contém
 mostra_so, le_so, enquanto_tiver, uai e sinao. Inspecionar o TAC em comando
 separado com --tac; não combinar inspeção com execução.
+
+## Adivinha o trem, sô!
+
+```bash
+python -m miniforge exemplos/adivinha/adivinha.mini --executar
+python -m miniforge exemplos/adivinha/adivinha.mini --executar -O
+```
+
+Com segredo padrão 65, digitar 40, 80 e 65: observar dicas e total 3.
+Em outra partida, digitar 101, depois 65: o palpite fora do intervalo não
+conta; o total é 1. Digitar 0 abandona. Mostrar no fonte as configurações,
+o incremento e a atribuição que encerra o laço. Para personalizar, seguir
+exemplos/adivinha/README.md. Não afirmar que há sorteio aleatório.
+O guia exemplos/README.md reúne os comandos e as edições dos dois programas.

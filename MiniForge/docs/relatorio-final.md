@@ -341,4 +341,44 @@ mineiras. A verificação de frações truncadas para zero fica no programa
 interativo: se o numerador é não nulo e o quociente inteiro é zero, a resposta
 é inválida. Zero matematicamente verdadeiro continua permitido. Essa decisão
 não muda o contrato de divisão do compilador nem dos exemplos fixos.
-A suíte atual passou com 766 testes; o registro detalhado está em testes-calculadora.md.
+A revisão anterior passou com 766 testes; o registro detalhado está em testes-calculadora.md.
+
+## 17. Segundo programa: Adivinha o trem, sô!
+
+O segundo programa completo fica em `exemplos/adivinha/adivinha.mini`. Ele é
+inteiramente mineirês e usa os recursos existentes: declarações, entrada inteira,
+saída de texto e valores, condicionais, comparações e repetição. Nenhum módulo
+do compilador precisou mudar para acomodar o jogo.
+
+O objetivo é descobrir um segredo fixo, padrão 65, no intervalo de 1 a 100.
+O jogador recebe dicas para aumentar ou diminuir o próximo palpite. O contador
+incrementa somente quando o inteiro está dentro do intervalo. Palpites válidos
+repetidos contam novamente. Zero abandona a partida. Ao acertar, o programa
+mostra a quantidade de tentativas e encerra; uma nova partida exige rodar de novo.
+O segredo não é aleatório e deve ser alterado no fonte antes da compilação.
+
+A configuração valida mínimo positivo, ordem dos limites e segredo dentro do
+intervalo. Se houver incoerência, apresenta mensagem e não pede teclado.
+A escolha de mínimo positivo preserva zero como comando de saída. Textos e
+decimais no lugar de palpite são recusados pelo leitor de inteiros.
+
+Na organização do roteiro, fontes e manuais das aplicações ficam em exemplos/,
+testes em tests/, módulos em miniforge/ e registros técnicos em docs/. O novo
+`exemplos/README.md` ensina a instalar, executar, inspecionar, editar os dois
+programas e criar um fonte mínimo. Cada aplicação possui README próprio com
+mapa do código, regras, personalizações e dificuldades frequentes. A estrutura
+foi conferida novamente com a página física 5 (4/5) do material da professora.
+
+Os 26 testes novos cobrem CLI original/otimizada, dicas, contagem, limites,
+saída, personalização e invariantes do TAC. A suíte ampliada passou com
+**792 testes em 14,21 s**. Foi também conferida uma sessão de terminal otimizada
+com palpites 40, 80 e 65, encerrando com três tentativas e código 0.
+O TAC padrão passou de 66 a 46 instruções sem rótulos (30,30% de redução
+estática). Esses números não medem velocidade nem equivalência geral.
+
+Na revisão inicial foi encontrada uma expectativa antiga da despedida nos
+testes da calculadora. O fonte atual foi preservado e os testes passaram a
+exigir “Até mais, sô!”, sem retirar asserções das operações ou dos erros.
+Detalhes em [testes-programas.md](testes-programas.md). Guias:
+[programas](../exemplos/README.md), [calculadora](../exemplos/calculadora/README.md)
+e [jogo](../exemplos/adivinha/README.md).

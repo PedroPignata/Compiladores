@@ -37,7 +37,7 @@ def codigo(fonte):
     ('4\n2\n-5\n0\n','Resultado inválido, sô!'),
     ('4\n0\n5\n0\n','Resultado:\n0'),
     ('4\n10\n2\n0\n','Resultado:\n5'),
-    ('0\n','Inté mais, sô!'),
+    ('0\n','Até mais, sô!'),
 ])
 def test_calculadora_mineires(entrada,esperado,otimizado):
     args=[sys.executable,'-m','miniforge',str(ARQUIVO),'--executar']
@@ -45,7 +45,7 @@ def test_calculadora_mineires(entrada,esperado,otimizado):
     r=subprocess.run(args,cwd=RAIZ,input=entrada,capture_output=True,text=True,timeout=10)
     assert r.returncode==0,r.stderr
     assert esperado in r.stdout
-    assert r.stdout.endswith('Inté mais, sô!\n')
+    assert r.stdout.endswith('Até mais, sô!\n')
 
 @pytest.mark.parametrize('otimizado',[False,True])
 def test_repeticao_nao_congela_entrada(otimizado):

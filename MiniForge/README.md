@@ -25,10 +25,10 @@ python -m miniforge exemplos/constantes.mini --tac -O
 ```
 
 O compilador usa a biblioteca padrão; pytest é dependência de desenvolvimento.
-A suíte atual tem **766 testes**, incluindo entrada e execução. Resultado
-em docs/testes-calculadora.md.
+A suíte atual tem **792 testes**, incluindo entrada e execução. Resultado
+em docs/testes-programas.md.
 O registro histórico da integração está em docs/testes.md; a execução atual
-está em docs/testes-calculadora.md.
+está em docs/testes-programas.md.
 
 ## Linguagem
 
@@ -44,8 +44,8 @@ está em docs/testes-calculadora.md.
 | mostra_so | comando de saída no TAC | mostra_so(n); |
 
 Sem coerção int/bool. Chaves obrigatórias, comentários //, comparações não
-encadeadas. Tipos internos continuam int e bool. Nenhuma extensão de linguagem
-foi adicionada: operadores lógicos permanecem proposta futura na gramática.
+encadeadas. Tipos internos continuam int e bool. A revisão interativa adicionou
+le_so e mensagens literais; operadores lógicos não estão implementados.
 
 ## Organização e pipeline
 
@@ -103,12 +103,31 @@ Diagnósticos e avisos vão para stderr; uma fase com erro bloqueia as seguintes
 - [Otimizações e resultados estáticos](docs/otimizacao.md).
 - [Integração e revisão](docs/integracao.md), [testes](docs/testes.md).
 - [Demonstração conferida](docs/demonstracao.md).
+- [Guia dos programas](exemplos/README.md), [relatório completo](docs/relatorio-final.md).
 
 Há execução explícita de TAC em execucao.py, sem bytecode de pilha.
 Não há prova geral de equivalência; os testes exercitam os casos cobertos. O atalho interno parse() pressupõe fonte lexicamente válido;
 para compilar arquivos use a CLI. Entradas patológicas, profundidade extrema
 e limite decimal do Python continuam limitações. Funções, strings, vetores e
 tipos de variável não foram acrescentados; texto literal só é permitido em mostra_so. Apresentações ficam locais, fora do Git.
+
+## Dois programas completos em mineirês
+
+| Programa | Executar na pasta MiniForge/ | Manual |
+|---|---|---|
+| Calculadora Mineira | `python -m miniforge exemplos/calculadora/interativa.mini --executar` | [Como usar e modificar](exemplos/calculadora/README.md) |
+| Adivinha o trem, sô! | `python -m miniforge exemplos/adivinha/adivinha.mini --executar` | [Como jogar e modificar](exemplos/adivinha/README.md) |
+
+O [guia dos dois programas](exemplos/README.md) ensina desde a instalação até
+como editar mensagens, regras e configurações, inspecionar as fases e escrever
+um novo `.mini`. O jogo usa segredo fixo 65, palpites de 1 a 100 e opção 0 para
+sair. Só palpites válidos contam. Para personalizar, edite segredo e limites
+no fonte; não há sorteio aleatório.
+
+Ambos usam os módulos existentes do MiniForge, sem alterações no compilador
+para implementar o jogo. `-O` pode acompanhar `--executar` para otimizar antes
+de rodar. Os fontes e manuais ficam em exemplos/, testes em tests/ e documentos
+técnicos em docs/, preservando a estrutura do roteiro da professora.
 
 ## Calculadora interativa escrita em mineirês
 
@@ -195,7 +214,7 @@ O exemplo de contas diretas também mostra `-7 / 2`, precedência e parênteses.
 ### Testes e interpretação dos resultados
 
 ```bash
-python -m pytest -q tests/test_calculadora.py tests/test_calculadora_interativa.py
+python -m pytest -q tests/test_calculadora.py tests/test_calculadora_interativa.py tests/test_adivinha.py
 python -m pytest -q
 ```
 

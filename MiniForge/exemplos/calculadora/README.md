@@ -242,3 +242,47 @@ inicializador inteiro demonstra erro semântico com `--contexto` (desfaça depoi
   da CLI, como `--tipos -O` sem `--tac`.
 
 Relatório do projeto: [relatorio-final.md](../../docs/relatorio-final.md).
+
+## Editar e entender a calculadora passo a passo
+
+1. Abra `exemplos/calculadora/interativa.mini` num editor e salve como UTF-8.
+2. Localize o trecho a alterar usando o mapa abaixo.
+3. Salve e rode `python -m miniforge exemplos/calculadora/interativa.mini --verificar`.
+4. Se não houver erro, rode com `--executar` e experimente os casos afetados.
+5. Repita com `--executar -O` para conferir a versão otimizada.
+6. Rode os testes e mantenha expectativas coerentes com as regras documentadas.
+
+| Parte | Como encontrar | O que pode mudar |
+|---|---|---|
+| Moldura e menu | Primeiros `mostra_so` dentro do laço | Textos entre aspas, mantendo opções coerentes |
+| Leitura da opção | `le_so(opcao);` | A variável precisa continuar inteira e declarada |
+| Encerrar | `enquanto_tiver (opcao != 0)` e teste de `opcao != 0` | Se mudar a opção de saída, atualize ambos e o menu |
+| Soma | `uai (opcao == 1)` | A expressão atribuída a resultado |
+| Subtração | `uai (opcao == 2)` | Idem, respeitando os tipos |
+| Multiplicação | `uai (opcao == 3)` | Idem |
+| Divisão | Alternativa final e teste `segundo == 0` | Preserve a proteção de zero antes da conta |
+| Rejeitar fração truncada | `primeiro != 0` e `resultado == 0` | Regra específica da aplicação, não do compilador |
+| Exibir resposta | `uai (valido)` | Mensagem e apresentação do valor |
+
+Exemplo de edição só de texto:
+
+```text
+mostra_so("Qual é o primeiro número, sô?");
+```
+
+Pode virar `mostra_so("Manda o primeiro inteiro aí, sô:");`, mantendo a leitura
+logo depois. Isso não exige alterar lexer, parser ou executor. Não use uma
+quebra de linha literal dentro das aspas; adicione outro `mostra_so`.
+
+Para experimentar uma nova operação, não basta criar a opção 5 no menu:
+a validação `opcao > 4`, os ramos de seleção, as mensagens, este README e os
+testes precisam mudar juntos. A linguagem não tem operador de potência ou
+resto, portanto escrever `**` ou `%` não cria esse recurso automaticamente.
+
+Os valores iniciais de `primeiro` e `segundo` no programa interativo são
+substituídos por `le_so` a cada rodada. Para configurar contas fixas sem teclado,
+use `calculadora.mini`, conforme a seção de exemplos fixos acima.
+
+Próximo programa: [Adivinha o trem, sô!](../adivinha/README.md).
+Guia conjunto com instalação, comandos e criação de fontes:
+[exemplos/README.md](../README.md).

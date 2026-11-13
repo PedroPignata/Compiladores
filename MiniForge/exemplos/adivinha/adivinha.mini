@@ -1,0 +1,66 @@
+// O segredo é fixo: altere-o aqui antes de iniciar uma nova partida.
+trem segredo: inteirim = 65;
+trem minimo: inteirim = 1;
+trem maximo: inteirim = 100;
+trem tentativas: inteirim = 0;
+trem jogando: booleanim = eh_memo;
+
+mostra_so("╭────────────────────────────────────────────────╮");
+mostra_so("│             ADIVINHA O TREM, SÔ!               │");
+mostra_so("╰────────────────────────────────────────────────╯");
+mostra_so("Tem um número escondido neste intervalo:");
+mostra_so(minimo);
+mostra_so("até");
+mostra_so(maximo);
+mostra_so("Digite 0 pra sair, se precisar tomar um cafezim.");
+
+// Zero é reservado para sair; o intervalo de palpites precisa ser positivo.
+uai (minimo < 1) {
+    jogando = num_eh;
+}
+uai (minimo > maximo) {
+    jogando = num_eh;
+}
+uai (segredo < minimo) {
+    jogando = num_eh;
+}
+uai (segredo > maximo) {
+    jogando = num_eh;
+}
+uai (jogando == num_eh) {
+    mostra_so("Uai, confira o segredo e os limites no código antes de jogar!");
+}
+
+enquanto_tiver (jogando) {
+    trem palpite: inteirim = 0;
+    mostra_so("Qual é seu palpite, sô?");
+    le_so(palpite);
+    uai (palpite == 0) {
+        mostra_so("Bão, o segredo fica pra próxima prosa!");
+        jogando = num_eh;
+    } sinao {
+        uai (palpite < minimo) {
+            mostra_so("Esse trem tá fora do intervalo. Tenta de novo!");
+        } sinao {
+            uai (palpite > maximo) {
+                mostra_so("Esse trem tá fora do intervalo. Tenta de novo!");
+            } sinao {
+                // Só palpites inteiros dentro do intervalo contam como tentativa.
+                tentativas = tentativas + 1;
+                uai (palpite < segredo) {
+                    mostra_so("Tá pequeno demais, sô! Tenta um maior.");
+                } sinao {
+                    uai (palpite > segredo) {
+                        mostra_so("Passou da conta, uai! Tenta um menor.");
+                    } sinao {
+                        mostra_so("Acertou, trem bão!");
+                        mostra_so("Quantidade de tentativas:");
+                        mostra_so(tentativas);
+                        jogando = num_eh;
+                    }
+                }
+            }
+        }
+    }
+}
+mostra_so("Até mais, sô!");

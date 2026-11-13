@@ -82,3 +82,11 @@ removida por falta de uso. Mensagens literais usam texto e são preservadas
 quando alcançáveis. Casos executados com e sem otimização estão nos testes
 da calculadora. Ver execucao.md para o novo escopo; os números acima são
 medições dos exemplos fixos, não de tempo ou de instruções executadas.
+
+## Jogo Adivinha o trem, sô!
+
+Configuração padrão: segredo 65, intervalo 1 a 100. Medição estática, sem rótulos:
+66 instruções antes, 46 depois, redução de 30,30%. Propagação e dobramento nas
+verificações de configuração criam saltos constantes e caminhos inalcançáveis,
+que os passes seguintes podem remover e limpar. Não se mediu tempo de execução.
+Reprodução e alcance dos testes em [testes-programas.md](testes-programas.md).

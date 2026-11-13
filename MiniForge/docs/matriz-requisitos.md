@@ -32,3 +32,16 @@ A tag v0.5-otimizacao-sem-vm continua representando o marco sem backend.
 A main inclui agora le_so, mensagens e executor TAC em execucao.py.
 O mapeamento histórico acima permanece válido para o marco; a extensão atual
 está documentada em execucao.md e nos testes da calculadora interativa.
+
+## Aplicações e organização revisada
+
+| Item | Implementação | Evidência |
+|---|---|---|
+| Separação do pacote, exemplos, testes e docs, p.5 (4/5) | miniforge/, exemplos/calculadora/, exemplos/adivinha/, tests/, docs/ | Árvore e contratos em arquitetura.md |
+| Dois programas na linguagem do grupo | interativa.mini e adivinha.mini | Execução pelo mesmo compilador, testes dos programas |
+| Instruções para instalar, usar e editar | README principal, exemplos/README.md e READMEs das aplicações | Comandos e cenários correspondentes aos testes |
+| Jogo sem extensão do compilador | Declarações, le_so, mostra_so, comparações, uai e enquanto_tiver existentes | 26 casos novos e suíte completa |
+
+O segundo programa não é uma exigência literal identificada na árvore dos
+slides; atende ao pedido posterior de aplicações. Não foi criado recurso de
+aleatoriedade nem movido código de outros projetos.
