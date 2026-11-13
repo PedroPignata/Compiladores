@@ -73,11 +73,10 @@ interativo: foram mantidos para estudar geração e otimização de contas const
 python -m miniforge exemplos/adivinha/adivinha.mini --executar
 ```
 
-O segredo padrão é 65, no intervalo 1 a 100. Tente 40, depois 80, depois 65:
-o jogo pede um maior, depois um menor e finalmente informa três tentativas.
+O segredo é sorteado entre 1 e 100 a cada partida. Faça palpites e siga as
+dicas de maior ou menor até acertar; o jogo mostra quantas tentativas válidas usou.
 Digite 0 para abandonar. Texto, decimal e palpites fora do intervalo não contam.
-Para uma nova partida, repita o comando. O segredo é fixo no código, não aleatório.
-Peça a um colega para personalizá-lo antes de jogar se quiser descobrir sem saber.
+Para uma nova partida, repita o comando. Um mesmo número pode reaparecer por acaso entre partidas.
 
 ## 4. Compilar e executar são comandos diferentes
 
@@ -112,7 +111,7 @@ abra outra vez para ver o efeito da edição.
 | Objetivo | Onde alterar | Cuidado |
 |---|---|---|
 | Mudar frases ou moldura | Literais de `mostra_so("...");` nos dois fontes | Não remover aspas e `;`; uma linha por mensagem |
-| Mudar segredo | `trem segredo: inteirim = 65;` no jogo | Manter entre mínimo e máximo |
+| Sortear o segredo | `segredo = sorteia_so(minimo, maximo);` no jogo | Manter a chamada fora do laço de palpites |
 | Mudar intervalo | `minimo` e `maximo` no jogo | Mínimo positivo; 0 é reservado para sair |
 | Alterar dica de palpite | Ramos `palpite < segredo` e `palpite > segredo` | Não inverter o sentido da dica |
 | Mudar contagem | `tentativas = tentativas + 1;` no jogo | Hoje só conta palpites dentro do intervalo |
@@ -148,7 +147,8 @@ Esse caminho é uma sugestão para seu arquivo, não um terceiro programa entreg
 Use `trem` para declarar antes de ler, `inteirim` para inteiros e `booleanim`
 para `eh_memo`/`num_eh`. `uai` e `enquanto_tiver` precisam de condições booleanas
 e chaves. Variáveis de bloco deixam de ser visíveis ao sair dele.
-Não há funções, strings em variáveis, números decimais ou sorteio. Textos
+Não há funções definidas pelo usuário, strings em variáveis ou números decimais.
+O sorteio inteiro existe pela expressão `sorteia_so(minimo, maximo)`. Textos
 literais só são aceitos como saída `mostra_so("texto");`.
 
 ## 7. Conferir depois de editar
@@ -158,7 +158,7 @@ python -m pytest -q tests/test_calculadora.py tests/test_calculadora_interativa.
 python -m pytest -q
 ```
 
-Os testes dos exemplos usam a configuração padrão. Se personalizar segredo,
+Os testes dos exemplos usam a configuração padrão. Se personalizar limites,
 mensagens ou regras, algumas expectativas podem deixar de corresponder à sua
 versão. Restaure o padrão para conferir o projeto original ou atualize os
 casos conscientemente, mantendo testes de erros e de comportamento.

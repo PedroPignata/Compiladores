@@ -146,9 +146,9 @@ python -m miniforge exemplos/adivinha/adivinha.mini --executar
 python -m miniforge exemplos/adivinha/adivinha.mini --executar -O
 ```
 
-Com segredo padrão 65, digitar 40, 80 e 65: observar dicas e total 3.
-Em outra partida, digitar 101, depois 65: o palpite fora do intervalo não
-conta; o total é 1. Digitar 0 abandona. Mostrar no fonte as configurações,
-o incremento e a atribuição que encerra o laço. Para personalizar, seguir
-exemplos/adivinha/README.md. Não afirmar que há sorteio aleatório.
-O guia exemplos/README.md reúne os comandos e as edições dos dois programas.
+O segredo agora é sorteado entre 1 e 100. Fazer palpites e seguir as dicas até
+acertar ou usar 0 para sair. Não prometer que 40/80/65 acertam: essa sequência
+só ilustra uma partida cujo sorteio fosse 65. Para demonstração previsível,
+configurar temporariamente minimo e maximo iguais a 42 e acertar com 42;
+depois restaurar os limites normais. Mostrar sorteia_so fora do laço no fonte
+e a instrução de sorteio preservada com --tac -O. Guias em exemplos/README.md.

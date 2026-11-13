@@ -1,7 +1,6 @@
-// O segredo é fixo: altere-o aqui antes de iniciar uma nova partida.
-trem segredo: inteirim = 65;
 trem minimo: inteirim = 1;
 trem maximo: inteirim = 100;
+trem segredo: inteirim = 0;
 trem tentativas: inteirim = 0;
 trem jogando: booleanim = eh_memo;
 
@@ -21,14 +20,13 @@ uai (minimo < 1) {
 uai (minimo > maximo) {
     jogando = num_eh;
 }
-uai (segredo < minimo) {
-    jogando = num_eh;
-}
-uai (segredo > maximo) {
-    jogando = num_eh;
-}
 uai (jogando == num_eh) {
-    mostra_so("Uai, confira o segredo e os limites no código antes de jogar!");
+    mostra_so("Uai, confira os limites no código antes de jogar!");
+}
+
+// Sorteie uma vez por partida, depois de validar os limites.
+uai (jogando) {
+    segredo = sorteia_so(minimo, maximo);
 }
 
 enquanto_tiver (jogando) {

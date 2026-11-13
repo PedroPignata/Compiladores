@@ -8,8 +8,8 @@ from .constantes import OPS, avaliar, tipo_constante
 
 _TEMPORARIO = re.compile(r"t[0-9]+")
 
-# Toda escrita invalida a constante anterior, inclusive read.
-_ESCREVEM = ("=", "neg", "read") + OPERADORES
+# Toda escrita invalida a constante anterior, inclusive read e random.
+_ESCREVEM = ("=", "neg", "read", "random") + OPERADORES
 
 # Instruções que terminam um bloco básico (além do rótulo, que inicia outro).
 _SALTOS = ("goto", "iffalse")
@@ -26,8 +26,8 @@ def eh_temporario(nome):
 
 
 def _pode_falhar(ins):
-    """Divisão cujo divisor pode ser zero: a VM levantaria ErroExecucao."""
-    return ins.op == "read" or ins.op == "/" and not (eh_const(ins.a2) and ins.a2 != 0)
+    """Preserva entrada, sorteio e divisões potencialmente falhas."""
+    return ins.op in ("read", "random") or ins.op == "/" and not (eh_const(ins.a2) and ins.a2 != 0)
 
 
 def _trocar(ins, **campos):

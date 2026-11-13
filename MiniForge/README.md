@@ -25,15 +25,16 @@ python -m miniforge exemplos/constantes.mini --tac -O
 ```
 
 O compilador usa a biblioteca padrão; pytest é dependência de desenvolvimento.
-A suíte atual tem **792 testes**, incluindo entrada e execução. Resultado
-em docs/testes-programas.md.
+A suíte atual tem **817 testes**, incluindo entrada e execução. Resultado
+em docs/testes-sorteio.md.
 O registro histórico da integração está em docs/testes.md; a execução atual
-está em docs/testes-programas.md.
+está em docs/testes-sorteio.md.
 
 ## Linguagem
 
 | Palavra | Papel | Exemplo |
 |---|---|---|
+| sorteia_so | sorteio inteiro inclusivo em execução | trem n: inteirim = sorteia_so(1, 100); |
 | le_so | leitura de inteiro | le_so(n); |
 | trem | declaração inicializada | trem x: inteirim = 1; |
 | inteirim | inteiro | trem n: inteirim = 5; |
@@ -45,7 +46,7 @@ está em docs/testes-programas.md.
 
 Sem coerção int/bool. Chaves obrigatórias, comentários //, comparações não
 encadeadas. Tipos internos continuam int e bool. A revisão interativa adicionou
-le_so e mensagens literais; operadores lógicos não estão implementados.
+le_so, mensagens literais e sorteia_so; operadores lógicos não estão implementados.
 
 ## Organização e pipeline
 
@@ -120,12 +121,12 @@ tipos de variável não foram acrescentados; texto literal só é permitido em m
 
 O [guia dos dois programas](exemplos/README.md) ensina desde a instalação até
 como editar mensagens, regras e configurações, inspecionar as fases e escrever
-um novo `.mini`. O jogo usa segredo fixo 65, palpites de 1 a 100 e opção 0 para
-sair. Só palpites válidos contam. Para personalizar, edite segredo e limites
-no fonte; não há sorteio aleatório.
+um novo `.mini`. O jogo sorteia um segredo entre 1 e 100 a cada partida e usa 0 para sair.
+Só palpites válidos contam. Para personalizar, edite os limites no fonte.
+O sorteio ocorre em execução, inclusive com -O, e pode repetir um número por acaso.
 
-Ambos usam os módulos existentes do MiniForge, sem alterações no compilador
-para implementar o jogo. `-O` pode acompanhar `--executar` para otimizar antes
+Ambos usam o mesmo compilador; o sorteio foi integrado do lexer ao executor
+pela expressão sorteia_so, sem aplicativo auxiliar para definir o segredo. `-O` pode acompanhar `--executar` para otimizar antes
 de rodar. Os fontes e manuais ficam em exemplos/, testes em tests/ e documentos
 técnicos em docs/, preservando a estrutura do roteiro da professora.
 

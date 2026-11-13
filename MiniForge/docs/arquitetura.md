@@ -24,7 +24,7 @@ MiniForge/
   tests/
     test_lexer.py, test_parser.py, test_simbolos.py, test_semantica.py, ...
     test_ir.py, test_otimizador.py, test_middleend.py
-    test_calculadora.py, test_calculadora_interativa.py, test_adivinha.py
+    test_calculadora.py, test_calculadora_interativa.py, test_adivinha.py, test_sorteio.py
     casos/
   exemplos/
     README.md
@@ -91,7 +91,8 @@ bytecode de pilha. A diferença de nome e a mudança de escopo estão documentad
 em [execucao.md](execucao.md). Não se afirma que o projeto atual é sem backend.
 
 A calculadora e o jogo só usam instruções já suportadas: cópias, operações,
-read, texto, print, saltos e rótulos. O jogo não adiciona reservadas ou imports
-específicos ao compilador. Contratos da linguagem em [especificacao.md](especificacao.md),
+read, texto, print, saltos, rótulos e random. A expressão sorteia_so foi
+integrada nos módulos existentes, sem novo pacote ou aplicativo auxiliar.
+Seu contrato e as adaptações dos passes estão em sorteio.md. Contratos da linguagem em [especificacao.md](especificacao.md),
 EBNF em [gramatica.md](gramatica.md) e conformidade histórica em
 [matriz-requisitos.md](matriz-requisitos.md).

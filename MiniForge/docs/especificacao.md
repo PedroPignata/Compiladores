@@ -23,6 +23,7 @@ adiciona entrada e execução explícita; contrato completo em [execucao.md](exe
   | `uai` | condicional | `if` | a interjeição mais mineira que há |
   | `sinao` | senão | `else` | "sinão" |
   | `enquanto_tiver` | repetição | `while` | "enquanto tiver" |
+  | `sorteia_so` | sorteio inteiro inclusivo | operação de biblioteca | "sorteia, sô" |
   | `le_so` | leitura de inteiro | entrada | "lê, sô" |
   | `mostra_so` | saída | `print` | "mostra, sô" |
 
@@ -35,7 +36,7 @@ adiciona entrada e execução explícita; contrato completo em [execucao.md](exe
   `eh_memo`); comentários `//` aceitam qualquer caractere.
 - Espaços, tabulações e quebras de linha separam tokens e são ignorados.
 - Comentários começam com `//` e terminam na quebra de linha ou no fim do arquivo.
-- Delimitadores: `(`, `)`, `{`, `}`, `:`, `;`.
+- Delimitadores: `(`, `)`, `{`, `}`, `:`, `;`, `,`.
 - Operadores: `=`, `+`, `-`, `*`, `/`, `==`, `!=`, `<`, `>`, `<=`, `>=`.
 - O lexer reconhece o maior lexema possível e guarda linha e coluna,
   contadas a partir de 1, além de emitir EOF.
@@ -203,3 +204,11 @@ Somente --executar executa os comandos de saída e repetição.
 
 O significado dinâmico descrito acima é o contrato da linguagem para a
 execução em `miniforge/execucao.py`. A CLI executa somente com `--executar`.
+
+## Sorteio em execução
+
+`sorteia_so(minimo, maximo)` exige duas expressões inteirim e produz inteirim.
+Os limites são inclusivos; mínimo maior que máximo causa erro em execução.
+A chamada é avaliada da esquerda para a direita e sorteada a cada execução
+alcançada, inclusive com -O. Não é expressão constante e não pode ser dobrada.
+A vírgula é um delimitador. Contratos e exemplos em [sorteio.md](sorteio.md).

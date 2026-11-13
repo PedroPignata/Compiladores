@@ -45,3 +45,8 @@ está documentada em execucao.md e nos testes da calculadora interativa.
 O segundo programa não é uma exigência literal identificada na árvore dos
 slides; atende ao pedido posterior de aplicações. Não foi criado recurso de
 aleatoriedade nem movido código de outros projetos.
+
+
+Revisão aleatória: sorteia_so foi integrada às fases existentes e substitui o
+segredo fixo do primeiro jogo. A linha anterior “jogo sem extensão” descreve
+a versão inicial. Sorteio, erros, efeitos e testes atuais: sorteio.md.

@@ -98,6 +98,12 @@ class Bool(Expr):
 
 
 @dataclass
+class Sorteio(Expr):
+    minimo: Expr
+    maximo: Expr
+
+
+@dataclass
 class Var(Expr):
     nome: str
 
@@ -144,6 +150,8 @@ def filhos(no):
         return [no.cond, no.entao] + ([no.senao] if no.senao is not None else [])
     if isinstance(no, While):
         return [no.cond, no.corpo]
+    if isinstance(no, Sorteio):
+        return [no.minimo, no.maximo]
     if isinstance(no, Binario):
         return [no.esq, no.dir]
     return []                          # Num, Bool, Var são folhas

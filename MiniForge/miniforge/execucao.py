@@ -1,5 +1,8 @@
 """Execução de TAC válido com memória, saltos e entrada e saída."""
 import sys
+from random import SystemRandom
+
+_sorteador = SystemRandom()
 from .constantes import avaliar
 from .ir import OPERADORES, formatar
 
@@ -28,6 +31,11 @@ def executar(codigo, entrada=None, saida=None, erros=None):
                 memoria[i.dest] = avaliar(i.op, valor(i.a1), valor(i.a2))
             elif i.op == 'neg':
                 memoria[i.dest] = -valor(i.a1)
+            elif i.op == 'random':
+                minimo, maximo = valor(i.a1), valor(i.a2)
+                if minimo > maximo:
+                    raise ErroExecucao(f'linha {i.linha}: intervalo inválido em sorteia_so')
+                memoria[i.dest] = _sorteador.randint(minimo, maximo)
             elif i.op == 'read':
                 while True:
                     saida.flush()

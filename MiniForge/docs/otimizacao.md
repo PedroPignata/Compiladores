@@ -85,8 +85,11 @@ medições dos exemplos fixos, não de tempo ou de instruções executadas.
 
 ## Jogo Adivinha o trem, sô!
 
-Configuração padrão: segredo 65, intervalo 1 a 100. Medição estática, sem rótulos:
-66 instruções antes, 46 depois, redução de 30,30%. Propagação e dobramento nas
-verificações de configuração criam saltos constantes e caminhos inalcançáveis,
-que os passes seguintes podem remover e limpar. Não se mediu tempo de execução.
-Reprodução e alcance dos testes em [testes-programas.md](testes-programas.md).
+Configuração atual: segredo sorteado em execução, intervalo 1 a 100.
+Medição estática sem rótulos: 62 instruções antes, 48 depois, redução de 22,58%.
+A instrução random permanece no TAC otimizado: não se pode congelar o segredo
+em compilação. A propagação invalida destinos de random e a eliminação mantém
+chamadas alcançáveis mesmo sem uso do resultado. Condições iniciais constantes
+continuam podendo ser simplificadas. Não se mediu tempo de execução.
+Registro da versão aleatória em testes-sorteio.md; testes-programas.md registra
+a versão anterior de segredo fixo.

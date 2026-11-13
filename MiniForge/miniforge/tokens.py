@@ -11,7 +11,7 @@ class TipoToken(Enum):
     VAR = auto(); INT = auto(); BOOL = auto()
     TRUE = auto(); FALSE = auto(); IF = auto()
     ELSE = auto(); WHILE = auto(); PRINT = auto()
-    READ = auto(); TEXTO = auto()
+    READ = auto(); TEXTO = auto(); SORTEIO = auto(); VIRGULA = auto()
     # operadores
     MAIS = auto(); MENOS = auto(); VEZES = auto()
     DIV = auto(); ATRIB = auto(); IGUAL = auto()
@@ -34,6 +34,7 @@ class Token:
 
 # A classificação ocorre depois de ler o identificador completo.
 RESERVADAS = {
+    "sorteia_so": TipoToken.SORTEIO,
     "le_so": TipoToken.READ,
     "trem": TipoToken.VAR,              # var   — "trem x: inteirim = 1;"
     "inteirim": TipoToken.INT,          # int
@@ -70,6 +71,7 @@ OPERADORES_2 = {
 }
 
 OPERADORES_1 = {
+    ",": TipoToken.VIRGULA,
     "+": TipoToken.MAIS,
     "-": TipoToken.MENOS,
     "*": TipoToken.VEZES,

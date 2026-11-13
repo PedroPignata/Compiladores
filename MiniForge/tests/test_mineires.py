@@ -15,6 +15,7 @@ from miniforge.tokens import TipoToken as T
 RAIZ = pathlib.Path(__file__).resolve().parent.parent
 
 VOCABULARIO = {
+    "sorteia_so": T.SORTEIO,
     "le_so": T.READ,
     "trem": T.VAR, "inteirim": T.INT, "booleanim": T.BOOL,
     "eh_memo": T.TRUE, "num_eh": T.FALSE, "uai": T.IF, "sinao": T.ELSE,

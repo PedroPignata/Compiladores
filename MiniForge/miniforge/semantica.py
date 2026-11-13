@@ -138,6 +138,14 @@ class AnalisadorSemantico(Visitor):
         no.tipo = res
         return res
 
+    def visitar_Sorteio(self, no):
+        tipos = [self.visitar(no.minimo), self.visitar(no.maximo)]
+        for limite, tipo in zip((no.minimo, no.maximo), tipos):
+            if tipo is not None and tipo != INT:
+                self.erro(limite, 'sorteia_so exige limites inteirim')
+        no.tipo = INT if tipos == [INT, INT] else None
+        return no.tipo
+
     def visitar_Num(self, no):
         no.tipo = INT
         return INT

@@ -21,9 +21,9 @@ O compilador exige Python 3.10+. Não é necessário instalar pytest para jogar.
 A instalação completa e o guia dos dois programas estão em
 [exemplos/README.md](../README.md).
 
-O número secreto padrão é **65**, no intervalo de **1 a 100**. Ele é fixo no
-código, não sorteado. Para jogar sem saber a resposta, peça a um colega para
-alterá-lo antes de iniciar a partida e não abra o fonte durante o jogo.
+O segredo é **sorteado entre 1 e 100**, incluindo os dois extremos, quando a
+partida começa. Não é mais fixo em 65. Cada nova execução faz outro sorteio;
+repetir um número por acaso é possível e não indica falha.
 
 ## Regras da partida
 
@@ -38,7 +38,7 @@ Textos e decimais também não contam: o leitor de inteiros solicita outra entra
 Um palpite válido repetido conta novamente, mesmo que já tenha sido tentado.
 O jogo não altera seu intervalo automaticamente depois de cada dica.
 
-Exemplo real de caminho de jogo, com segredo 65:
+Exemplo ilustrativo de uma partida **caso o sorteio dê 65**:
 
 | Entrada | Resposta relevante |
 |---|---|
@@ -55,18 +55,27 @@ saída separados. Para jogar novamente, execute o mesmo comando no terminal.
 ### Configuração e estado
 
 ```text
-trem segredo: inteirim = 65;
 trem minimo: inteirim = 1;
 trem maximo: inteirim = 100;
+trem segredo: inteirim = 0;
 trem tentativas: inteirim = 0;
 trem jogando: booleanim = eh_memo;
 ```
 
-Os três primeiros valores definem a partida. `tentativas` registra palpites
-válidos; `jogando` controla o laço. A inicialização é obrigatória na linguagem.
-O fonte verifica a configuração antes de pedir palpites: mínimo positivo,
-mínimo não maior que máximo e segredo dentro do intervalo. Caso contrário,
-mostra uma mensagem e encerra sem consumir entrada.
+`minimo` e `maximo` definem o intervalo. `segredo` começa em zero e recebe
+o sorteio após validar os limites. `tentativas` registra palpites válidos;
+`jogando` controla o laço. A inicialização é obrigatória na linguagem.
+O fonte exige mínimo positivo e mínimo não maior que máximo; configuração
+inválida mostra mensagem e encerra sem ler palpites nem sortear.
+
+```text
+uai (jogando) {
+    segredo = sorteia_so(minimo, maximo);
+}
+```
+
+Essa chamada fica **fora do laço de palpites**: o segredo não muda durante a
+partida. O sorteio acontece no executor, não no parser nem no otimizador.
 
 ### Leitura, escopo e repetição
 
@@ -93,30 +102,28 @@ Não é necessário `break`, funções, vetores ou operadores lógicos adicionai
 
 ## Alterar o jogo
 
-### Mudar o segredo
+### Mudar o intervalo de sorteio
 
-Edite somente esta declaração e salve o arquivo UTF-8:
-
-```text
-trem segredo: inteirim = 42;
-```
-
-Execute novamente. O segredo precisa estar no intervalo configurado. Alterar
-o arquivo durante uma execução não muda a partida que já foi compilada.
-
-### Mudar o intervalo
-
-Para jogar de 10 até 50, use:
+Edite as duas declarações iniciais. Para jogar de 10 até 50:
 
 ```text
-trem segredo: inteirim = 32;
 trem minimo: inteirim = 10;
 trem maximo: inteirim = 50;
 ```
 
-O texto do programa mostra `minimo` e `maximo` por comandos de saída, então os
-limites exibidos acompanham essas alterações sem editar mensagens. Mantenha o
-mínimo maior ou igual a 1: zero é o comando reservado para abandonar a partida.
+A chamada `segredo = sorteia_so(minimo, maximo);` passa a escolher um número
+nesse intervalo e as mensagens exibem os novos limites automaticamente.
+Mantenha o mínimo maior ou igual a 1, pois zero é reservado para sair.
+Salve e reinicie o programa: a partida já compilada não lê suas edições.
+
+### Preparar uma demonstração previsível
+
+Para demonstrar um acerto garantido, use temporariamente `minimo = 42` e
+`maximo = 42` nas declarações. O sorteio num intervalo de um elemento resulta
+em 42. Isso permite mostrar contagem e encerramento sem revelar ou fixar o
+segredo da versão normal. Depois restaure 1 e 100 antes de rodar os testes.
+Não mova o sorteio para dentro de `enquanto_tiver`: isso mudaria o segredo a
+cada palpite e alteraria as regras do jogo.
 
 ### Mudar as frases ou o visual
 
@@ -130,8 +137,8 @@ Cada linha do menu precisa de seu próprio comando de saída.
 A contagem fica em `tentativas = tentativas + 1;`. Mover essa linha para antes
 da validação do intervalo faria palpites fora do intervalo contarem também.
 Se fizer isso, atualize as regras no README e os testes. Para manter o programa
-original, não mova a linha. Limite de tentativas e sorteio aleatório são ideias
-possíveis, mas **não estão implementados** nesta versão.
+original, não mova a linha. Limite de tentativas é uma ideia possível, mas **não está implementado**.
+O sorteio aleatório já faz parte desta versão.
 
 ## Inspecionar a compilação
 
@@ -161,29 +168,29 @@ Os testes verificam dicas, contagem, saída com zero, limites, texto/decimal
 inválido, EOF, personalização, configuração inválida, rótulos, idempotência e
 execução com/sem otimização. Não introduzem um executor separado do compilador.
 
-Demonstração sugerida: mostrar o `.mini`; executar e tentar 40, 80 e 65; repetir
-com `-O`; demonstrar 101 como palpite recusado e 0 para sair; mudar segredo para
-42, verificar o fonte e jogar outra partida. A sequência 40/80/65 só é válida
-para o segredo padrão 65. Desfaça personalizações antes de rodar os testes que
-usam a configuração padrão, ou atualize expectativas deliberadamente.
+Demonstração sugerida: mostrar `sorteia_so` fora do laço; executar e seguir as
+dicas; repetir com `-O`; demonstrar 101 como palpite recusado e 0 para sair.
+Para um acerto previsível, usar temporariamente intervalo 42 a 42. Não prometer
+que 40/80/65 acertam no intervalo normal: o segredo agora é aleatório.
+Os testes controlam o gerador para conferir dicas e contagem de forma repetível,
+mas o programa de uso normal não recebe semente ou segredo fixos.
 
 ## Limites e erros comuns
 
-- Não existe sorteio: o segredo é fixo em cada compilação.
+- O sorteio é realizado em cada execução, não em cada palpite; números podem se repetir entre partidas.
 - Não há limite de tentativas nem reinício automático depois de vencer.
 - EOF sem escolher sair produz erro com código 1; Ctrl+C retorna 130.
 - `No module named miniforge`: execute a partir da pasta `MiniForge/`.
 - `uai (palpite)` não é válido: condições exigem booleanos, como `palpite == 0`.
-- Se escolher um segredo fora dos limites, o programa compila, mas sua própria
-  validação de configuração impede a partida. Não é um erro de tipos.
+- Se configurar limites inválidos, a própria validação impede a partida
+  antes do sorteio. Não é um erro de tipos.
 
 Veja também a [Calculadora Mineira](../calculadora/README.md) e o
 [guia para usar e modificar os dois programas](../README.md).
 
-## Evidência de otimização
+## Sorteio e otimização
 
-Na configuração padrão, o TAC tem 66 instruções antes e 46 depois da otimização,
-excluindo rótulos: redução estática de 30,30%. A configuração conhecida permite
-simplificar verificações iniciais; os palpites continuam sendo recebidos em
-execução. Isso não é medição de velocidade. A forma de medir e os resultados
-executados estão no [registro dos programas](../../docs/testes-programas.md).
+Mesmo com limites constantes, `sorteia_so` não pode virar uma constante durante
+a compilação. O TAC contém uma instrução de sorteio, executada quando a partida
+começa. Os cinco passes preservam a chamada e suas possíveis falhas. Testes e
+medições da revisão atual estão em [testes-sorteio.md](../../docs/testes-sorteio.md).

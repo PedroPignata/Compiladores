@@ -176,6 +176,14 @@ class Parser:
 
     def fator(self):               # fator → NUM | "eh_memo" | "num_eh" | ID
         t = self.atual()           #       | "(" expr ")" | "-" fator
+        if self.verificar(T.SORTEIO):
+            self.consumir()
+            self.esperar(T.ABRE_PAR, "faltou '('")
+            minimo = self.expr()
+            self.esperar(T.VIRGULA, "faltou ','")
+            maximo = self.expr()
+            self.esperar(T.FECHA_PAR, "faltou ')'")
+            return A.Sorteio(minimo, maximo, linha=t.linha, coluna=t.coluna)
         if self.verificar(T.NUM):
             self.consumir()
             return A.Num(int(t.lexema), linha=t.linha, coluna=t.coluna)

@@ -343,7 +343,7 @@ interativo: se o numerador é não nulo e o quociente inteiro é zero, a respost
 não muda o contrato de divisão do compilador nem dos exemplos fixos.
 A revisão anterior passou com 766 testes; o registro detalhado está em testes-calculadora.md.
 
-## 17. Segundo programa: Adivinha o trem, sô!
+## 17. Primeira versão do segundo programa (histórico)
 
 O segundo programa completo fica em `exemplos/adivinha/adivinha.mini`. Ele é
 inteiramente mineirês e usa os recursos existentes: declarações, entrada inteira,
@@ -382,3 +382,22 @@ exigir “Até mais, sô!”, sem retirar asserções das operações ou dos err
 Detalhes em [testes-programas.md](testes-programas.md). Guias:
 [programas](../exemplos/README.md), [calculadora](../exemplos/calculadora/README.md)
 e [jogo](../exemplos/adivinha/README.md).
+
+
+## 18. Jogo com segredo aleatório
+
+A versão atual substitui o segredo fixo por `sorteia_so(minimo, maximo)`.
+Essa expressão inteira foi implementada no lexer, parser, AST, semântica,
+TAC, otimizador e executor, mantendo a arquitetura de um módulo por fase.
+O jogo sorteia uma vez, antes do laço, após validar os limites. Cada nova
+partida chama novamente o gerador, podendo repetir um número por acaso.
+
+O executor usa SystemRandom, sem semente fixa. A instrução random é efeito
+observável e não pode ser dobrada nem removida quando alcançável por falta
+de uso. A execução otimizada também sorteia normalmente. Não há aplicativo
+Python auxiliar decidindo o segredo fora do programa mineirês.
+
+Os guias agora ensinam a personalizar limites em vez de fixar a resposta.
+Para demonstração previsível, um intervalo de um elemento é permitido.
+O TAC passou de 62 para 48 instruções sem rótulos (22,58% de redução estática).
+Resultados da validação completa em testes-sorteio.md e contrato em sorteio.md.

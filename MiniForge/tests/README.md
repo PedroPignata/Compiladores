@@ -4,7 +4,7 @@ Na raiz MiniForge/, com pytest instalado:
 
 ```bash
 python -m pytest -q
-python -m pytest -q tests/test_calculadora.py tests/test_calculadora_interativa.py tests/test_adivinha.py
+python -m pytest -q tests/test_calculadora.py tests/test_calculadora_interativa.py tests/test_adivinha.py tests/test_sorteio.py
 ```
 
 A primeira chamada verifica o projeto inteiro. A segunda verifica os exemplos
@@ -26,3 +26,6 @@ Resultados históricos em [testes.md](../docs/testes.md), revisão da calculador
 em [testes-calculadora.md](../docs/testes-calculadora.md) e validação conjunta
 em [testes-programas.md](../docs/testes-programas.md). Os casos cobertos não
 constituem prova geral de equivalência entre TAC original e otimizado.
+
+Sorteio: test_sorteio.py verifica tipos, sintaxe, ordem, limites e preservação
+de efeitos pelo otimizador. Resultados atuais em [testes-sorteio.md](../docs/testes-sorteio.md).

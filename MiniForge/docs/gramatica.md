@@ -30,7 +30,7 @@ de repetição.
 ## Gramática G = (V, T, P, S)
 
 - **V** (não terminais): `programa`, `comando`, `decl`, `tipo`, `atrib`,
-  `print`, `leitura`, `if`, `while`, `bloco`, `expr`, `soma`, `termo`, `fator`.
+  `print`, `leitura`, `if`, `while`, `bloco`, `expr`, `soma`, `termo`, `fator`, `sorteio`.
 - **T** (terminais): os tokens de `miniforge/tokens.py`.
 - **P** (produções): abaixo.
 - **S** (símbolo inicial): `programa`.
@@ -51,8 +51,9 @@ bloco    → "{" { comando } "}"
 expr     → soma [ ( "==" | "!=" | "<" | ">" | "<=" | ">=" ) soma ]
 soma     → termo { ( "+" | "-" ) termo }
 termo    → fator { ( "*" | "/" ) fator }
-fator    → NUM | "eh_memo" | "num_eh" | ID
+fator    → sorteio | NUM | "eh_memo" | "num_eh" | ID
          | "(" expr ")" | "-" fator
+sorteio  → "sorteia_so" "(" expr "," expr ")"
 ```
 
 ## Decisões de projeto
@@ -256,3 +257,9 @@ Se `!` ficasse acima de `||` (negando a expressão inteira), `!a || b` viraria
 `le_so` é reservada. `TEXTO` é um literal entre aspas duplas, sem escapes
 e sem quebra de linha. Só aparece no comando de saída, não em `fator`.
 Contrato semântico e execução: [execucao.md](execucao.md).
+
+## Sorteio inteiro
+
+`sorteia_so` é reservada e a vírgula separa seus dois argumentos. O sorteio
+é uma expressão no nível fator; portanto compõe aritmética e comparações
+sem mudar as precedências existentes. Ver [sorteio.md](sorteio.md).

@@ -31,6 +31,8 @@ class Instr:
     def __str__(self):
         """Mantém rótulos na margem e recua as instruções."""
         a1, a2 = formatar(self.a1), formatar(self.a2)
+        if self.op == "random":
+            return f"    {self.dest} = sorteia {a1}, {a2}"
         if self.op == "read":
             return f"    read {self.dest}"
         if self.op == "texto":
@@ -169,6 +171,13 @@ class GeradorTAC(_GeradorBase):
         t = self.novo_temp()
         self.emitir("neg", t, a, linha=no.linha)
         return t
+
+    def visitar_Sorteio(self, no):
+        minimo = self.visitar(no.minimo)
+        maximo = self.visitar(no.maximo)
+        destino = self.novo_temp()
+        self.emitir('random', destino, minimo, maximo, linha=no.linha)
+        return destino
 
     def visitar_Num(self, no):
         return no.valor                   # constante int

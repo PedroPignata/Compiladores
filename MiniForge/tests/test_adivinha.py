@@ -4,6 +4,7 @@ from io import StringIO
 from pathlib import Path
 import subprocess
 import sys
+from unittest.mock import patch
 
 import pytest
 from miniforge.execucao import executar
@@ -33,31 +34,35 @@ def compilar(fonte):
     ('1\n100\n65\n', ['Tenta um maior.', 'Tenta um menor.', 'Quantidade de tentativas:\n3\n']),
 ])
 def test_sessoes(otimizado, entrada, trechos):
-    args = [sys.executable, '-m', 'miniforge', str(ARQUIVO), '--executar']
+    cod = compilar(ARQUIVO.read_text())
     if otimizado:
-        args.append('-O')
-    r = subprocess.run(args, cwd=RAIZ, input=entrada, capture_output=True,
-                       text=True, timeout=10)
-    assert r.returncode == 0, r.stderr
-    assert all(t in r.stdout for t in trechos)
-    assert r.stdout.endswith('Até mais, sô!\n')
+        cod = otimizar(cod)
+    saida = StringIO(); erros = StringIO()
+    with patch('miniforge.execucao._sorteador.randint', return_value=65) as sorteio:
+        executar(cod, StringIO(entrada), saida, erros)
+    texto = saida.getvalue()
+    assert all(t in texto for t in trechos)
+    assert texto.endswith('Até mais, sô!\n')
+    sorteio.assert_called_once_with(1, 100)
     if 'abc' in entrada:
-        assert r.stderr.count('Entrada inválida') == 2
+        assert erros.getvalue().count('Entrada inválida') == 2
     else:
-        assert not r.stderr
+        assert not erros.getvalue()
     if entrada == '0\n':
-        assert 'Acertou' not in r.stdout and 'Quantidade de tentativas:' not in r.stdout
+        assert 'Acertou' not in texto and 'Quantidade de tentativas:' not in texto
 
 
 @pytest.mark.parametrize('segredo', [1, 100, 42])
 def test_personalizar_segredo(segredo):
-    fonte = ARQUIVO.read_text().replace('segredo: inteirim = 65;', f'segredo: inteirim = {segredo};')
+    fonte = ARQUIVO.read_text()
     original = compilar(fonte)
     copia = deepcopy(original)
     sem = StringIO(); com = StringIO()
-    executar(original, StringIO(f'{segredo}\n'), sem)
+    with patch('miniforge.execucao._sorteador.randint', return_value=segredo):
+        executar(original, StringIO(f'{segredo}\n'), sem)
     novo = otimizar(original)
-    executar(novo, StringIO(f'{segredo}\n'), com)
+    with patch('miniforge.execucao._sorteador.randint', return_value=segredo):
+        executar(novo, StringIO(f'{segredo}\n'), com)
     assert original == copia
     assert sem.getvalue() == com.getvalue()
     assert 'Quantidade de tentativas:\n1\n' in com.getvalue()
@@ -68,16 +73,16 @@ def test_personalizar_segredo(segredo):
 
 
 @pytest.mark.parametrize('de,para', [
-    ('segredo: inteirim = 65;', 'segredo: inteirim = 101;'),
-    ('segredo: inteirim = 65;', 'segredo: inteirim = 0;'),
     ('minimo: inteirim = 1;', 'minimo: inteirim = 0;'),
     ('minimo: inteirim = 1;', 'minimo: inteirim = 101;'),
 ])
 def test_configuracao_invalida_nao_le_entrada(de, para):
     fonte = ARQUIVO.read_text().replace(de, para)
     saida = StringIO()
-    executar(otimizar(compilar(fonte)), StringIO(''), saida)
-    assert 'confira o segredo e os limites' in saida.getvalue()
+    with patch('miniforge.execucao._sorteador.randint') as sorteio:
+        executar(otimizar(compilar(fonte)), StringIO(''), saida)
+    sorteio.assert_not_called()
+    assert 'confira os limites' in saida.getvalue()
     assert 'Qual é seu palpite' not in saida.getvalue()
 
 
@@ -93,3 +98,17 @@ def test_eof_durante_palpite():
     r = subprocess.run([sys.executable, '-m', 'miniforge', str(ARQUIVO), '--executar'],
                        cwd=RAIZ, input='', capture_output=True, text=True, timeout=10)
     assert r.returncode == 1 and 'fim da entrada' in r.stderr
+
+
+@pytest.mark.parametrize('otimizado', [False, True])
+def test_cli_sorteio_real_intervalo_unitario(tmp_path, otimizado):
+    fonte = ARQUIVO.read_text().replace('minimo: inteirim = 1;', 'minimo: inteirim = 42;')
+    fonte = fonte.replace('maximo: inteirim = 100;', 'maximo: inteirim = 42;')
+    caminho = tmp_path / 'jogo.mini'
+    caminho.write_text(fonte, encoding='utf-8')
+    args = [sys.executable, '-m', 'miniforge', str(caminho), '--executar']
+    if otimizado:
+        args.append('-O')
+    r = subprocess.run(args, cwd=RAIZ, input='42\n', capture_output=True, text=True, timeout=10)
+    assert r.returncode == 0, r.stderr
+    assert 'Quantidade de tentativas:\n1\n' in r.stdout
