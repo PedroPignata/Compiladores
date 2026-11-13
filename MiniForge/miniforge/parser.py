@@ -1,19 +1,4 @@
-"""Parser recursivo descendente que constrói a AST (aula 14).
-
-Cada não terminal de docs/gramatica.md vira um método. As regras de
-tradução são as do slide:
-
-    não terminal soma   ->  def soma(self)
-    terminal ";"        ->  self.esperar(T.PONTO_VIRG, "faltou ';'")
-    { x }               ->  while self.verificar(<FIRST de x>): ...
-    [ x ]               ->  if self.verificar(<FIRST de x>): ...
-    a | b | c           ->  if / elif pelo token atual (FIRST)
-
-Como os conjuntos FIRST das alternativas são disjuntos (gramática LL(1)), o
-parser decide cada regra olhando um único token, sem voltar atrás. Todo
-caminho consome pelo menos um token ou lança ErroSintatico, então o parser
-nunca entra em laço infinito.
-"""
+"""Construção da AST por análise descendente com precedência explícita."""
 
 from . import ast as A
 from .lexer import Lexer
@@ -41,9 +26,8 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
 
-    # ------------------------------------------------------------------
     # utilitários
-    # ------------------------------------------------------------------
+
     def atual(self):
         """Devolve o token corrente, sem consumir."""
         return self.tokens[self.pos]
@@ -73,9 +57,8 @@ class Parser:
             f"achei '{t.lexema or 'EOF'}'",
             t.linha, t.coluna)
 
-    # ------------------------------------------------------------------
     # programa e comandos
-    # ------------------------------------------------------------------
+
     def programa(self):            # programa → { comando } EOF
         comandos = []
         while not self.verificar(T.EOF):      # vai até o EOF: um '}' sobrando
@@ -165,9 +148,8 @@ class Parser:
         self.esperar(T.FECHA_CHAVE, "faltou '}'")
         return A.Bloco(comandos, linha=ini.linha, coluna=ini.coluna)
 
-    # ------------------------------------------------------------------
     # expressões: um método por nível de precedência
-    # ------------------------------------------------------------------
+
     def expr(self):                # expr → soma [ comparador soma ]
         esq = self.soma()
         if self.verificar(*COMPARADORES):     # [ ] e não { }: não associativa

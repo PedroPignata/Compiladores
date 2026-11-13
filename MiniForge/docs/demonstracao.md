@@ -131,7 +131,9 @@ python3 -m miniforge exemplos/calculadora/interativa.mini --executar
 
 Escolher 1, digitar 18 e 6: o programa mostra Resultado: e 24. Escolher 4,
 digitar 10 e 0: mensagem de divisor zero e retorno ao menu. Escolher 4,
-digitar -7 e 2: resultado -3. Escolher 0 para encerrar.
+digitar -7 e 2: resultado -3. Experimentar 2 / 5: Resultado inválido,
+pois a fração seria truncada para zero. Comparar com 0 / 5: zero válido.
+Escolher 0 para encerrar.
 Repetir com `--executar -O` para usar TAC otimizado.
 Para explicar o código, abrir interativa.mini: o próprio fonte contém
 mostra_so, le_so, enquanto_tiver, uai e sinao. Inspecionar o TAC em comando

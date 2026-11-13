@@ -1,5 +1,3 @@
-// Válido. Saída esperada (python -m miniforge): 100.
-// Exemplo do slide 3 da aula 30: com -O, 12 instruções viram 3.
 trem base: inteirim = 2 * 3 + 4;
 trem lim: inteirim = base * 10;
 uai (lim > 50) {

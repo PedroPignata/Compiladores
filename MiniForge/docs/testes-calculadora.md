@@ -119,3 +119,27 @@ AST foram atualizadas preservando os testes de correspondência completos.
 Segunda execução da revisão interativa: **754 passed in 14.58s**.
 Sessão de terminal com --executar -O conferida: soma 18 + 6 apresentou 24,
 divisão -7 / 2 apresentou -3 e divisor zero mostrou mensagem e retornou ao menu.
+
+## Revisão de comentários e apresentação do terminal
+
+Foram retiradas referências a aulas, slides e desafios dos comentários dos
+módulos, testes e exemplos. Docstrings longas foram substituídas por contratos
+curtos. Comentários sobre escopos, invalidação de constantes, posições e efeitos
+foram mantidos ou ajustados. Uma comparação das ASTs Python, ignorando docstrings,
+confirmou que a lógica dos módulos do compilador não mudou.
+
+A calculadora recebeu menu com moldura e mensagens mineiras. O programa
+interativo agora rejeita divisões de numerador não nulo cujo quociente inteiro
+seria zero: 2 / 5 e suas variantes de sinal mostram resultado inválido. 0 / 5
+continua válido. Não se alterou o operador de divisão da linguagem; a verificação
+é feita no próprio fonte mineirês, antes de mostrar o resultado.
+
+Novos cenários foram executados com e sem otimização, incluindo retorno ao menu
+e nova conta após uma fração rejeitada. O teste de posição dos tokens do fatorial
+foi atualizado para a linha 1, pois o comentário inicial do exemplo foi removido;
+a verificação de coluna e EOF foi preservada.
+
+Execução completa: `python -m pytest -q`: **766 passed in 14.66s**.
+`python3 -m compileall -q miniforge tests` e `git diff --check`: código 0.
+Sessão real com --executar -O confirmou mensagem inválida para 2 / 5,
+resultado zero para 0 / 5 e encerramento normal pelo menu.

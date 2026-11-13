@@ -211,6 +211,10 @@ O novo módulo `miniforge/execucao.py` executa o TAC válido usando memória de
 nomes internos e contador de instruções. A aritmética usa as regras já existentes,
 inclusive divisão truncada para zero. O programa mineirês usa um laço para
 repetir o menu e condicionais para escolher a operação e evitar divisor zero.
+O visual usa molduras e mensagens mineiras. Uma verificação adicional impede
+apresentar zero quando um numerador não nulo dividido por outro inteiro gera
+quociente truncado zero (como 2 / 5). Zero verdadeiro, como 0 / 5, continua válido.
+Essa validação pertence ao programa interativo, sem alterar o operador da linguagem.
 Entrada decimal ou texto é rejeitada pelo leitor inteiro, que solicita novamente.
 EOF e divisão por zero não protegida geram erro com linha de origem.
 
@@ -323,3 +327,18 @@ e os testes registram o que foi efetivamente construído e o alcance das evidên
 - Integração principal: https://github.com/PedroPignata/Compiladores/pull/2
 - Documentos internos: especificação, gramática, arquitetura, matriz,
   integração, testes e otimização, na pasta `docs/`.
+
+## 16. Revisão de clareza e apresentação
+
+Os comentários do código foram reduzidos a explicações de contratos e decisões
+específicas, removendo referências a aulas e desafios. A lógica dos módulos
+Python foi comparada por AST sem docstrings para assegurar que essa limpeza
+não alterou a implementação. Comentários de casos de erro usados pelos testes
+continuam presentes quando funcionam como expectativas dos arquivos de referência.
+
+O terminal da calculadora recebeu uma moldura, opções alinhadas e frases
+mineiras. A verificação de frações truncadas para zero fica no programa
+interativo: se o numerador é não nulo e o quociente inteiro é zero, a resposta
+é inválida. Zero matematicamente verdadeiro continua permitido. Essa decisão
+não muda o contrato de divisão do compilador nem dos exemplos fixos.
+A suíte atual passou com 766 testes; o registro detalhado está em testes-calculadora.md.

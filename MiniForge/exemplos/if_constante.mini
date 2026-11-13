@@ -1,5 +1,3 @@
-// Válido. Saída esperada (python -m miniforge): 11.
-// Tabela da aula 30: com -O, 9 instruções viram 2 (o ramo do uai some).
 trem a: inteirim = 10;
 uai (1 > 2) {
     mostra_so(a);

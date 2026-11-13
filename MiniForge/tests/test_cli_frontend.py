@@ -24,7 +24,6 @@ def test_padrao_gera_tac_sem_execucao():
     assert r.returncode == 0 and not r.stderr
     assert 'print f' in r.stdout and '120' not in r.stdout
 
-
 @pytest.mark.parametrize('fonte', [
     'enquanto_tiver (eh_memo) { mostra_so(999); }',
     'mostra_so(1 / 0);',
@@ -36,13 +35,11 @@ def test_nao_executa_nem_avalia_expressoes(tmp_path, fonte):
     assert r.returncode == 0 and not r.stderr
     assert 'goto' in r.stdout or '/ 0' in r.stdout
 
-
 @pytest.mark.parametrize('opcao', ['--pilha', '--vm-pilha', '--stats'])
 def test_opcoes_futuras_rejeitadas(opcao):
     r = cli('exemplos/fatorial.mini', opcao)
     assert r.returncode == 2 and not r.stdout
     assert 'unrecognized arguments' in r.stderr
-
 
 @pytest.mark.parametrize('args', [[], ['--inexistente']])
 def test_argumentos_invalidos(args):
@@ -57,7 +54,6 @@ def test_leitura_invalida(tmp_path):
             p.write_bytes(b'\xff')
         r = cli(p)
         assert r.returncode == 1 and not r.stdout and 'erro ao ler' in r.stderr
-
 
 # Todas as 32 combinações dos cinco sinalizadores públicos.
 @pytest.mark.parametrize('flags', [
@@ -76,7 +72,6 @@ def test_combinacoes_documentadas(flags):
     assert ('Num 5 : inteirim' in r.stdout) == tipos
     sucesso = verificar
     assert ('tudo certim' in r.stdout) == sucesso
-
 
 @pytest.mark.parametrize('flags', [['--ast', '--tipos'], ['--ast', '--verificar'], ['--tokens', '--tipos']])
 def test_opcao_semantica_nao_e_ignorada(flags):
@@ -101,7 +96,6 @@ def test_independencia_estatica_e_dinamica():
               '["miniforge.vm"])')
     r = subprocess.run([sys.executable, '-c', script], cwd=RAIZ, capture_output=True)
     assert r.returncode == 0, r.stderr
-
 
 @pytest.mark.parametrize('op,esq,dir', itertools.product(
     ['+', '-', '*', '/', '<', '>', '<=', '>=', '==', '!='], ['1', 'eh_memo'], ['1', 'eh_memo']

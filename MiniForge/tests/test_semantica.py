@@ -1,8 +1,4 @@
-"""Testes do analisador semântico, parte de nomes e escopos (aula 20):
-Visitor, redeclaração, uso de variável não declarada, escopos dos blocos e
-o desafio dos avisos de variável nunca usada. Os tipos (aula 22) estão em
-tests/test_tipos.py.
-"""
+"""Testes do analisador semântico, parte de nomes e escopos"""
 
 import pathlib
 import subprocess
@@ -26,10 +22,9 @@ def sem(fonte):
 def avisos(fonte):
     return analisar(parse(fonte)).avisos
 
-
-# ----------------------------------------------------------------------
 # Visitor
-# ----------------------------------------------------------------------
+
+
 def test_visitor_despacha_pelo_nome_da_classe():
     class Nomes(Visitor):
         def visitar_Num(self, no):
@@ -54,10 +49,7 @@ def test_analisador_tem_metodo_para_todo_no_da_ast():
         assert hasattr(AnalisadorSemantico, "visitar_" + classe.__name__), classe
 
 
-# ----------------------------------------------------------------------
-# testes do slide e do checklist de entrega
-# ----------------------------------------------------------------------
-def test_fora_do_escopo():                       # teste do slide da aula 20
+def test_fora_do_escopo():
     erros = sem("{ trem y: inteirim = 1; } mostra_so(y);")
     assert erros == [
         "linha 1: erro semântico: 'y' num foi declarado, sô"]
@@ -94,10 +86,9 @@ def test_variavel_externa_visivel_no_bloco_interno():
 def test_nome_de_bloco_pode_ser_declarado_de_novo_depois_dele():
     assert sem("{ trem t: inteirim = 1; mostra_so(t); }\ntrem t: inteirim = 2;\nmostra_so(t);") == []
 
-
-# ----------------------------------------------------------------------
 # inicializador visitado antes de declarar
-# ----------------------------------------------------------------------
+
+
 def test_inicializador_nao_ve_a_propria_variavel():
     assert sem("trem x: inteirim = x + 1;") == [
         "linha 1: erro semântico: 'x' num foi declarado, sô"]
@@ -116,10 +107,9 @@ def test_redeclaracao_com_inicializador_invalido_gera_os_dois_erros():
         "linha 2: erro semântico: 'x' já foi declarado neste escopo, uai",
     ]
 
-
-# ----------------------------------------------------------------------
 # if / while / expressões
-# ----------------------------------------------------------------------
+
+
 def test_bloco_do_if_e_do_else_sao_escopos_separados():
     fonte = ("trem c: booleanim = eh_memo;\n"
              "uai (c) { trem t: inteirim = 1; mostra_so(t); }\n"
@@ -169,14 +159,11 @@ def test_analisa_ast_montada_a_mao():
     prog = Programa([Bloco([Print(Var("q", linha=7), linha=7)])])
     assert analisar(prog).erros == ["linha 7: erro semântico: 'q' num foi declarado, sô"]
 
-
-# ----------------------------------------------------------------------
 # banco de casos: todo válido também é semanticamente válido
-# ----------------------------------------------------------------------
+
 @pytest.mark.parametrize("arq", VALIDOS, ids=lambda p: p.name)
 def test_casos_validos_sem_erros_semanticos(arq):
     assert sem(arq.read_text(encoding="utf-8")) == []
-
 
 @pytest.mark.parametrize("arq", ["fatorial.mini", "if_else.mini", "escopos.mini"])
 def test_exemplos_validos(arq):
@@ -189,9 +176,6 @@ def test_exemplo_erro_semantico():
     assert sem(fonte) == ["linha 3: erro semântico: 'ausente' num foi declarado, sô"]
 
 
-# ----------------------------------------------------------------------
-# desafio: aviso de variável declarada e nunca usada
-# ----------------------------------------------------------------------
 def test_aviso_variavel_nunca_usada():
     assert avisos("trem x: inteirim = 1;") == [
         "linha 1: aviso: 'x' declarado e nunca usado, sô"]
@@ -233,10 +217,9 @@ def test_sombreada_sem_uso_gera_aviso_so_para_ela():
     fonte = "trem x: inteirim = 1;\n{ trem x: inteirim = 2; }\nmostra_so(x);"
     assert avisos(fonte) == ["linha 2: aviso: 'x' declarado e nunca usado, sô"]
 
-
-# ----------------------------------------------------------------------
 # CLI (integração)
-# ----------------------------------------------------------------------
+
+
 def cli(*args):
     return subprocess.run(
         [sys.executable, "-m", "miniforge", *args],

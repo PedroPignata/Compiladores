@@ -1,4 +1,3 @@
-// Válido. Saída esperada (python -m miniforge): 72 e 22.
 // Programa-vitrine do mineirês (v0.6): três fornadas de pão de queijo,
 // cada uma com 12 a mais que a anterior; o que passar de 50 é pra visita.
 trem fornada: inteirim = 1;

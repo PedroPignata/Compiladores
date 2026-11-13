@@ -1,17 +1,4 @@
-"""Análise léxica manual e recuperação de erros (aulas 08 e 10).
-
-O lexer percorre o fonte caractere a caractere. Cada ramo de
-proximo_token() corresponde a um caminho do autômato finito:
-
-    q0 --letra ou _--> q1 (laço em letra, dígito, _)  -> aceita ID/reservada
-    q0 --dígito------> q2 (laço em dígito)            -> aceita NUM
-
-Regras de prioridade: maior casamento (whilex é ID; <= é um token só) e
-reservadas consultadas na tabela RESERVADAS depois de ler a palavra inteira.
-
-Erros léxicos usam recuperação em modo pânico: a mensagem vai para
-self.erros, o caractere inválido é descartado e a análise continua.
-"""
+"""Reconhecimento de tokens com recuperação de caracteres inválidos."""
 
 from .tokens import OPERADORES_1, OPERADORES_2, RESERVADAS, Token
 from .tokens import TipoToken as T
@@ -37,9 +24,8 @@ class Lexer:
         self.coluna = 1
         self.erros = []       # mensagens "linha:coluna: erro léxico: ..."
 
-    # ------------------------------------------------------------------
     # utilitários de leitura
-    # ------------------------------------------------------------------
+
     def atual(self):
         """Caractere na posição atual, sem consumir ("" no fim)."""
         if self.pos < len(self.fonte):
@@ -63,9 +49,8 @@ class Lexer:
             self.coluna += 1
         return c
 
-    # ------------------------------------------------------------------
     # espaços e comentários
-    # ------------------------------------------------------------------
+
     def pular_espacos_e_comentarios(self):
         while True:
             c = self.atual()
@@ -77,9 +62,8 @@ class Lexer:
             else:
                 return
 
-    # ------------------------------------------------------------------
     # reconhecimento de um token
-    # ------------------------------------------------------------------
+
     def proximo_token(self):
         """Devolve o próximo Token, ou None quando houve erro léxico."""
         self.pular_espacos_e_comentarios()
@@ -100,18 +84,18 @@ class Lexer:
             self.avancar()
             return Token(T.TEXTO, self.fonte[ini:self.pos], lin, col)
 
-        if eh_letra(c):                                  # q0 --letra--> q1
+        if eh_letra(c):                                  # Consome o nome antes de consultar as reservadas.
             ini = self.pos
             while eh_letra(self.atual()) or eh_digito(self.atual()):
-                self.avancar()                           # laço em q1
+                self.avancar()
             lex = self.fonte[ini:self.pos]
             tipo = RESERVADAS.get(lex, T.ID)             # reservada ou ID?
             return Token(tipo, lex, lin, col)
 
-        if eh_digito(c):                                 # q0 --dígito--> q2
+        if eh_digito(c):                                 # O sinal negativo é um token separado.
             ini = self.pos
             while eh_digito(self.atual()):
-                self.avancar()                           # laço em q2
+                self.avancar()
             return Token(T.NUM, self.fonte[ini:self.pos], lin, col)
 
         dois = c + self.proximo()                        # 2 caracteres primeiro

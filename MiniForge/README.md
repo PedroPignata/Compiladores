@@ -25,7 +25,7 @@ python -m miniforge exemplos/constantes.mini --tac -O
 ```
 
 O compilador usa a biblioteca padrão; pytest é dependência de desenvolvimento.
-A suíte atual tem **754 testes**, incluindo entrada e execução. Resultado
+A suíte atual tem **766 testes**, incluindo entrada e execução. Resultado
 em docs/testes-calculadora.md.
 O registro histórico da integração está em docs/testes.md; a execução atual
 está em docs/testes-calculadora.md.
@@ -114,7 +114,9 @@ tipos de variável não foram acrescentados; texto literal só é permitido em m
 
 O programa está em [interativa.mini](exemplos/calculadora/interativa.mini).
 O próprio fonte contém menu, leitura dos números, seleção, operações,
-tratamento de divisor zero e repetição. Não há aplicativo Python específico
+tratamento de divisor zero e repetição. O menu tem moldura e mensagens mineiras.
+Divisões como 2 / 5 recebem resultado inválido, em vez de exibir zero truncado;
+0 / 5 continua válido. A regra inteira da linguagem permanece a mesma. Não há aplicativo Python específico
 fazendo as contas ou gerando fontes no lugar do programa.
 
 Na raiz MiniForge/:

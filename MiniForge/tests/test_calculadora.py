@@ -18,7 +18,6 @@ def compilar(fonte):
     assert not lexer.erros
     return gerar_tac(Parser(tokens).programa())
 
-
 @pytest.mark.parametrize('nome', ['calculadora', 'constantes'])
 def test_referencias_e_invariantes(nome):
     original = compilar((PASTA / f'{nome}.mini').read_text(encoding='utf-8'))
@@ -31,7 +30,6 @@ def test_referencias_e_invariantes(nome):
         rotulos = [i.dest for i in codigo if i.op == 'label']
         assert len(rotulos) == len(set(rotulos))
         assert all(i.dest in rotulos for i in codigo if i.op in ('goto', 'iffalse'))
-
 
 @pytest.mark.parametrize('operacao,a,b,esperado', [
     (1,18,6,24), (2,18,6,12), (3,18,6,108), (4,18,6,3),
@@ -56,7 +54,6 @@ def test_cenarios_compilados(operacao,a,b,esperado):
 def test_contas_precedencia_e_divisao():
     codigo = otimizar(compilar((PASTA / 'constantes.mini').read_text()))
     assert [i.a1 for i in codigo if i.op == 'print'] == [24,12,108,3,-3,14,20]
-
 
 @pytest.mark.parametrize('opcoes', [['--verificar'], ['--tokens'], ['--ast'], ['--tipos'], ['--tac'], ['--tac','-O']])
 def test_cli_calculadora(opcoes):

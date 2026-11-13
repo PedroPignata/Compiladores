@@ -1,23 +1,4 @@
-"""Nós da árvore sintática abstrata com posição no fonte (aulas 14 e 22).
-
-Uma dataclass por construção da linguagem, todas herdando de No. Os campos
-linha e coluna são keyword-only: não entram na ordem dos campos posicionais
-e todo nó pode recebê-los como linha=..., coluna=... . A análise semântica
-(aula 22) e a VM (aula 28) usam essa posição para apontar onde o erro
-aconteceu, quando os tokens já não existem mais. A coluna é o desafio da
-aula 22 (mostrar a linha do fonte com um ^ sob o erro) e fica fora da
-comparação entre nós, para os testes que só informam a linha continuarem
-valendo.
-
-As expressões herdam de Expr, que acrescenta o campo tipo: None depois do
-parser e "int" ou "bool" depois da análise semântica (aula 22), que anota a
-AST com no.tipo = ... . A geração de código lê esse campo em vez de
-recalcular os tipos.
-
-A AST guarda só o que importa para as fases seguintes: não há ';', parênteses
-nem níveis intermediários (expr, soma, termo, fator). A precedência já está
-codificada na forma da árvore.
-"""
+"""Nós da árvore com posição de origem e tipo anotado nas expressões."""
 
 from dataclasses import dataclass, field
 from typing import List, Optional
@@ -33,14 +14,13 @@ class No:
 
 @dataclass
 class Expr(No):
-    """Base das expressões: guarda o tipo anotado pela semântica (aula 22)."""
+    """O tipo permanece None até a expressão ser validada."""
     tipo: Optional[str] = field(default=None, kw_only=True, compare=False,
                                 repr=False)
 
-
-# ----------------------------------------------------------------------
 # programa e comandos
-# ----------------------------------------------------------------------
+
+
 @dataclass
 class Programa(No):
     comandos: List[No]
@@ -91,10 +71,9 @@ class While(No):         # enquanto_tiver (cond) corpo
     cond: No
     corpo: Bloco
 
-
-# ----------------------------------------------------------------------
 # expressões
-# ----------------------------------------------------------------------
+
+
 @dataclass
 class Binario(Expr):     # esq op dir
     op: str
@@ -123,9 +102,6 @@ class Var(Expr):
     nome: str
 
 
-# ----------------------------------------------------------------------
-# pretty-printer (desafio da aula 14; formato do slide da aula 16)
-# ----------------------------------------------------------------------
 def rotulo(no):
     """Texto de um nó na árvore indentada, sem os filhos.
 
@@ -174,16 +150,7 @@ def filhos(no):
 
 
 def formatar_ast(raiz):
-    """AST indentada, um nó por linha (formato do slide da aula 16):
-
-        Programa
-        ├── Decl x: int
-        │   └── Num 1
-        └── Atrib x
-            └── Binario +
-                ├── Var x
-                └── Num 2
-    """
+    """Formata os filhos com recuo e conectores de árvore."""
     linhas = [rotulo(raiz)]
 
     def visitar(no, prefixo):

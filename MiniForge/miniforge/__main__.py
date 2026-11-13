@@ -94,7 +94,6 @@ def main(argv=None) -> int:
         if not (args.tipos or args.verificar or args.tac):
             return 0
 
-    # 3 · semântica: Programa -> AST validada e tipada (aulas 20 e 22)
     analisador = analisar(programa)
     if analisador.erros:                 # erros semânticos -> stderr, sai 1
         linhas_fonte = fonte.splitlines()
@@ -134,11 +133,7 @@ def main(argv=None) -> int:
 
 
 def contexto(linhas_fonte, linha, coluna):
-    """Desafio da aula 22: linha do fonte e um ^ sob a coluna, como no Clang.
-
-        3 | uai (x) { y = 2; }
-          |      ^
-    """
+    """Marca a coluna do diagnóstico preservando as tabulações do fonte."""
     if not (1 <= linha <= len(linhas_fonte)) or coluna < 1:
         return []                        # AST montada à mão, sem posição
     texto = linhas_fonte[linha - 1]
@@ -146,7 +141,6 @@ def contexto(linhas_fonte, linha, coluna):
     recuo = "".join(c if c == "\t" else " " for c in texto[:coluna - 1])
     margem = " " * len(str(linha))
     return [f" {linha} | {texto}", f" {margem} | {recuo}^"]
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

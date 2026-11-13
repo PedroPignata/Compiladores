@@ -1,4 +1,4 @@
-"""Testes do parser recursivo descendente e da AST (aulas 14 e 16)."""
+"""Testes do parser recursivo descendente e da AST."""
 
 import pathlib
 import subprocess
@@ -23,9 +23,6 @@ def erro_de(fonte):
     return str(info.value)
 
 
-# ----------------------------------------------------------------------
-# testes do slide (aula 14)
-# ----------------------------------------------------------------------
 def test_precedencia():
     e = parse("x = 1 + 2 * 3;").comandos[0].expr
     assert e.op == "+" and e.dir.op == "*"
@@ -40,10 +37,9 @@ def test_falta_ponto_virgula():
     with pytest.raises(ErroSintatico, match="faltou ';'"):
         parse("trem x: inteirim = 1")
 
-
-# ----------------------------------------------------------------------
 # forma da AST
-# ----------------------------------------------------------------------
+
+
 def test_ast_completa_do_slide():
     p = parse("trem x: inteirim = 1;\nx = x + 2 * 3;")
     assert p == A.Programa([
@@ -92,7 +88,6 @@ def test_multiplicacao_antes_de_soma_a_esquerda():
 def test_comparacao_tem_menor_precedencia():
     e = parse("x = 1 + 2 < 3 * 4;").comandos[0].expr
     assert e.op == "<" and e.esq.op == "+" and e.dir.op == "*"
-
 
 @pytest.mark.parametrize("op", ["==", "!=", "<", ">", "<=", ">="])
 def test_todos_os_comparadores(op):
@@ -148,12 +143,11 @@ def test_programa_vazio():
     assert parse("") == A.Programa([], linha=1)
     assert parse("// só comentário\n") == A.Programa([], linha=1)
 
-
-# ----------------------------------------------------------------------
 # erros sintáticos: posição e mensagem
-# ----------------------------------------------------------------------
+
+
 def test_erro_aponta_o_proximo_token():
-    # o ';' faltou na linha 1, mas o parser só percebe ao ver 'print' (slide)
+
     assert erro_de("trem x: inteirim = 1\nmostra_so(x);") == \
         "2:1: erro sintático: faltou ';', sô: achei 'mostra_so'"
 
@@ -167,7 +161,6 @@ def test_erro_guarda_linha_e_coluna():
     with pytest.raises(ErroSintatico) as info:
         parse("x = 1;\n  y = ;")
     assert (info.value.linha, info.value.coluna) == (2, 7)
-
 
 @pytest.mark.parametrize("fonte, esperado", [
     ("trem x inteirim = 1;", "1:8: erro sintático: faltou ':', sô: achei 'inteirim'"),
@@ -202,10 +195,9 @@ def test_parser_exige_eof_no_fim():
     with pytest.raises(ValueError):
         Parser([Token(T.ID, "x", 1, 1)])
 
-
-# ----------------------------------------------------------------------
 # pretty-printer
-# ----------------------------------------------------------------------
+
+
 def test_ast_indentada_do_slide():
     assert A.formatar_ast(parse("trem x: inteirim = 1;\nx = x + 2 * 3;")) == "\n".join([
         "Programa",
@@ -237,9 +229,6 @@ def test_ast_indentada_if_while():
     ])
 
 
-# ----------------------------------------------------------------------
-# CLI (aula 16)
-# ----------------------------------------------------------------------
 def cli(*args):
     return subprocess.run(
         [sys.executable, "-m", "miniforge", *args],
@@ -253,7 +242,6 @@ def test_cli_ast_fatorial():
     assert linhas[:3] == ["Programa", "├── Decl n: inteirim", "│   └── Num 5"]
     assert "├── While" in linhas
     assert linhas[-2:] == ["└── Print", "    └── Var f"]
-
 
 @pytest.mark.parametrize("arq", ["fatorial.mini", "if_else.mini",
                                  "escopos.mini"])
@@ -287,7 +275,7 @@ def test_cli_tokens_e_ast_juntos():
     r = cli("exemplos/fatorial.mini", "--tokens", "--ast")
     assert r.returncode == 0
     linhas = r.stdout.splitlines()
-    assert linhas[0].split() == ["2:1", "VAR", "'trem'"]
+    assert linhas[0].split() == ["1:1", "VAR", "'trem'"]
     assert "Programa" in linhas
 
 

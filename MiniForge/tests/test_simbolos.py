@@ -1,15 +1,11 @@
-"""Testes da tabela de símbolos isolada, sem AST (aula 20).
-
-Cobrem as 4 operações (entrar_escopo, sair_escopo, declarar, buscar), os 5
-atributos do Simbolo, sombreamento, saída de escopo e redeclaração.
-"""
+"""Testes da tabela de símbolos isolada, sem AST."""
 
 import pytest
 
 from miniforge.simbolos import Simbolo, TabelaSimbolos
 
 
-def test_escopos():                      # teste do slide da aula 20
+def test_escopos():
     ts = TabelaSimbolos()
     ts.declarar("x", "int", 1)
     ts.entrar_escopo()
@@ -67,7 +63,7 @@ def test_mesmo_nome_em_escopo_interno_e_permitido():
 
 
 def test_buscar_vai_do_topo_para_a_base():
-    # Situação do slide de revisão: x (nível 0), y (nível 1), x (nível 2).
+
     ts = TabelaSimbolos()
     ts.declarar("x", "int", 1)
     ts.entrar_escopo()

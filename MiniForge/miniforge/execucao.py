@@ -1,8 +1,4 @@
-"""Execução explícita do TAC para programas mineirês com entrada e saída.
-
-Este módulo é um novo executor (backend simples), acrescentado para permitir
-programas interativos. Não participa da CLI de compilação sem --executar.
-"""
+"""Execução de TAC válido com memória, saltos e entrada e saída."""
 import sys
 from .constantes import avaliar
 from .ir import OPERADORES, formatar

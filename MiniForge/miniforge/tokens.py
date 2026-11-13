@@ -1,4 +1,4 @@
-"""Tipos de token, Token e tabela de palavras reservadas (aula 08)."""
+"""Categorias de token, reservadas e nomes públicos dos tipos."""
 
 from dataclasses import dataclass
 from enum import Enum, auto
@@ -32,12 +32,7 @@ class Token:
     linha: int
     coluna: int
 
-
-# Mineirês (v0.6): as palavras reservadas da linguagem. O compilador inteiro
-# trabalha com os tipos de token (T.VAR, T.IF, ...) e com os nomes internos
-# dos tipos ("int", "bool"); só esta tabela e as mensagens sabem que o
-# programa foi escrito em mineirês. Trocar a linguagem de superfície é trocar
-# esta tabela.
+# A classificação ocorre depois de ler o identificador completo.
 RESERVADAS = {
     "le_so": TipoToken.READ,
     "trem": TipoToken.VAR,              # var   — "trem x: inteirim = 1;"
@@ -64,7 +59,6 @@ LITERAL_BOOL = {True: "eh_memo", False: "num_eh"}
 def nome_tipo(tipo):
     """Nome mineiro de um tipo interno ("int" -> "inteirim")."""
     return NOME_TIPO.get(tipo, tipo)
-
 
 # Operadores e delimitadores. Os de 2 caracteres são testados antes dos de 1
 # (maior casamento): "<=" é um token só, não "<" seguido de "=".

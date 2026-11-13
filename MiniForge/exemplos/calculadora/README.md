@@ -21,19 +21,32 @@ mensagem e solicita novamente a mesma entrada. Divisor zero gera a mensagem
 escrita no fonte e volta ao menu. Fim inesperado da entrada retorna código 1;
 Ctrl+C interrompe a execução com código 130.
 
-Exemplo de sessão:
+### Visual do menu
 
 ```text
-Calculadora Mineira
-1 - Somar / 2 - Subtrair / 3 - Multiplicar / 4 - Dividir / 0 - Sair
-1
-Primeiro numero:
-18
-Segundo numero:
-6
-Resultado:
-24
+╭────────────────────────────────────────────────╮
+│            CALCULADORA MINEIRA, SÔ!            │
+├────────────────────────────────────────────────┤
+│        [1] Somar          [2] Subtrair         │
+│         [3] Multiplicar    [4] Dividir         │
+│                    [0] Sair                    │
+╰────────────────────────────────────────────────╯
+Escolhe a operação aí, sô:
 ```
+
+Depois dos números, a calculadora mostra `Tá na mão, sô! Resultado:` e o valor.
+
+### Divisão que seria truncada para zero
+
+O programa interativo rejeita uma divisão quando o numerador é diferente de
+zero, mas o quociente inteiro seria zero. Por exemplo, `2 / 5`, `-2 / 5` e
+`2 / -5` mostram `Resultado inválido, sô! Essa fração num cabe em inteirim.`
+e voltam ao menu, sem apresentar um zero enganoso.
+
+`0 / 5` continua sendo zero válido, e `10 / 2` produz 5. A regra geral da
+linguagem não foi alterada: outras frações ainda são truncadas (`7 / 2 = 3`).
+Essa proteção pertence ao programa `.mini` interativo e não aos exemplos fixos.
+Divisor zero continua recebendo mensagem própria: `Uai, dividir por zero num dá, sô!`.
 
 ### Onde está cada parte do programa?
 
@@ -79,7 +92,7 @@ Altere o arquivo, salve e compile novamente para experimentar outra conta.
 
 Este programa demonstra o uso do compilador, cujo produto é **TAC**, código de
 três endereços. O comando `mostra_so` vira uma instrução `print` nesse código.
-O MiniForge não executa o TAC: ver `print 24` significa ver uma instrução gerada,
+Nesse modo de compilação, o MiniForge não executa o TAC: ver `print 24` significa ver uma instrução gerada,
 e não uma conta executada pelo programa. O dobramento de constantes pode calcular
 uma operação durante a compilação, sem executar o programa inteiro.
 

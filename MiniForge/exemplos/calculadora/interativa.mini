@@ -1,21 +1,26 @@
-// Programa inteiro em mineires: menu, leitura, selecao, contas e repeticao.
 trem opcao: inteirim = -1;
 enquanto_tiver (opcao != 0) {
-    mostra_so("Calculadora Mineira");
-    mostra_so("1 - Somar / 2 - Subtrair / 3 - Multiplicar / 4 - Dividir / 0 - Sair");
+    mostra_so("╭────────────────────────────────────────────────╮");
+    mostra_so("│            CALCULADORA MINEIRA, SÔ!            │");
+    mostra_so("├────────────────────────────────────────────────┤");
+    mostra_so("│        [1] Somar          [2] Subtrair         │");
+    mostra_so("│         [3] Multiplicar    [4] Dividir         │");
+    mostra_so("│                    [0] Sair                    │");
+    mostra_so("╰────────────────────────────────────────────────╯");
+    mostra_so("Escolhe a operação aí, sô:");
     le_so(opcao);
     uai (opcao != 0) {
         uai (opcao < 1) {
-            mostra_so("Opcao invalida.");
+            mostra_so("Uai, essa opção num tem! Escolha de 0 a 4.");
         } sinao {
             uai (opcao > 4) {
-                mostra_so("Opcao invalida.");
+                mostra_so("Uai, essa opção num tem! Escolha de 0 a 4.");
             } sinao {
                 trem primeiro: inteirim = 0;
                 trem segundo: inteirim = 0;
-                mostra_so("Primeiro numero:");
+                mostra_so("Qual é o primeiro número, sô?");
                 le_so(primeiro);
-                mostra_so("Segundo numero:");
+                mostra_so("E o segundo número?");
                 le_so(segundo);
                 trem resultado: inteirim = 0;
                 trem valido: booleanim = eh_memo;
@@ -29,20 +34,27 @@ enquanto_tiver (opcao != 0) {
                             resultado = primeiro * segundo;
                         } sinao {
                             uai (segundo == 0) {
-                                mostra_so("Nao e possivel dividir por zero.");
+                                mostra_so("Uai, dividir por zero num dá, sô!");
                                 valido = num_eh;
                             } sinao {
                                 resultado = primeiro / segundo;
+                                // Zero de 0 / n é válido; não aceite fração truncada para zero.
+                                uai (primeiro != 0) {
+                                    uai (resultado == 0) {
+                                        mostra_so("Resultado inválido, sô! Essa fração num cabe em inteirim.");
+                                        valido = num_eh;
+                                    }
+                                }
                             }
                         }
                     }
                 }
                 uai (valido) {
-                    mostra_so("Resultado:");
+                    mostra_so("Tá na mão, sô! Resultado:");
                     mostra_so(resultado);
                 }
             }
         }
     }
 }
-mostra_so("Ate mais, so!");
+mostra_so("Inté mais, sô!");

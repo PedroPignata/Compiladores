@@ -1,4 +1,3 @@
-// Válido. Saída esperada (python -m miniforge): eh_memo e 0.
 trem valor: inteirim = 3;
 trem pequeno: booleanim = valor < 5;
 mostra_so(pequeno);

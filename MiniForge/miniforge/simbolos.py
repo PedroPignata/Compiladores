@@ -1,23 +1,4 @@
-"""Símbolos e pilha de escopos léxicos (aula 20).
-
-Cada nome declarado vira um Simbolo com seus atributos. A TabelaSimbolos é
-uma pilha de dicionários: a base é o escopo global (nível 0) e cada bloco
-{ ... } empilha um dicionário novo. A busca vai do topo para a base, então um
-nome declarado num bloco interno sombreia o de mesmo nome dos níveis abaixo;
-ao sair do bloco o dicionário é desempilhado e o nome externo volta a valer.
-
-    trem x: inteirim = 1;              // nível 0
-    {
-        trem y: inteirim = 2;          // nível 1
-        {
-            trem x: booleanim = eh_memo;   // nível 2: sombreia x
-            mostra_so(y);                  // buscar("y") acha no nível 1
-        }
-    }
-
-Decisão da turma (registrada em docs/especificacao.md): redeclarar no mesmo
-escopo é erro; declarar o mesmo nome em escopo interno é permitido.
-"""
+"""Pilha de escopos e registro de declarações e usos."""
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
@@ -30,14 +11,13 @@ class Simbolo:
     categoria: str       # 'variavel' (única categoria nesta versão)
     linha: int           # linha da declaração
     nivel: int           # 0 = global, 1 = primeiro bloco, ...
-    # Desafio da aula 20: quantas vezes o valor foi lido. Fica fora da
-    # comparação para Simbolo("x", "int", "variavel", 1, 0) continuar igual
-    # a um símbolo já usado.
+
+    # A contagem de leituras não altera a identidade do símbolo.
     usos: int = field(default=0, compare=False)
 
 
 class TabelaSimbolos:
-    """Pilha de escopos com as 4 operações do slide da aula 20."""
+    """Busca nomes do escopo mais interno ao global."""
 
     def __init__(self):
         self.escopos: List[Dict[str, Simbolo]] = [{}]    # [global, bloco1, ...]

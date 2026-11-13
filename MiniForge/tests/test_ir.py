@@ -16,7 +16,7 @@ RAIZ = pathlib.Path(__file__).parent.parent
 VALIDOS = sorted((RAIZ / "tests" / "casos" / "validos").glob("*.mini"))
 
 
-def tac(fonte):                                   # helper do slide
+def tac(fonte):
     arv = parse(fonte)
     assert AnalisadorSemantico().visitar(arv) == []
     return [str(i) for i in GeradorTAC().visitar(arv)]
@@ -26,9 +26,6 @@ def tac_de(caminho):
     return tac(pathlib.Path(caminho).read_text(encoding="utf-8"))
 
 
-# ----------------------------------------------------------------------
-# testes do slide de entrega
-# ----------------------------------------------------------------------
 def test_expressao():
     assert tac("trem x: inteirim = 1 + 2 * 3;") == [
         "    t1 = 2 * 3",
@@ -42,14 +39,10 @@ def test_while_tem_rotulos_e_saltos():
     assert "    ifFalse t1 goto L2" in cod
 
 
-# ----------------------------------------------------------------------
-# Instr e o formato do slide 2
-# ----------------------------------------------------------------------
 def test_instr_tem_os_campos_do_slide():
     i = Instr("+", "t1", "a", 2, linha=3)
     assert (i.op, i.dest, i.a1, i.a2, i.linha) == ("+", "t1", "a", 2, 3)
     assert Instr("goto", "L1") == Instr("goto", "L1", None, None, 0)
-
 
 @pytest.mark.parametrize("instr, texto", [
     (Instr("=", "x", "y"), "    x = y"),
@@ -85,10 +78,9 @@ def test_gerador_tem_metodo_para_todo_no_da_ast():
         for classe in nos:
             assert hasattr(gerador, f"visitar_{classe.__name__}"), classe
 
-
-# ----------------------------------------------------------------------
 # expressões
-# ----------------------------------------------------------------------
+
+
 def test_constantes_e_variaveis_nao_geram_temporario():
     assert tac("trem a: inteirim = 7; trem b: booleanim = eh_memo; trem c: inteirim = a;") == [
         "    a = 7",
@@ -126,11 +118,9 @@ def test_unario_em_constante():
         "    t2 = t1 + 1",
         "    print t2"]
 
-
 @pytest.mark.parametrize("op", ["+", "-", "*", "/"])
 def test_todos_os_aritmeticos(op):
     assert tac(f"mostra_so(8 {op} 2);") == [f"    t1 = 8 {op} 2", "    print t1"]
-
 
 @pytest.mark.parametrize("op", ["<", ">", "<=", ">=", "==", "!="])
 def test_todos_os_relacionais(op):
@@ -156,10 +146,9 @@ def test_constantes_sao_valores_python():
     assert cod[0].a1 is True
     assert cod[1].a1 == 3 and type(cod[1].a1) is int
 
-
-# ----------------------------------------------------------------------
 # comandos simples
-# ----------------------------------------------------------------------
+
+
 def test_decl_atrib_e_print():
     assert tac("trem x: inteirim = 1; x = x + 1; mostra_so(x);") == [
         "    x = 1",
@@ -177,9 +166,6 @@ def test_bloco_solto_nao_gera_instrucao_propria():
     assert tac("{ trem a: inteirim = 1; mostra_so(a); }") == ["    a = 1", "    print a"]
 
 
-# ----------------------------------------------------------------------
-# controle de fluxo (esquemas do slide 3)
-# ----------------------------------------------------------------------
 def test_while_completo():
     assert tac("trem i: inteirim = 0; enquanto_tiver (i < 3) { i = i + 1; }") == [
         "    i = 0",
@@ -205,8 +191,7 @@ def test_if_else():
 
 
 def test_if_sem_else_usa_o_mesmo_esquema():
-    # <código de S2> vazio: fica um goto para o rótulo seguinte (slide 3),
-    # que o otimizador removerá na aula 30.
+
     assert tac("trem a: inteirim = 1; uai (a > 0) { mostra_so(a); } mostra_so(0);") == [
         "    a = 1",
         "    t1 = a > 0",
@@ -284,10 +269,9 @@ def test_instrucoes_guardam_a_linha_do_fonte():
         ("t2 = n - 1", 3), ("n = t2", 3), ("goto L1", 2), ("L2:", 2),
         ("t3 = n / 0", 5), ("print t3", 5)]
 
-
-# ----------------------------------------------------------------------
 # temporários e rótulos nunca se repetem
-# ----------------------------------------------------------------------
+
+
 def _validada(fonte):
     arv = parse(fonte)
     assert AnalisadorSemantico().visitar(arv) == []
@@ -304,7 +288,6 @@ def _checar_unicidade(codigo):
     for i in codigo:                                # todo salto tem destino
         if i.op in ("goto", "iffalse"):
             assert i.dest in rotulos
-
 
 @pytest.mark.parametrize("arq", VALIDOS, ids=lambda p: p.name)
 def test_todo_caso_valido_gera_tac(arq):
@@ -327,10 +310,9 @@ def test_contadores_continuam_entre_comandos():
                                                   "L6:", "L4:"]
     _checar_unicidade(gerar_tac(_validada(fonte)))
 
-
-# ----------------------------------------------------------------------
 # nomes internos únicos (docs/arquitetura.md, cuidado 4)
-# ----------------------------------------------------------------------
+
+
 def test_sombreamento_ganha_nome_interno_proprio():
     assert tac_de(RAIZ / "exemplos" / "escopos.mini") == [
         "    x = 1",
@@ -399,10 +381,9 @@ def test_nomes_parecidos_com_temporario_mantem_o_nome():
     assert tac("trem t: inteirim = 1; trem t1x: inteirim = t; trem tt1: inteirim = t1x;") == [
         "    t = 1", "    t1x = t", "    tt1 = t1x"]
 
-
-# ----------------------------------------------------------------------
 # CLI --tac
-# ----------------------------------------------------------------------
+
+
 def rodar(*args):
     return subprocess.run([sys.executable, "-m", "miniforge", *args],
                           cwd=RAIZ, capture_output=True, text=True,
@@ -447,7 +428,7 @@ def test_cli_tokens_e_tac_juntos():
 
 
 def test_cli_verificar_mantem_a_mensagem_do_frontend():
-    # Desde a aula 28, sem opção a CLI executa; --verificar para na semântica.
+
     r = rodar("exemplos/fatorial.mini", "--verificar")
     assert r.returncode == 0
     assert "tudo certim, sem erros léxicos, sintáticos ou semânticos" in r.stdout

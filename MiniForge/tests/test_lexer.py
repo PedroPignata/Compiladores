@@ -1,4 +1,4 @@
-"""Testes do analisador léxico (aulas 08 e 10)."""
+"""Testes do analisador léxico."""
 
 import pathlib
 import subprocess
@@ -18,9 +18,6 @@ def tipos(fonte):
     return [t.tipo for t in Lexer(fonte).tokens()]
 
 
-# ----------------------------------------------------------------------
-# Aula 08 — tokens
-# ----------------------------------------------------------------------
 def test_declaracao():
     assert tipos("trem x: inteirim = 10;") == [
         T.VAR, T.ID, T.DOIS_PONTOS, T.INT,
@@ -106,14 +103,11 @@ def test_eof_na_linha_seguinte_a_ultima_quebra():
 def test_posicoes_do_fatorial_como_no_slide():
     toks = Lexer((EXEMPLOS / "fatorial.mini").read_text(encoding="utf-8")).tokens()
     assert [(t.linha, t.coluna, t.tipo, t.lexema) for t in toks[:7]] == [
-        (2, 1, T.VAR, "trem"), (2, 6, T.ID, "n"), (2, 7, T.DOIS_PONTOS, ":"),
-        (2, 9, T.INT, "inteirim"), (2, 18, T.ATRIB, "="), (2, 20, T.NUM, "5"),
-        (2, 21, T.PONTO_VIRG, ";")]
+        (1, 1, T.VAR, "trem"), (1, 6, T.ID, "n"), (1, 7, T.DOIS_PONTOS, ":"),
+        (1, 9, T.INT, "inteirim"), (1, 18, T.ATRIB, "="), (1, 20, T.NUM, "5"),
+        (1, 21, T.PONTO_VIRG, ";")]
 
 
-# ----------------------------------------------------------------------
-# Aula 10 — erros léxicos com recuperação em modo pânico
-# ----------------------------------------------------------------------
 def test_erro_lexico_continua():
     lx = Lexer("x @ y")
     assert [t.tipo for t in lx.tokens()] == [T.ID, T.ID, T.EOF]
@@ -149,10 +143,9 @@ def test_sem_erros_lista_vazia():
     lx.tokens()
     assert lx.erros == []
 
-
-# ----------------------------------------------------------------------
 # CLI
-# ----------------------------------------------------------------------
+
+
 def cli(*args):
     return subprocess.run(
         [sys.executable, "-m", "miniforge", *args],
@@ -163,9 +156,9 @@ def test_cli_tokens_fatorial():
     r = cli("exemplos/fatorial.mini", "--tokens")
     assert r.returncode == 0
     linhas = r.stdout.splitlines()
-    assert linhas[0].split() == ["2:1", "VAR", "'trem'"]
-    assert linhas[2].split() == ["2:7", "DOIS_PONTOS", "':'"]
-    assert linhas[-1].split() == ["9:1", "EOF", "''"]
+    assert linhas[0].split() == ["1:1", "VAR", "'trem'"]
+    assert linhas[2].split() == ["1:7", "DOIS_PONTOS", "':'"]
+    assert linhas[-1].split() == ["8:1", "EOF", "''"]
 
 
 def test_cli_erro_lexico_sai_com_codigo_1():
@@ -175,7 +168,6 @@ def test_cli_erro_lexico_sai_com_codigo_1():
     assert r.stderr.splitlines() == [
         "1:3: erro léxico: caractere inválido '@', que trem é esse?",
         "4:9: erro léxico: caractere inválido '$', que trem é esse?"]
-
 
 @pytest.mark.parametrize("arq", sorted(
     p.name for p in EXEMPLOS.glob("*.mini") if p.name != "erro_lexico.mini"))

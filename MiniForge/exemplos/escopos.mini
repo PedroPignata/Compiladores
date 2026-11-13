@@ -1,4 +1,3 @@
-// Válido. Saída esperada (python -m miniforge): eh_memo, 2 e 1.
 trem x: inteirim = 1;
 {
     trem y: inteirim = 2;

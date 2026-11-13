@@ -1,11 +1,4 @@
-"""Testes da linguagem de superfície mineirês (v0.6).
-
-O MiniForge passou a aceitar programas em mineirês: só a tabela RESERVADAS
-(tokens.py) e as mensagens mudaram. Do parser em diante o compilador continua
-trabalhando com os mesmos tipos de token e os mesmos tipos internos ("int" e
-"bool"). Estes testes fixam o vocabulário, garantem que as palavras do inglês
-antigo viraram identificadores comuns e conferem o sotaque das mensagens.
-"""
+"""Verifica vocabulário e integração dos programas mineirês."""
 
 import pathlib
 import subprocess
@@ -29,23 +22,18 @@ VOCABULARIO = {
 }
 
 
-
-
 def erros(fonte):
     return analisar(parse(fonte)).erros
 
-
-# ----------------------------------------------------------------------
 # vocabulário
-# ----------------------------------------------------------------------
+
+
 def test_vocabulario_completo():
     assert RESERVADAS == VOCABULARIO
-
 
 @pytest.mark.parametrize("palavra, tipo", sorted(VOCABULARIO.items()))
 def test_cada_palavra_vira_o_token_certo(palavra, tipo):
     assert [t.tipo for t in Lexer(palavra).tokens()] == [tipo, T.EOF]
-
 
 @pytest.mark.parametrize("antiga", ["var", "int", "bool", "true", "false",
                                     "if", "else", "while", "print"])
@@ -72,18 +60,15 @@ def test_tipos_internos_continuam_int_e_bool():
     assert NOME_TIPO == {"int": "inteirim", "bool": "booleanim"}
     assert nome_tipo("int") == "inteirim" and nome_tipo("xyz") == "xyz"
 
-
-# ----------------------------------------------------------------------
 # saída e literais
-# ----------------------------------------------------------------------
+
+
 def test_literais_booleanos():
     prog = parse("mostra_so(eh_memo); mostra_so(num_eh);")
     assert analisar(prog).erros == []
     assert [c.expr.valor for c in prog.comandos] == [True, False]
     assert [c.expr.tipo for c in prog.comandos] == ["bool", "bool"]
     assert LITERAL_BOOL == {True: "eh_memo", False: "num_eh"}
-
-
 
 
 def test_programa_completo_em_mineires():
@@ -103,15 +88,13 @@ def test_programa_completo_em_mineires():
     assert prog.comandos[-2].entao.comandos[0].expr.tipo == "bool"
     assert prog.comandos[-1].expr.tipo == "int"
 
-
-# ----------------------------------------------------------------------
 # mensagens com sotaque
-# ----------------------------------------------------------------------
+
+
 def test_erro_lexico_pergunta_que_trem_e_esse():
     lx = Lexer("trem x: inteirim = 1 # 2;")
     lx.tokens()
     assert lx.erros == ["1:22: erro léxico: caractere inválido '#', que trem é esse?"]
-
 
 @pytest.mark.parametrize("fonte, esperado", [
     ("trem x: inteirim = 1", "1:21: erro sintático: faltou ';', sô: achei 'EOF'"),
@@ -124,7 +107,6 @@ def test_erros_sintaticos(fonte, esperado):
     with pytest.raises(ErroSintatico) as info:
         parse(fonte)
     assert str(info.value) == esperado
-
 
 @pytest.mark.parametrize("fonte, esperado", [
     ("mostra_so(x);", "'x' num foi declarado, sô"),
@@ -142,8 +124,6 @@ def test_erros_semanticos(fonte, esperado):
 def test_aviso_de_trem_sem_uso():
     a = analisar(parse("trem esquecido: inteirim = 1;"))
     assert a.avisos == ["linha 1: aviso: 'esquecido' declarado e nunca usado, sô"]
-
-
 
 
 def test_cli_verificar_diz_tudo_certim():

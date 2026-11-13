@@ -1,47 +1,4 @@
-"""Representação intermediária: código de três endereços, TAC (aula 26).
-
-O GeradorTAC percorre a AST já validada e tipada pela semântica (aula 22) e
-produz uma lista linear de Instr. Cada instrução tem no máximo um operador e
-três endereços (destino + 2 fontes), nas formas do slide 2 da aula 26:
-
-    FORMA                 Instr(op, dest, a1, a2)
-    x = y                 ("=",       "x",  y)            cópia
-    t = a op b            ("+",       "t1", a, b)         + - * / < > <= >= == !=
-    t = -a                ("neg",     "t1", a)            unário
-    goto L                ("goto",    "L1")
-    ifFalse t goto L      ("iffalse", "L2", t)            salta se t for falso
-    L:                    ("label",   "L1")
-    print a               ("print",   None, a)
-
-Um operando ("endereço") é um int (constante inteira), um bool (constante
-booleana, impressa como eh_memo/num_eh) ou uma str (nome de variável ou de
-temporário). Os rótulos só aparecem no campo dest de label, goto e iffalse,
-nunca como operando. O campo linha guarda a linha do fonte que originou a
-instrução, para a VM (aula 28) apontar erros de execução (divisão por zero).
-
-Expressões devolvem o próprio endereço: Num, Bool e Var devolvem o valor ou
-o nome; Binario e Unario emitem uma instrução e devolvem um temporário novo.
-Os temporários (t1, t2, ...) e os rótulos (L1, L2, ...) vêm de contadores que
-só crescem, então nunca se repetem no programa.
-
-A geração não verifica mais nada: a AST que chega aqui é válida ("frontend
-completo", aula 22).
-
-Nomes internos (docs/arquitetura.md, cuidado 4): a memória da VM é plana, mas
-a MiniForge permite sombreamento. Por isso cada variável declarada recebe um
-nome interno próprio:
-
-    * a 1ª declaração de um nome mantém o nome do fonte (x);
-    * a k-ésima declaração do mesmo nome, k >= 2, vira x.k (x.2, x.3, ...);
-    * um nome com a forma de temporário (t1, t27, ...) vira t1.1 já na 1ª
-      declaração, para não colidir com os temporários do gerador.
-
-O ponto não pode aparecer num identificador da MiniForge ([a-zA-Z_][a-zA-Z0-9_]*),
-então um nome interno nunca coincide com outra variável nem com um temporário.
-Programas sem sombreamento (como todos os do slide) ficam com os nomes do
-fonte: "x = t2", "n = 5".
-
-"""
+"""Geração de TAC com nomes internos únicos e posição de origem."""
 
 from dataclasses import dataclass
 import re
@@ -72,7 +29,7 @@ class Instr:
     linha: int = 0
 
     def __str__(self):
-        """Formato do slide 2: rótulo na margem, demais com 4 espaços."""
+        """Mantém rótulos na margem e recua as instruções."""
         a1, a2 = formatar(self.a1), formatar(self.a2)
         if self.op == "read":
             return f"    read {self.dest}"
@@ -153,9 +110,8 @@ class GeradorTAC(_GeradorBase):
     def emitir(self, op, dest=None, a1=None, a2=None, linha=0):
         self.codigo.append(Instr(op, dest, a1, a2, linha))
 
-    # ------------------------------------------------------------------
     # comandos
-    # ------------------------------------------------------------------
+
     def visitar_Decl(self, no):
         # O inicializador é gerado antes de declarar o nome, como na
         # semântica: em trem x: inteirim = x + 1; o x da direita é o externo.
@@ -199,9 +155,8 @@ class GeradorTAC(_GeradorBase):
         self.emitir("goto", ini, linha=no.linha)
         self.emitir("label", fim, linha=no.linha)
 
-    # ------------------------------------------------------------------
     # expressões: devolvem o endereço do valor
-    # ------------------------------------------------------------------
+
     def visitar_Binario(self, no):
         a = self.visitar(no.esq)
         b = self.visitar(no.dir)

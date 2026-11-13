@@ -1,14 +1,4 @@
-"""Teste automático do banco de casos de tests/casos/ (aulas 12, 14 e 22).
-
-Cada arquivo de validos/ precisa gerar AST sem exceção. Cada arquivo de
-invalidos/ tem na 1ª linha o comentário "// ERRO: <mensagem>" e precisa
-falhar com ErroSintatico contendo essa mensagem.
-
-Aula 22: o mesmo teste parametrizado, trocando ErroSintatico pela lista de
-erros do analisador, roda os arquivos de semanticos/. Cada um é léxica e
-sintaticamente válido e precisa gerar exatamente um erro semântico, com a
-mensagem da 1ª linha: um único engano, uma única mensagem (sem cascata).
-"""
+"""Valida arquivos de referência e suas mensagens esperadas."""
 
 import pathlib
 import re
@@ -33,8 +23,7 @@ def parse(fonte):
 def test_banco_tem_pelo_menos_8_de_cada():
     assert len(VALIDOS) >= 8
     assert len(INVALIDOS) >= 8
-    assert len(SEMANTICOS) >= 6               # os 6 casos da tabela do slide
-
+    assert len(SEMANTICOS) >= 6
 
 @pytest.mark.parametrize("arq", VALIDOS, ids=lambda p: p.name)
 def test_validos(arq):
@@ -43,7 +32,6 @@ def test_validos(arq):
     toks = lx.tokens()
     assert lx.erros == []                    # casos do parser são lexicamente válidos
     assert isinstance(Parser(toks).programa(), Programa)  # não pode lançar exceção
-
 
 @pytest.mark.parametrize("arq", INVALIDOS, ids=lambda p: p.name)
 def test_invalidos(arq):
@@ -58,7 +46,6 @@ def test_invalidos(arq):
     assert re.fullmatch(
         rf"\d+:\d+: erro sintático: {re.escape(esperado)}, sô: achei '.*'",
         str(info.value))
-
 
 @pytest.mark.parametrize("arq", SEMANTICOS, ids=lambda p: p.name)
 def test_semanticos(arq):

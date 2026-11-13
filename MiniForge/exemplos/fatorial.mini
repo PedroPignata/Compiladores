@@ -1,4 +1,3 @@
-// Válido. Saída esperada (python -m miniforge): 120.
 trem n: inteirim = 5;
 trem f: inteirim = 1;
 enquanto_tiver (n > 0) {

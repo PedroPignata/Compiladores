@@ -1,10 +1,4 @@
-"""Testes da verificação de tipos e da AST anotada (aula 22).
-
-Cobrem as 5 regras semânticas, a tabela REGRAS de operadores, a anotação
-no.tipo em cada expressão, a ausência de erros em cascata, o exemplo
-exemplos/semantico.mini do slide de entrega, a CLI (todos os erros de uma
-vez, código 1, sem gerar código) e o desafio do ^ sob a coluna do erro.
-"""
+"""Testes da verificação de tipos e da AST anotada."""
 
 import pathlib
 import subprocess
@@ -39,10 +33,9 @@ def expressoes(no):
     for filho in A.filhos(no):
         yield from expressoes(filho)
 
-
-# ----------------------------------------------------------------------
 # tabela de tipos dos operadores
-# ----------------------------------------------------------------------
+
+
 def test_tabela_regras_igual_ao_slide():
     esperado = {}
     for op in "+-*/":
@@ -54,9 +47,8 @@ def test_tabela_regras_igual_ao_slide():
         esperado[(op, "bool", "bool")] = "bool"
     assert REGRAS == esperado
 
-
 @pytest.mark.parametrize("expr, tipo", [
-    ("1 + 2", "int"),                 # exemplos do slide
+    ("1 + 2", "int"),
     ("1 < 2", "bool"),
     ("eh_memo == num_eh", "bool"),
     ("7 / 2", "int"),
@@ -73,10 +65,9 @@ def test_tabela_regras_igual_ao_slide():
 def test_tipo_das_expressoes(expr, tipo):
     assert tipo_de(expr) == tipo
 
-
 @pytest.mark.parametrize("expr, msg", [
-    ("eh_memo + 1", "operador '+' num serve pra booleanim e inteirim"),     # do slide
-    ("1 == eh_memo", "operador '==' num serve pra inteirim e booleanim"),   # do slide
+    ("eh_memo + 1", "operador '+' num serve pra booleanim e inteirim"),
+    ("1 == eh_memo", "operador '==' num serve pra inteirim e booleanim"),
     ("num_eh - eh_memo", "operador '-' num serve pra booleanim e booleanim"),
     ("2 / num_eh", "operador '/' num serve pra inteirim e booleanim"),
     ("eh_memo > num_eh", "operador '>' num serve pra booleanim e booleanim"),
@@ -88,11 +79,10 @@ def test_tipo_das_expressoes(expr, tipo):
 def test_operadores_com_tipos_invalidos(expr, msg):
     assert sem(f"mostra_so({expr});") == [f"linha 1: erro semântico: {msg}"]
 
-
-# ----------------------------------------------------------------------
 # regras 3 e 4: declarações, atribuições e condições
-# ----------------------------------------------------------------------
-def test_decl_com_tipo_errado():                 # caso do slide
+
+
+def test_decl_com_tipo_errado():
     assert sem("trem b: booleanim = 1 + 2;\nmostra_so(b);") == [
         "linha 1: erro semântico: 'b' é booleanim, mas tá recebendo inteirim"]
 
@@ -115,7 +105,6 @@ def test_atribuicao_usa_o_tipo_da_variavel_visivel():
     fonte = "trem x: booleanim = eh_memo;\n{\n  trem x: inteirim = 0;\n  x = 1;\n  mostra_so(x);\n}\nx = num_eh;\nmostra_so(x);"
     assert sem(fonte) == []
 
-
 @pytest.mark.parametrize("cmd", ["uai", "enquanto_tiver"])
 def test_condicao_int(cmd):
     assert sem(f"{cmd} (1) {{ }}") == [
@@ -134,10 +123,9 @@ def test_condicao_de_variavel_int():
 def test_print_aceita_int_e_bool():
     assert sem("mostra_so(1);\nmostra_so(eh_memo);\nmostra_so(1 < 2);") == []
 
-
-# ----------------------------------------------------------------------
 # anotação da AST
-# ----------------------------------------------------------------------
+
+
 def test_ast_anotada_em_todos_os_nos_de_expressao():
     fonte = ("trem n: inteirim = 5;\n"
              "trem ok: booleanim = (-n < 0) == eh_memo;\n"
@@ -179,7 +167,6 @@ def test_tipo_nao_entra_na_comparacao_de_nos():
     analisar(prog)
     assert prog.comandos[0].expr == A.Num(1, linha=1)
 
-
 @pytest.mark.parametrize("arq", VALIDOS, ids=lambda p: p.name)
 def test_casos_validos_ficam_totalmente_tipados(arq):
     prog = parse(arq.read_text(encoding="utf-8"))
@@ -202,11 +189,10 @@ def test_formatar_ast_mostra_tipos_depois_da_semantica():
         "        └── Num 4 : inteirim"
     )
 
-
-# ----------------------------------------------------------------------
 # sem erros em cascata
-# ----------------------------------------------------------------------
-def test_sem_cascata_em_somas():                 # exemplo do slide
+
+
+def test_sem_cascata_em_somas():
     assert sem("mostra_so(z + 1 + 2);") == [
         "linha 1: erro semântico: 'z' num foi declarado, sô"]
 
@@ -264,10 +250,6 @@ def test_todos_os_erros_de_uma_vez_na_ordem():
         "linha 7: erro semântico: 'y' num foi declarado, sô",
     ]
 
-
-# ----------------------------------------------------------------------
-# exemplo do slide de entrega e posições (desafio)
-# ----------------------------------------------------------------------
 SAIDA_SLIDE = [
     "linha 2: erro semântico: 'b' é booleanim, mas tá recebendo inteirim",
     "linha 3: erro semântico: condição tem que ser booleanim, mas veio inteirim",
@@ -299,10 +281,9 @@ def test_ast_montada_a_mao_sem_coluna():
     a.visitar(A.Programa([A.Print(A.Var("q", linha=7), linha=7)]))
     assert a.posicoes == [(7, 0)]
 
-
-# ----------------------------------------------------------------------
 # CLI
-# ----------------------------------------------------------------------
+
+
 def cli(*args):
     return subprocess.run(
         [sys.executable, "-m", "miniforge", *args],
